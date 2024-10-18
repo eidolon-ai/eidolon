@@ -26,8 +26,6 @@ from ..security.permissions import PermissionException
 
 
 class MachineSpec(BaseModel):
-    model_config = ConfigDict(extra='allow')
-
     symbolic_memory: AnnotatedReference[SymbolicMemory] = Field(description="The Symbolic Memory implementation.")
     file_memory: AnnotatedReference[FileMemory] = Field(description="The File Memory implementation.")
     similarity_memory: AnnotatedReference[SimilarityMemory] = Field(description="The Vector Memory implementation.")

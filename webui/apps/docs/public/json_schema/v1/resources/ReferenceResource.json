@@ -1,0 +1,143 @@
+{
+  "$defs": {
+    "Metadata": {
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Metadata",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "apiVersion": {
+      "title": "ApiVersion",
+      "const": "server.eidolonai.com/v1alpha1"
+    },
+    "kind": {
+      "const": "Reference",
+      "default": "Reference",
+      "title": "Kind"
+    },
+    "metadata": {
+      "$ref": "#/$defs/Metadata"
+    },
+    "spec": {
+      "anyOf": [
+        {
+          "$ref": "../schemas/AgentMachine/overview.json"
+        },
+        {
+          "$ref": "../schemas/AuthenticationProcessor/overview.json"
+        },
+        {
+          "$ref": "../schemas/Embedding/overview.json"
+        },
+        {
+          "$ref": "../schemas/FileMemory/overview.json"
+        },
+        {
+          "$ref": "../schemas/FunctionalAuthorizer/overview.json"
+        },
+        {
+          "$ref": "../schemas/OpenAIConnectionHandler/overview.json"
+        },
+        {
+          "$ref": "../schemas/ProcessAuthorizer/overview.json"
+        },
+        {
+          "$ref": "../schemas/ProcessFileSystem/overview.json"
+        },
+        {
+          "$ref": "../schemas/SecurityManager/overview.json"
+        },
+        {
+          "$ref": "../schemas/SimilarityMemory/overview.json"
+        },
+        {
+          "$ref": "../schemas/SymbolicMemory/overview.json"
+        },
+        {
+          "$ref": "../schemas/VectorStore/overview.json"
+        },
+        {
+          "$ref": "../schemas/APU/overview.json"
+        },
+        {
+          "$ref": "../schemas/Agent/overview.json"
+        },
+        {
+          "$ref": "../schemas/AudioUnit/overview.json"
+        },
+        {
+          "$ref": "../schemas/DocumentLoader/overview.json"
+        },
+        {
+          "$ref": "../schemas/DocumentManager/overview.json"
+        },
+        {
+          "$ref": "../schemas/DocumentParser/overview.json"
+        },
+        {
+          "$ref": "../schemas/DocumentProcessor/overview.json"
+        },
+        {
+          "$ref": "../schemas/DocumentReranker/overview.json"
+        },
+        {
+          "$ref": "../schemas/DocumentRetriever/overview.json"
+        },
+        {
+          "$ref": "../schemas/DocumentTransformer/overview.json"
+        },
+        {
+          "$ref": "../schemas/IOUnit/overview.json"
+        },
+        {
+          "$ref": "../schemas/ImageUnit/overview.json"
+        },
+        {
+          "$ref": "../schemas/LLMModel/overview.json"
+        },
+        {
+          "$ref": "../schemas/LLMUnit/overview.json"
+        },
+        {
+          "$ref": "../schemas/LogicUnit/overview.json"
+        },
+        {
+          "$ref": "../schemas/LongTermMemoryUnit/overview.json"
+        },
+        {
+          "$ref": "../schemas/MemoryUnit/overview.json"
+        },
+        {
+          "$ref": "../schemas/QuestionTransformer/overview.json"
+        },
+        {
+          "$ref": "../schemas/ResultSummarizer/overview.json"
+        },
+        {
+          "$ref": "../schemas/Retriever/overview.json"
+        },
+        {
+          "$ref": "../schemas/SqlClient/overview.json"
+        }
+      ]
+    }
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
+  "title": "ReferenceResource",
+  "type": "object"
+}

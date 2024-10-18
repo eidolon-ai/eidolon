@@ -17,7 +17,9 @@ from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
 from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent.sql_agent.agent import SqlAgent
 from eidolon_ai_sdk.system.reference_model import Reference
+from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
+from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 
 EIDOLON = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
 
@@ -40,12 +42,15 @@ def main():
 
     print("copying schema to site...")
     shutil.rmtree(EIDOLON / "webui" / "apps" / "docs" / "public" / "json_schema" / "v1", ignore_errors=True)
-    shutil.copytree(EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas", EIDOLON / "webui" / "apps" / "docs" / "public" / "json_schema" / "v1" / 'schemas')
-    shutil.copytree(EIDOLON / "scripts" / "scripts" / "docbuilder" / "Resource", EIDOLON / "webui" / "apps" / "docs" / "public" / "json_schema" / "v1" / 'resources')
+    shutil.copytree(EIDOLON / "scripts" / "scripts" / "docbuilder" / "schemas",
+                    EIDOLON / "webui" / "apps" / "docs" / "public" / "json_schema" / "v1" / 'schemas')
+    shutil.copytree(EIDOLON / "scripts" / "scripts" / "docbuilder" / "Resource",
+                    EIDOLON / "webui" / "apps" / "docs" / "public" / "json_schema" / "v1" / 'resources')
 
 
 class AgentBuilder(BaseModel):
-    documented_agents: Reference["Agent", "SimpleAgent", SimpleAgent | RetrieverAgent | APIAgent | SqlAgent | AutonomousSpeechAgent]
+    documented_agents: Reference[
+        "Agent", "SimpleAgent", SimpleAgent | RetrieverAgent | APIAgent | SqlAgent | AutonomousSpeechAgent]
 
 
 def generate_schema():
@@ -57,16 +62,22 @@ def generate_schema():
     accumulated_schema["$defs"].update(fake_agent_schema.pop("$defs", {}))
 
     # only one version of agent machine so no need to require impl
-    accumulated_schema["$defs"]["AgentMachine"]['required'] = [r for r in accumulated_schema["$defs"]["AgentMachine"]['required'] if r != "implementation"]
+    accumulated_schema["$defs"]["AgentMachine"]['required'] = [r for r in
+                                                               accumulated_schema["$defs"]["AgentMachine"]['required']
+                                                               if r != "implementation"]
     return accumulated_schema
 
 
 def write_json_schema(dist_component_schemas, schema):
     defs = schema.get("$defs", {})
     transform_file_defs(schema, defs)
+    resource_any_of = []
     for k, v in defs.items():
         write_loc = get_write_loc(v)
         if write_loc:
+            if write_loc.name == "overview.json":
+                resource_any_of.append({"$ref": "../schemas/" + str(write_loc)})
+
             copied = copy.deepcopy(v)
             local_refs = find_local_refs(v)
             # relative_write_locs(copied, "../" + str(write_loc.parent) + "/")
@@ -77,6 +88,31 @@ def write_json_schema(dist_component_schemas, schema):
             os.makedirs((dist_component_schemas / write_loc).parent, exist_ok=True)
             with open(dist_component_schemas / write_loc, 'w') as json_file:
                 json.dump(copied, json_file, indent=2)
+
+    reference_resource = {
+        "$defs": {
+            "Metadata": {
+                "additionalProperties": True,
+                "properties": {
+                    "name": {"title": "Name", "type": "string"}
+                },
+                "required": ["name"],
+                "title": "Metadata",
+                "type": "object"
+            }
+        },
+        "properties": {
+            "apiVersion": {"title": "ApiVersion", "const": "server.eidolonai.com/v1alpha1"},
+            "kind": {"const": "Reference", "default": "Reference", "title": "Kind"},
+            "metadata": {"$ref": "#/$defs/Metadata"},
+            "spec": {"anyOf": resource_any_of}
+        },
+        "required": ["apiVersion", "kind", "metadata", "spec"],
+        "title": "ReferenceResource",
+        "type": "object"
+    }
+    with open(dist_component_schemas.parent / "Resource" / "ReferenceResource.json", 'w') as json_file:
+        json.dump(reference_resource, json_file, indent=2)
 
 
 def get_write_loc(schema):
@@ -236,7 +272,7 @@ def write_md(read_loc,
                     with_footer=False,
                 ))
                 write_astro_md_file(content, write_loc / url_safe(group_name) / (
-                            url_safe(schema['reference_details']['name']) + ".md"), group_names)
+                        url_safe(schema['reference_details']['name']) + ".md"), group_names)
 
 
 def write_astro_md_file(content, write_file_loc, group_names: List[str]):
@@ -266,7 +302,7 @@ def clean_ref_groups_for_md(schema, group_defaults, seen=None):
     if isinstance(schema, dict):  # inline optional types for easier to read markdown
         if "anyOf" in schema and len(schema['anyOf']) == 2 and [s for s in schema['anyOf'] if
                                                                 len(s) == 1 and s.get("type") == "null"] and schema.get(
-                'default') is None:
+            'default') is None:
             any_of = schema.pop('anyOf')
             object_type = [s for s in any_of if not (len(s) == 1 and s.get("type") == "null")][0]
             schema.update(object_type)
