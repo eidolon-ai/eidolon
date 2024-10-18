@@ -12,7 +12,6 @@ description: Description of the AgentMachine component
 | - [security_manager](#security_manager )                   | No      | [Reference[SecurityManager]](/docs/components/securitymanager/overview)   | No         | -          | The Security Manager implementation.                                              |
 | - [process_file_system](#process_file_system )             | No      | [Reference[ProcessFileSystem]](/docs/components/processfilesystem/overview) | No         | -          | The Process File System implementation. Used to store files related to processes. |
 | - [fail_on_agent_start_error](#fail_on_agent_start_error ) | No      | boolean                      | No         | -          | Fail On Agent Start Error                                                         |
-| - [](#additionalProperties )                               | No      | object                       | No         | -          | -                                                                                 |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
