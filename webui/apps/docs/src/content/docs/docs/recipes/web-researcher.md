@@ -19,11 +19,11 @@ This Recipe shows an example of a web researcher chatbot.
 ###### [How to Configure Built-in Components](/docs/howto/configure_builtins)
 
 ## Agents
-#### [Conversational Agent](https://github.com/eidolon-ai/web-researcher/blob/main/resources/conversational_agent.yaml)
+#### [Conversational Agent](https://github.com/eidolon-ai/web-researcher/blob/main/resources/conversational_agent.eidolon.yaml)
 This uses the SimpleAgent template, but needs some customization to enable file uploads and support multiple LLMs. 
-#### [Speech Agent](https://github.com/eidolon-ai/web-researcher/blob/main/resources/speech_agent.yaml)
+#### [Speech Agent](https://github.com/eidolon-ai/web-researcher/blob/main/resources/speech_agent.eidolon.yaml)
 This uses the builtin AutonomousSpeechAgent to enable speech-to-text capabilities. 
-#### [Web Researcher](https://github.com/eidolon-ai/web-researcher/blob/main/resources/web_research.yaml)
+#### [Web Researcher](https://github.com/eidolon-ai/web-researcher/blob/main/resources/web_research.eidolon.yaml)
 This is the researcher agent. Customize the prompts, search parameters, etc... to suit your needs. 
 
 You will notice that enabled file upload on our AgentProcessingUnit's primary action.
@@ -35,7 +35,7 @@ You will notice that enabled file upload on our AgentProcessingUnit's primary ac
 ```
 
 
-We also have a list of available [APUs](/docs/components/apu/overview) in resources/apus.yaml.
+We also have a list of available [APUs](/docs/components/apu/overview) in resources/apus.eidolon.yaml.
 ```yaml
   apus:
     - apu: MistralSmall

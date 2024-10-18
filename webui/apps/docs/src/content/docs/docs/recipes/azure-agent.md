@@ -40,7 +40,7 @@ Get `Key` and add it to .env as AZURE_OPENAI_API_KEY
 make .env
 ```
 
-🚨 Also note the `Endpoint` value. We will use this to update the `azure_endpoint` field in `azure_agent.yaml` later.
+🚨 Also note the `Endpoint` value. We will use this to update the `azure_endpoint` field in `azure_agent.eidolon.yaml` later.
 
 ### 2. Deploy a Model
 Create an Azure [deployment](https://ai.azure.com/resource/deployments) for your resource a model named (in this demo we named our deployment `custom-azure-deployment`).
@@ -49,7 +49,7 @@ Create an Azure [deployment](https://ai.azure.com/resource/deployments) for your
 Create a new APU resource in the `resources` directory. This APU will point to your Azure LLM deployment and will be used by your agent to interact with the LLM.
 
 ```yaml
-# resources/azure_4o_apu.yaml
+# resources/azure_4o_apu.eidolon.yaml
 apiVersion: server.eidolonai.com/v1alpha1
 kind: Reference
 metadata:
@@ -70,7 +70,7 @@ spec:
 <summary>The example agent already points to this apu.</summary>
 
 ```yaml
-# resources/azure_agent.yaml
+# resources/azure_agent.eidolon.yaml
 apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:

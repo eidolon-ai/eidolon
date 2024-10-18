@@ -25,7 +25,7 @@ This is important if you have a body of information that is constantly changing,
 ###### [Dynamic embedding management](/docs/components/retriever_agent)
 
 ## Agents
-### [Conversational Agent](https://github.com/eidolon-ai/eidolon-s3-rag/blob/main/resources/conversational_agent.yaml)
+### [Conversational Agent](https://github.com/eidolon-ai/eidolon-s3-rag/blob/main/resources/conversational_agent.eidolon.yaml)
 The user facing copilot. Ask this agent questions and it use the llm to provide answers while reaching out to the S3
 Search Agent as needed for relevant documents as needed assistance of the repo search agent.
 
@@ -35,7 +35,7 @@ to the `agent_refs` list.
 agent_refs: [s3_search]
 ```
 
-### [S3 RAG](https://github.com/eidolon-ai/eidolon-s3-rag/blob/main/resources/repo_search.yaml)
+### [S3 RAG](https://github.com/eidolon-ai/eidolon-s3-rag/blob/main/resources/repo_search.eidolon.yaml)
 Handles loading, embedding, and re-embedding documents ensuring they are up-to-date.
 
 Translates queries into a vector search query and returns the top results.

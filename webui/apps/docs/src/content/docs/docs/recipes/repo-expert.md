@@ -29,7 +29,7 @@ src="https://www.youtube.com/embed/INOjIWMX4mY">
 ###### [Dynamic embedding management](/docs/components/retriever_agent)
 
 ## Agents
-### [Repo Expert](https://github.com/eidolon-ai/eidolon-git-search/blob/main/resources/repo_expert.yaml)
+### [Repo Expert](https://github.com/eidolon-ai/eidolon-git-search/blob/main/resources/repo_expert.eidolon.yaml)
 The user facing copilot. Ask this agent questions about a repository, and it will go and find the answer with the
 assistance of the repo search agent. It needs to be able to communicate with the repo search agent to get the 
 information it needs.
@@ -40,7 +40,7 @@ to the `agent_refs` list.
 agent_refs: [repo_search]
 ```
 
-### [Repo Search](https://github.com/eidolon-ai/eidolon-git-search/blob/main/resources/repo_search.yaml)
+### [Repo Search](https://github.com/eidolon-ai/eidolon-git-search/blob/main/resources/repo_search.eidolon.yaml)
 Handles loading, embedding, and re-embedding documents ensuring they are up-to-date.
 
 Translates queries into a vector search query and returns the top results.

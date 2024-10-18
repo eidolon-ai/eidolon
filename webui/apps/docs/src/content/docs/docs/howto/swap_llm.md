@@ -58,13 +58,13 @@ ls -o
 
 3. Identify the YAML file associated with the agent you want to customize. It is good practice to backup the file first.
 ```bash
-cp hello_world_agent.yaml hello_world_agent.bak
+cp hello_world_agent.eidolon.yaml hello_world_agent.bak
 ```
 4. Edit the YAML file in a text editor or your preferred IDE.
 5. Confirm you're editing an agent file, specifically, `kind: Agent`. Configurable attributes appear below `spec:`.
 6. Add (or edit) an `apu > implementation` attribute as follows, being careful to nest each attribute appropriately:
 
-```yaml title=resources/hello_world_agent.yaml
+```yaml title=resources/hello_world_agent.eidolon.yaml
 apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
@@ -95,13 +95,13 @@ ls -o
 ```
 3. Identify the YAML file associated with the agent you want to customize. It is good practice to backup the file first.
 ```bash
-cp hello_world_agent.yaml hello_world_agent_name.bak
+cp hello_world_agent.eidolon.yaml hello_world_agent_name.bak
 ```
 4. Edit the YAML file in a text editor or your preferred IDE.
 5. Confirm you're editing an agent file, specifically, `kind: Agent`. Configurable attributes appear below `spec:`.
 6. Add (or edit) `apu > llm_unit > implementation` and `apu > llm_unit > model` attributes as follows, being careful to nest each attribute appropriately:
 
-```yaml title=resources/hello_world_agent.yaml
+```yaml title=resources/hello_world_agent.eidolon.yaml
 apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
