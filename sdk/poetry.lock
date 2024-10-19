@@ -1218,6 +1218,31 @@ typing-extensions = ">=4.5.0"
 uvicorn = {version = ">=0.18.3", extras = ["standard"]}
 
 [[package]]
+name = "chromadb-client"
+version = "0.5.15"
+description = "Chroma Client."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "chromadb_client-0.5.15-py3-none-any.whl", hash = "sha256:f2b2da8c6a8836ec26ff8eef29232f1864b3a5cf2373b99fb3551956f784c6d3"},
+    {file = "chromadb_client-0.5.15.tar.gz", hash = "sha256:c07763cc1ba781600c4bb7c13f7f8380bba595943324df106f3d8c9d4b3fd94b"},
+]
+
+[package.dependencies]
+httpx = ">=0.27.0"
+numpy = ">=1.22.5,<2.0.0"
+opentelemetry-api = ">=1.2.0"
+opentelemetry-exporter-otlp-proto-grpc = ">=1.2.0"
+opentelemetry-sdk = ">=1.2.0"
+orjson = ">=3.9.12"
+overrides = ">=7.3.1"
+posthog = ">=2.4.0"
+pydantic = ">=1.9"
+PyYAML = ">=6.0.0"
+tenacity = ">=8.2.3"
+typing-extensions = ">=4.5.0"
+
+[[package]]
 name = "click"
 version = "8.1.7"
 description = "Composable command line interface toolkit"
@@ -3740,7 +3765,7 @@ type = ["mypy (>=1.8)"]
 name = "playwright"
 version = "1.46.0"
 description = "A high-level API to automate web browsers"
-optional = true
+optional = false
 python-versions = ">=3.8"
 files = [
     {file = "playwright-1.46.0-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:fa60b95c16f6ce954636229a6c9dd885485326bca52d5ba20d02c0bc731a2bbb"},
@@ -4081,7 +4106,7 @@ typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 name = "pyee"
 version = "11.1.0"
 description = "A rough port of Node.js's EventEmitter to Python with a few tricks of its own"
-optional = true
+optional = false
 python-versions = ">=3.8"
 files = [
     {file = "pyee-11.1.0-py3-none-any.whl", hash = "sha256:5d346a7d0f861a4b2e6c47960295bd895f816725b27d656181947346be98d7c1"},
@@ -5872,7 +5897,6 @@ description = "Automatically mock your HTTP interactions to simplify and speed u
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "vcrpy-6.0.1-py2.py3-none-any.whl", hash = "sha256:621c3fb2d6bd8aa9f87532c688e4575bcbbde0c0afeb5ebdb7e14cac409edfdd"},
     {file = "vcrpy-6.0.1.tar.gz", hash = "sha256:9e023fee7f892baa0bbda2f7da7c8ac51165c1c6e38ff8688683a12a4bde9278"},
 ]
 
@@ -6285,9 +6309,9 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 type = ["pytest-mypy"]
 
 [extras]
-all = ["playwright"]
+all = []
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "4be2644b78267846816dfcfb881d122e4528424cdb1d03a7610a0cec64b7f5c7"
+content-hash = "ac249f7a24828c07b12169833b94d81c438d7073cc3dbe22dc972a52af99738a"
