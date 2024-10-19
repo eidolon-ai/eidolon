@@ -44,7 +44,6 @@ tiktoken = ">=0.5.1"
 jsonref = "^1.1.0"
 filetype = "^1.2.0"
 esprima = "^4.0.1"
-unstructured = "^0.14.5"
 python-multipart = ">=0.0.6,<0.0.8"
 pillow = "^10.2.0"
 python-docx = "^1.1.0"
@@ -75,7 +74,7 @@ pydantic = "^2.9.2"
 chromadb-client = "^0.5.15"
 
 [tool.poetry.extras]
-all = [ "playwright", "chromadb" ]
+all = [ "playwright", "chromadb", "unstructured" ]
 
 [tool.pytest.ini_options]
 pythonpath = "project"
@@ -100,6 +99,7 @@ watchfiles = "^0.22.0"
 pytest-mock = "^3.14.0"
 chromadb = "^0.4.18"
 playwright = "^1.43.0"
+unstructured = "^0.14.5"
 
 [tool.poetry.group.dev.dependencies.typer]
 extras = [ "all",]
