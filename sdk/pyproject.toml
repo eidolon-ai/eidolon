@@ -72,6 +72,7 @@ eval-type-backport = "^0.2.0"
 mem0ai = "^0.0.9"
 pydantic = "^2.9.2"
 chromadb-client = "^0.5.15"
+bs4 = "^0.0.2"
 
 [tool.poetry.extras]
 all = [ "playwright", "chromadb", "unstructured" ]
