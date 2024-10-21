@@ -24,7 +24,7 @@ class ComplexInput(BaseModel):
 class TestSchemaToModel:
     def test_complex_model(self):
         schema = ComplexInput.model_json_schema()
-        duped = schema_to_model(jsonref.replace_refs(schema), "Dupe")
+        duped = schema_to_model(jsonref.replace_refs(schema), "Dupe", {})
         assert duped.model_validate(dict(nested_object=dict(int_field=1))).nested_object.int_field == 1
 
     def test_simple_model_creation(self):
@@ -34,7 +34,7 @@ class TestSchemaToModel:
             "properties": {"name": {"type": "string"}, "age": {"type": "integer"}},
             "required": ["name"],
         }
-        SimpleModel = schema_to_model(json_schema, "SimpleModel")
+        SimpleModel = schema_to_model(json_schema, "SimpleModel", {})
         assert issubclass(SimpleModel, BaseModel)
         model = SimpleModel(name="John Doe", age=30)
         assert model.name == "John Doe"
@@ -55,7 +55,7 @@ class TestSchemaToModel:
                 }
             },
         }
-        NestedModel = schema_to_model(json_schema, "NestedModel")
+        NestedModel = schema_to_model(json_schema, "NestedModel", {})
         assert issubclass(NestedModel, BaseModel)
         nested_model = NestedModel(user={"name": "Jane Doe", "age": 25})
         assert nested_model.user.name == "Jane Doe"
@@ -67,7 +67,7 @@ class TestSchemaToModel:
             "type": "object",
             "properties": {"tags": {"type": "array", "items": {"type": "string"}}},
         }
-        ArrayModel = schema_to_model(json_schema, "ArrayModel")
+        ArrayModel = schema_to_model(json_schema, "ArrayModel", {})
         assert issubclass(ArrayModel, BaseModel)
         array_model = ArrayModel(tags=["tag1", "tag2"])
         assert array_model.tags == ["tag1", "tag2"]
@@ -79,7 +79,7 @@ class TestSchemaToModel:
             "properties": {"name": {"type": "string"}, "age": {"type": "integer"}},
             "required": ["name"],
         }
-        RequiredFieldModel = schema_to_model(json_schema, "RequiredFieldModel")
+        RequiredFieldModel = schema_to_model(json_schema, "RequiredFieldModel", {})
         with pytest.raises(ValidationError):
             RequiredFieldModel(age=30)  # 'name' is required
 
@@ -92,7 +92,7 @@ class TestSchemaToModel:
                 "age": {"type": "integer"},
             },
         }
-        DefaultModel = schema_to_model(json_schema, "DefaultModel")
+        DefaultModel = schema_to_model(json_schema, "DefaultModel", {})
         model = DefaultModel(age=30)
         assert model.name == "Anonymous"
         assert model.age == 30
@@ -111,7 +111,7 @@ class TestSchemaToModel:
             },
             "required": ["age"],
         }
-        DefaultModel = schema_to_model(json_schema, "DefaultModel")
+        DefaultModel = schema_to_model(json_schema, "DefaultModel", {})
         with pytest.raises(ValueError) as exc_info:
             DefaultModel()
         assert (
@@ -124,7 +124,7 @@ class TestSchemaToModel:
         """Test that an invalid schema raises the appropriate error."""
         json_schema = {"properties": {"name": {"type": "string"}, "age": {"type": "integer"}}}
         with pytest.raises(ValueError) as exc_info:
-            schema_to_model(json_schema, "InvalidModel")
+            schema_to_model(json_schema, "InvalidModel", {})
         assert "Schema must be an object with properties." in str(exc_info.value)
 
     def test_unsupported_type(self):
@@ -134,5 +134,24 @@ class TestSchemaToModel:
             "properties": {"name": {"type": "unsupported"}},
         }
         with pytest.raises(ValueError) as exc_info:
-            schema_to_model(json_schema, "UnsupportedModel")
+            schema_to_model(json_schema, "UnsupportedModel", {})
         assert "Error creating field 'name'" in str(exc_info.value)
+
+    def test_nested_allofs(self):
+        """Test that nested allOf is correctly handled."""
+        json_schema = {
+            "type": "object",
+            "allOf": [
+                {
+                    "properties": {"name": {"type": "string"}},
+                    "required": ["name"],
+                },
+                {
+                    "properties": {"age": {"type": "integer"}},
+                },
+            ],
+        }
+        NestedAllOfModel = schema_to_model(json_schema, "NestedAllOfModel", {})
+        model = NestedAllOfModel(name="John Doe", age=30)
+        assert model.name == "John Doe"
+        assert model.age == 30
