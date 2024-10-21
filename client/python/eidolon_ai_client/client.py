@@ -160,7 +160,7 @@ class ProcessesResponse(BaseModel):
     next: Optional[str] = None
 
 
-class ProcessStatus(Process, extra=Extra.allow):
+class ProcessStatus(Process, extra="allow"):
     agent: str
     state: str
     title: Optional[str]
