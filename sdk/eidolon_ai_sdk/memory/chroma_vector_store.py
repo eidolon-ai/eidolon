@@ -1,6 +1,15 @@
 import threading
 
 import chromadb
+try:
+    from chromadb import Include, QueryResult
+    from chromadb.api.models.Collection import Collection
+    chromadb.config.is_thin_client = False  # we may have chromadb_client and chromadb installed at same time
+except ImportError:
+    QueryResult = type(object)
+    Include = type(object)
+    Collection = type(object)
+
 
 from eidolon_ai_sdk.util.async_wrapper import make_async
 
