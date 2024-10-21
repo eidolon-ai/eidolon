@@ -85,6 +85,8 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
         url = urlparse(self.spec.url)
         if url.scheme == "file":
             path = url.path
+            if not hasattr(chromadb, "PersistentClient"):
+                raise RuntimeError("chromadb must be installed to use ChromaDB backed by local file storage. Specify `path` to use a remote ChromaDB or install chromadb via `pip install chromadb`.")
             self.client = chromadb.PersistentClient(path)
         else:
             host = url.hostname
