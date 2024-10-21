@@ -21,7 +21,7 @@ from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
 from eidolon_ai_sdk.util.class_utils import fqn
 
 
-class TestLLMUnit(LLMUnit):
+class LLMUnitForTest(LLMUnit):
     fn: Callable
 
     def __init__(self, **kwargs):
@@ -44,7 +44,7 @@ def make_wrapper(prompt: str, fn):
     spec = {
         "tool_message_prompt": prompt,
         "llm_unit": {
-            "implementation": fqn(TestLLMUnit),
+            "implementation": fqn(LLMUnitForTest),
             "model": {
                 "human_name": "Test LLM Unit",
                 "name": "test_llm_unit",

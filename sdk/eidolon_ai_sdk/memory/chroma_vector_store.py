@@ -1,5 +1,16 @@
 import threading
 
+import chromadb
+try:
+    from chromadb import Include, QueryResult
+    from chromadb.api.models.Collection import Collection
+    chromadb.config.is_thin_client = False  # we may have chromadb_client and chromadb installed at same time
+except ImportError:
+    QueryResult = type(object)
+    Include = type(object)
+    Collection = type(object)
+
+
 from eidolon_ai_sdk.util.async_wrapper import make_async
 
 try:
@@ -9,9 +20,6 @@ try:
     sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
 except ImportError:
     pass
-import chromadb
-from chromadb import Include, QueryResult
-from chromadb.api.models.Collection import Collection
 from pathlib import Path
 from pydantic import Field, field_validator
 from typing import List, Dict, Any, Optional
@@ -62,7 +70,7 @@ class ChromaVectorStoreConfig(FileSystemVectorStoreSpec):
 
 class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]):
     spec: ChromaVectorStoreConfig
-    client: chromadb.Client
+    client: "chromadb.Client"
     lock = threading.Lock()
 
     def __init__(self, spec: ChromaVectorStoreConfig):
@@ -77,6 +85,8 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
         url = urlparse(self.spec.url)
         if url.scheme == "file":
             path = url.path
+            if not hasattr(chromadb, "PersistentClient"):
+                raise RuntimeError("chromadb must be installed to use ChromaDB backed by local file storage. Specify `path` to use a remote ChromaDB or install chromadb via `pip install chromadb`.")
             self.client = chromadb.PersistentClient(path)
         else:
             host = url.hostname
@@ -91,7 +101,7 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
     async def stop(self):
         pass
 
-    def _get_collection(self, name: str) -> Collection:
+    def _get_collection(self, name: str):
         with ChromaVectorStore.lock:
             if not self.client:
                 self.connect()
@@ -130,11 +140,11 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
         include_embeddings=False,
     ) -> List[QueryItem]:
         collection = self._get_collection(name=collection)
-        thingsToInclude: Include = ["metadatas", "distances"]
+        thingsToInclude = ["metadatas", "distances"]
         if include_embeddings:
             thingsToInclude.append("embeddings")
 
-        results: QueryResult = collection.query(
+        results = collection.query(
             query_embeddings=[query],
             n_results=num_results,
             where=metadata_where,

@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import os
 import shutil
 from pathlib import Path
+from typing import Callable
 
 from eidolon_ai_sdk.memory.chroma_vector_store import ChromaVectorStore
 from eidolon_ai_sdk.memory.local_file_memory import LocalFileMemory
@@ -11,7 +14,18 @@ from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
 
+skip_decorator: Callable[[type[TestMachine]], type[TestMachine]]
 
+try:
+    import pytest
+    skip_decorator = pytest.mark.skip(reason="This test class should not be run by pytest")
+except ImportError:
+    # Define a no-op decorator if pytest is not installed
+    def skip_decorator(cls):
+        return cls
+
+
+@skip_decorator
 class TestMachine(MachineResource):
     _file_memory: str
     _similarity_memory: str
