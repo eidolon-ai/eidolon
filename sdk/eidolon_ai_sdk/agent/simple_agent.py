@@ -128,8 +128,7 @@ generate_title_message = (
     "The title should be no longer than 5 words. Do not wrap the title in quotes. Answer only with the title."
 )
 
-
-SimpleAgent = agent = Agent("SimpleAgent", SimpleAgentSpec)
+agent = Agent("SimpleAgent", SimpleAgentSpec)
 
 
 @agent.dynamic_contract
@@ -140,8 +139,7 @@ def fn(spec: SimpleAgentSpec, metadata: Metadata):
         apu.title = apu_spec.title or apu.__class__.__name__
         _register_refs_logic_unit(apu, spec.agent_refs)
         apus[apu_spec.title] = apu
-    default_apu: APU = apus[
-        (filter(lambda apu: apu.default, spec.apus) or NamedAPU(apu=spec.apu, default=True))[0].title]
+    default_apu: APU = apus[(list(filter(lambda apu: apu.default, spec.apus)) or [NamedAPU(apu=spec.apu, default=True)])[0].title]
 
     @agent.create_process_hook
     async def create_process(process_id: str):
@@ -173,7 +171,8 @@ def fn(spec: SimpleAgentSpec, metadata: Metadata):
             raise ValueError(f"Invalid output_schema for action '{action.name}'") from e
         input_schema = _make_input_schema(spec, action, metadata)
 
-        @agent.action(action.name, action.title, action.sub_title, action.description, action.allowed_states, input_schema, output_schema)
+        @agent.action(action.name, action.title, action.sub_title, action.description, action.allowed_states,
+                      input_schema, output_schema)
         async def action_fn(process_id, **kwargs):
             execute_on_apu = None
             request_body = to_jsonable_python(kwargs.get("body") or {})
@@ -268,7 +267,7 @@ def _make_input_schema(spec: SimpleAgentSpec, action: ActionDefinition, metadata
 
     if spec.apus:
         apu_names = [apu.title for apu in spec.apus]
-        default = (filter(lambda apu: apu.default, spec.apus) or spec.apus)[0].title
+        default = (list(filter(lambda apu: apu.default, spec.apus)) or spec.apus)[0].title
         properties["body"]["properties"]["execute_on_apu"] = dict(type="string", enum=apu_names, default=default)
         if "required" not in properties["body"]:
             properties["body"]["required"] = []
@@ -276,3 +275,7 @@ def _make_input_schema(spec: SimpleAgentSpec, action: ActionDefinition, metadata
 
     schema = {"type": "object", "properties": properties, "required": required}
     return schema_to_model(schema, f"{metadata.name.capitalize()}{action.name.capitalize()}InputModel")
+
+
+# todo remove
+SimpleAgent = agent.translate()

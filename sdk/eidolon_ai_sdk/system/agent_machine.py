@@ -62,7 +62,10 @@ class AgentMachine(Specable[MachineSpec]):
         for name, r in AgentOSKernel.get_resources(AgentResource).items():
             with _error_wrapper(r):
                 try:
-                    agents[name] = r.spec.instantiate()
+                    if getattr(r.spec._get_reference_class(), "built_with_agent_builder", False):
+                        agents[name] = r.spec.instantiate(metadata=r.metadata)
+                    else:
+                        agents[name] = r.spec.instantiate()
                 except Exception as e:
                     register_instantiate_error(name, r.kind, e)
         self.memory = self.spec.get_agent_memory()

@@ -1,4 +1,9 @@
 import asyncio
+import copy
+import inspect
+
+import sys
+import types
 from textwrap import dedent
 from typing import TypeVar, Optional, Callable, Generic, Type, AsyncIterable, Tuple, List, Awaitable, Dict, Any
 
@@ -7,32 +12,35 @@ from pydantic import BaseModel
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_sdk.agent.agent import register_action
 from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.resources.resources_base import Metadata
 
 T = TypeVar("T", bound=BaseModel)
 
 
-class Agent(Generic[T], Specable[T]):
+class Agent(Generic[T]):
     _kind: str
     _spec_type: Type[T]
-    _dynamic_contracts: List[Callable[[T], Awaitable[None]]]
-    _actions: Dict[str, Tuple[str, Optional[str], Optional[str], List[str], Type[BaseModel], Type, bool, Callable[..., AsyncIterable[StreamEvent]]]]
-    _create_process_hooks: List[Callable[[str], Awaitable[None]]]
-    _delete_process_hooks: List[Callable[[str], Awaitable[None]]]
+    _dynamic_contracts: List[Callable[[T, Metadata], Awaitable[None] | None]]
+    _actions: Tuple[Dict[str, Tuple[str, Optional[str], Optional[str], List[str], Type[BaseModel], Type, bool, Callable[..., AsyncIterable[StreamEvent]]]], Dict[str, Tuple[str, Optional[str], Optional[str], List[str], Type[BaseModel], Type, bool, Callable[..., AsyncIterable[StreamEvent]]]]]
+    _create_process_hooks: Tuple[List[Callable[[str], Awaitable[None]]], List[Callable[[str], Awaitable[None]]]]
+    _delete_process_hooks: Tuple[List[Callable[[str], Awaitable[None]]], List[Callable[[str], Awaitable[None]]]]
     _initialized: bool
 
     def __init__(self, kind: str, spec: Type[T]):
         self._kind = kind
         self._spec_type = spec
         self._dynamic_contracts = []
-        self._actions = {}
-        self._create_process_hooks = []
-        self._delete_process_hooks = []
-        self._initialized = False
+        self._actions = ({}, {})
+        self._create_process_hooks = ([], [])
+        self._delete_process_hooks = ([], [])
+        self._locked = False
 
     def __name__(self):
         return self._kind
 
-    def dynamic_contract(self, fn: Callable[[T], Awaitable[None]]):
+    def dynamic_contract(self, fn: Callable[[T], Awaitable[None] | None]):
+        if self._locked:
+            raise ValueError("Cannot add dynamic contracts after agent has been initialized")
         self._dynamic_contracts.append(fn)
         return fn
 
@@ -69,16 +77,17 @@ class Agent(Generic[T], Specable[T]):
             name_ = name or fn.__name__
             description_ = description or dedent(fn.__doc__ or "").strip() or None
             allowed_states_ = allowed_states or ["initialized"]
-            if name_ in self._actions:
+            if name_ in self._actions[0] or name_ in self._actions[1]:
                 raise ValueError(f"Action with name {name_} already exists")
             if not input_model:
                 raise ValueError("todo: automatically generate input model from type signature")
-            self._actions[name_] = (title, sub_title, description_, allowed_states_, input_model, output_model, custom_user_input_event, fn)
+            actions = self._actions[1] if self._locked else self._actions[0]
+            actions[name_] = (title, sub_title, description_, allowed_states_, input_model, output_model, custom_user_input_event, fn)
             return fn
 
         return decorator
 
-    async def create_process_hook(self, fn: Callable[[str], Awaitable[None]]):
+    def create_process_hook(self, fn: Callable[[str], Awaitable[None]]):
         """
         Registers a function to be called when a process is created.
 
@@ -86,10 +95,11 @@ class Agent(Generic[T], Specable[T]):
         async def on_process_created(process_id: str):
             print(f"Process {process_id} created")
         """
-        self._create_process_hooks.append(fn)
+        hooks = self._create_process_hooks[1] if self._locked else self._create_process_hooks[0]
+        hooks.append(fn)
         return fn
 
-    async def delete_process_hook(self, fn: Callable[[str], Awaitable[None]]):
+    def delete_process_hook(self, fn: Callable[[str], Awaitable[None]]):
         """
         Registers a function to be called when a process is deleted.
 
@@ -97,44 +107,89 @@ class Agent(Generic[T], Specable[T]):
         async def on_process_deleted(process_id: str):
             print(f"Process {process_id} deleted")
         """
-
-        self._delete_process_hooks.append(fn)
+        hooks = self._delete_process_hooks[1] if self._locked else self._delete_process_hooks[0]
+        hooks.append(fn)
         return fn
 
-    async def __call__(_self, spec: T):  # Temporary wrapper for legacy mechanism for defining agents.
-        if not _self._initialized:
+    def _reset(self):
+        self._actions[1].clear()
+        self._create_process_hooks[1].clear()
+        self._delete_process_hooks[1].clear()
+
+    # super fucked up logic written to transition support to Agent mechanism. todo, remove before merging
+    def translate(_self):  # Temporary wrapper for legacy mechanism for defining agents.
+        _self._locked = True
+
+        def __init__(self, spec: T, metadata: Metadata):
+            self.spec = spec
+            self.startup_tasks = []
+
+            _self._reset()
             for builder in _self._dynamic_contracts:
-                asyncio.run(builder(spec))
-            _self._initialized = True
+                built = builder(spec, metadata)
+                if inspect.isawaitable(built):
+                    self.startup_tasks.append(built)
 
-        class Translator(Specable[type[spec]]):
-            def __name__(self):
-                return _self._kind
+            for action_name, (title, sub_title, description, allowed_states, input_model, output_model, custom_user_input_event, fn) in dict(**_self._actions[0], **_self._actions[1]).items():
+                async def _fn_wrap(self, process_id, **kwargs):
+                    async for e in fn(process_id, **kwargs):
+                        yield e
 
-            def __init__(self, spec):
-                super().__init__(spec)
-                for action_name, (title, sub_title, description, allowed_states, input_model, output_model, custom_user_input_event, fn) in _self._actions.items():
-                    setattr(
-                        self,
-                        action_name,
-                        register_action(
-                            *allowed_states,
-                            name=action_name,
-                            title=title,
-                            sub_title=sub_title,
-                            description=lambda o, h: description,
-                            input_model=lambda o, h: input_model,
-                            output_model=lambda o, h: output_model,
-                            custom_user_input_event=custom_user_input_event,
-                        )(fn),
-                    )
+                setattr(
+                    self,
+                    action_name,
+                    register_action(
+                        *allowed_states,
+                        name=action_name,
+                        title=title,
+                        sub_title=sub_title,
+                        description=lambda o, h: description,
+                        input_model=lambda o, h: input_model,
+                        output_model=lambda o, h: output_model,
+                        custom_user_input_event=custom_user_input_event,
+                    )(_fn_wrap),
+                )
 
-            async def create_process(self, process_id: str):
-                for hook in _self._create_process_hooks:
-                    await hook(process_id)
+        async def create_process(self, process_id: str):
+            for hook in [*_self._create_process_hooks[0], *_self._create_process_hooks[1]]:
+                await hook(process_id)
 
-            async def delete_process(self, process_id: str):
-                for hook in _self._delete_process_hooks:
-                    await hook(process_id)
+        async def delete_process(self, process_id: str):
+            for hook in [*_self._delete_process_hooks[0], *_self._delete_process_hooks[1]]:
+                await hook(process_id)
 
-        return Translator(spec=spec)
+        async def start(self):
+            for task in self.startup_tasks:
+                await task
+
+        # Create registry module
+        if _self._kind in sys.modules[__name__].__dict__:
+            raise ValueError(f"Agent with name {_self._kind} already exists")
+
+        # Create metaclass that handles init_subclass without kwargs
+        class NoKwargsMeta(type):
+            @classmethod
+            def __prepare__(metacls, name, bases, **kwds):
+                return {}
+
+            def __new__(metacls, name, bases, namespace, **kwds):
+                return super().__new__(metacls, name, bases, namespace)
+
+            def __init__(cls, name, bases, namespace, **kwds):
+                super().__init__(name, bases, namespace)
+
+        new_class = types.new_class(
+            _self._kind,
+            (Specable[_self._spec_type],),
+            {"__module__": __name__, "metaclass": NoKwargsMeta},
+            lambda ns: ns.update({
+                "__init__": __init__,
+                "create_process": create_process,
+                "delete_process": delete_process,
+                "start": start,
+                "built_with_agent_builder": True,
+            })
+        )
+
+        setattr(sys.modules[__name__], _self._kind, new_class)
+        return new_class
