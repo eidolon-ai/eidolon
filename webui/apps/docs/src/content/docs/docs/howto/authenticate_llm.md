@@ -11,7 +11,7 @@ To access LLM models through Eidolon, you may need to:
 - Fund the account
 - Acquire an API key
 
-Note that each provider has its own terms and conditions regarding account payment and usage pricing.
+If you receive an authentication error, it may be because Eidolon does not have an API key, or the account is not funded.
 
 Use the table below to get started with popular LLM providers. 
 
@@ -22,6 +22,8 @@ Use the table below to get started with popular LLM providers.
 | Ollama  | <a href="https://github.com/ollama/ollama" target=_blank>Ollama Github</a>                                                                                                                                                                                       | n/a -- you run Ollama locally |
 | ChatGPT | OpenAI <a href="https://platform.openai.com/api-keys" target=_blank>API Keys</a>, <a href="https://platform.openai.com/settings/organization/billing/overview" target=_blank>billing</a> and <a href="https://platform.openai.com/usage" target=_blank>usage</a> | OPENAI_API_KEY                |
 | Azure   | Azure is different since you need to deploy individual models. See our [Azure Agent Example](/docs/recipes/azure-agent) for a more detailed walkthrough.                                                                                                         | AZURE_OPENAI_API_KEY                 |
+
+Note that each provider has its own terms and conditions regarding account payment and usage pricing.
 
 >👉 Hot tip! Some LLM providers offer evaluation credits. It's a great way to get started and save money.
 
@@ -38,7 +40,7 @@ cat .env
 ```
 ## Setting New LLM API Keys
 
-If you want to [use a new LLM](/docs/howto/swap_llm), you may need to enter an API Key to the `.env` file. See [LLM Prerequisites](#llm-prerequisites) to learn about authenticating with various providers.
+If you want to [use a new LLM](/docs/howto/swap_llm), you may need to enter an API Key to the `.env` file. See [LLM Prerequisites](#llm-prerequisites) above to learn about authenticating with various providers.
 
 Example `.env` file:
 
