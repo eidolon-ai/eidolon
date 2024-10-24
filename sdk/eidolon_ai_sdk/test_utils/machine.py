@@ -27,6 +27,7 @@ except ImportError:
 
 @skip_decorator
 class TestMachine(MachineResource):
+    __test__ = False
     _file_memory: str
     _similarity_memory: str
 
