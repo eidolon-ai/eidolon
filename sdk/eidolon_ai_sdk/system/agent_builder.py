@@ -1,12 +1,9 @@
-import asyncio
-import copy
 import inspect
-
-import sys
 import types
 from textwrap import dedent
 from typing import TypeVar, Optional, Callable, Generic, Type, AsyncIterable, Tuple, List, Awaitable, Dict, Any
 
+import sys
 from pydantic import BaseModel
 
 from eidolon_ai_client.events import StreamEvent
@@ -130,10 +127,15 @@ class Agent(Generic[T]):
                 if inspect.isawaitable(built):
                     self.startup_tasks.append(built)
 
+            self.create_process_hooks = [*_self._create_process_hooks[0], *_self._create_process_hooks[1]]
+            self.delete_process_hooks = [*_self._delete_process_hooks[0], *_self._delete_process_hooks[1]]
+
             for action_name, (title, sub_title, description, allowed_states, input_model, output_model, custom_user_input_event, fn) in dict(**_self._actions[0], **_self._actions[1]).items():
-                async def _fn_wrap(self, process_id, **kwargs):
-                    async for e in fn(process_id, **kwargs):
-                        yield e
+                def _build(_fn):
+                    async def _fn_wrap(self, process_id, **kwargs):
+                        async for e in _fn(process_id, **kwargs):
+                            yield e
+                    return _fn_wrap
 
                 setattr(
                     self,
@@ -143,19 +145,19 @@ class Agent(Generic[T]):
                         name=action_name,
                         title=title,
                         sub_title=sub_title,
-                        description=lambda o, h: description,
-                        input_model=lambda o, h: input_model,
-                        output_model=lambda o, h: output_model,
+                        description=lambda o, h, d=description: d,
+                        input_model=lambda o, h, i=input_model: i,
+                        output_model=lambda o, h, om=output_model: om,
                         custom_user_input_event=custom_user_input_event,
-                    )(_fn_wrap),
+                    )(_build(fn)),
                 )
 
         async def create_process(self, process_id: str):
-            for hook in [*_self._create_process_hooks[0], *_self._create_process_hooks[1]]:
+            for hook in self.create_process_hooks:
                 await hook(process_id)
 
         async def delete_process(self, process_id: str):
-            for hook in [*_self._delete_process_hooks[0], *_self._delete_process_hooks[1]]:
+            for hook in self.delete_process_hooks:
                 await hook(process_id)
 
         async def start(self):
