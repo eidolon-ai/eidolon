@@ -135,12 +135,6 @@ class Agent(Generic[T]):
                 self.create_process_hooks = [*_self._create_process_hooks[0], *_self._create_process_hooks[1]]
 
                 for action_name, (title, sub_title, description, allowed_states, input_model, output_model, custom_user_input_event, fn) in dict(**_self._actions[0], **_self._actions[1]).items():
-                    def _build(_fn):
-                        async def _fn_wrap(self, process_id, **kwargs):
-                            async for e in _fn(process_id, **kwargs):
-                                yield e
-                        return _fn_wrap
-
                     setattr(
                         self,
                         action_name,
@@ -153,7 +147,7 @@ class Agent(Generic[T]):
                             input_model=lambda o, h, i=input_model: i,
                             output_model=lambda o, h, om=output_model: om,
                             custom_user_input_event=custom_user_input_event,
-                        )(_build(fn)),
+                        )(fn),
                     )
 
             async def create_process(self, process_id: str):
