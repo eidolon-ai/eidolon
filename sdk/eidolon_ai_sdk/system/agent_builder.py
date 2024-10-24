@@ -31,7 +31,9 @@ class Agent(Generic[T]):
         self._create_process_hooks = ([], [])
         self._delete_process_hooks = ([], [])
         self._locked = False
+        self._specable = None
 
+    @property
     def __name__(self):
         return self._kind
 
@@ -114,84 +116,87 @@ class Agent(Generic[T]):
         self._delete_process_hooks[1].clear()
 
     # super fucked up logic written to transition support to Agent mechanism. todo, remove before merging
-    def translate(_self):  # Temporary wrapper for legacy mechanism for defining agents.
-        _self._locked = True
+    def specable(_self):  # Temporary wrapper for legacy mechanism for defining agents.
+        if not _self._specable:
+            _self._locked = True
 
-        def __init__(self, spec: T, metadata: Metadata):
-            self.spec = spec
-            self.startup_tasks = []
+            def __init__(self, spec: T, metadata: Metadata):
+                self.spec = spec
+                self.startup_tasks = []
 
-            _self._reset()
-            for builder in _self._dynamic_contracts:
-                built = builder(spec, metadata)
-                if inspect.isawaitable(built):
-                    self.startup_tasks.append(built)
+                _self._reset()
+                for builder in _self._dynamic_contracts:
+                    built = builder(spec, metadata)
+                    if inspect.isawaitable(built):
+                        self.startup_tasks.append(built)
 
-            self.create_process_hooks = [*_self._create_process_hooks[0], *_self._create_process_hooks[1]]
-            self.delete_process_hooks = [*_self._delete_process_hooks[0], *_self._delete_process_hooks[1]]
+                self.create_process_hooks = [*_self._create_process_hooks[0], *_self._create_process_hooks[1]]
+                self.delete_process_hooks = [*_self._delete_process_hooks[0], *_self._delete_process_hooks[1]]
 
-            for action_name, (title, sub_title, description, allowed_states, input_model, output_model, custom_user_input_event, fn) in dict(**_self._actions[0], **_self._actions[1]).items():
-                def _build(_fn):
-                    async def _fn_wrap(self, process_id, **kwargs):
-                        async for e in _fn(process_id, **kwargs):
-                            yield e
-                    return _fn_wrap
+                for action_name, (title, sub_title, description, allowed_states, input_model, output_model, custom_user_input_event, fn) in dict(**_self._actions[0], **_self._actions[1]).items():
+                    def _build(_fn):
+                        async def _fn_wrap(self, process_id, **kwargs):
+                            async for e in _fn(process_id, **kwargs):
+                                yield e
+                        return _fn_wrap
 
-                setattr(
-                    self,
-                    action_name,
-                    register_action(
-                        *allowed_states,
-                        name=action_name,
-                        title=title,
-                        sub_title=sub_title,
-                        description=lambda o, h, d=description: d,
-                        input_model=lambda o, h, i=input_model: i,
-                        output_model=lambda o, h, om=output_model: om,
-                        custom_user_input_event=custom_user_input_event,
-                    )(_build(fn)),
-                )
+                    setattr(
+                        self,
+                        action_name,
+                        register_action(
+                            *allowed_states,
+                            name=action_name,
+                            title=title,
+                            sub_title=sub_title,
+                            description=lambda o, h, d=description: d,
+                            input_model=lambda o, h, i=input_model: i,
+                            output_model=lambda o, h, om=output_model: om,
+                            custom_user_input_event=custom_user_input_event,
+                        )(_build(fn)),
+                    )
 
-        async def create_process(self, process_id: str):
-            for hook in self.create_process_hooks:
-                await hook(process_id)
+            async def create_process(self, process_id: str):
+                for hook in self.create_process_hooks:
+                    await hook(process_id)
 
-        async def delete_process(self, process_id: str):
-            for hook in self.delete_process_hooks:
-                await hook(process_id)
+            async def delete_process(self, process_id: str):
+                for hook in self.delete_process_hooks:
+                    await hook(process_id)
 
-        async def start(self):
-            for task in self.startup_tasks:
-                await task
+            async def start(self):
+                for task in self.startup_tasks:
+                    await task
 
-        # Create registry module
-        if _self._kind in sys.modules[__name__].__dict__:
-            raise ValueError(f"Agent with name {_self._kind} already exists")
+            # Create registry module
+            if _self._kind in sys.modules[__name__].__dict__:
+                raise ValueError(f"Agent with name {_self._kind} already exists")
 
-        # Create metaclass that handles init_subclass without kwargs
-        class NoKwargsMeta(type):
-            @classmethod
-            def __prepare__(metacls, name, bases, **kwds):
-                return {}
+            # Create metaclass that handles init_subclass without kwargs
+            class NoKwargsMeta(type):
+                @classmethod
+                def __prepare__(metacls, name, bases, **kwds):
+                    return {}
 
-            def __new__(metacls, name, bases, namespace, **kwds):
-                return super().__new__(metacls, name, bases, namespace)
+                def __new__(metacls, name, bases, namespace, **kwds):
+                    return super().__new__(metacls, name, bases, namespace)
 
-            def __init__(cls, name, bases, namespace, **kwds):
-                super().__init__(name, bases, namespace)
+                def __init__(cls, name, bases, namespace, **kwds):
+                    super().__init__(name, bases, namespace)
 
-        new_class = types.new_class(
-            _self._kind,
-            (Specable[_self._spec_type],),
-            {"__module__": __name__, "metaclass": NoKwargsMeta},
-            lambda ns: ns.update({
-                "__init__": __init__,
-                "create_process": create_process,
-                "delete_process": delete_process,
-                "start": start,
-                "built_with_agent_builder": True,
-            })
-        )
+            new_class = types.new_class(
+                _self._kind,
+                (Specable[_self._spec_type],),
+                {"__module__": __name__, "metaclass": NoKwargsMeta},
+                lambda ns: ns.update({
+                    "__init__": __init__,
+                    "create_process": create_process,
+                    "delete_process": delete_process,
+                    "start": start,
+                    "built_with_agent_builder": True,
+                })
+            )
 
-        setattr(sys.modules[__name__], _self._kind, new_class)
-        return new_class
+            setattr(sys.modules[__name__], _self._kind, new_class)
+            _self._specable = new_class
+
+        return _self._specable
