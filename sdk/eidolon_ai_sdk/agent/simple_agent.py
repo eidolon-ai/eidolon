@@ -168,9 +168,8 @@ def fn(spec: SimpleAgentSpec, metadata: Metadata):
         output_schema = str if action.output_schema == "str" else schema_to_model(action.output_schema, model_name)
         input_schema = _make_input_schema(spec, action, metadata)
 
-        @agent.action(action.name, action.title, action.sub_title, action.description, action.allowed_states,
-                      input_schema, output_schema)
-        async def action_fn(process_id, **kwargs):
+        @agent.action(action.name, action.title, action.sub_title, action.description, action.allowed_states, input_schema, output_schema)
+        async def action_fn(process_id, action=action, **kwargs):
             execute_on_apu = None
             request_body = to_jsonable_python(kwargs.get("body") or {})
             if isinstance(request_body, dict) and "execute_on_apu" in request_body:
