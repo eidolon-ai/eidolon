@@ -1,5 +1,6 @@
 import inspect
 import types
+from collections import namedtuple
 from textwrap import dedent
 from typing import TypeVar, Optional, Callable, Generic, Type, AsyncIterable, Tuple, List, Awaitable, Dict, Any
 
@@ -14,13 +15,16 @@ from eidolon_ai_sdk.system.resources.resources_base import Metadata
 T = TypeVar("T", bound=BaseModel)
 
 
+_ActionState = namedtuple("_ActionState", ["title", "sub_title", "description", "allowed_states", "input_model", "output_model", "custom_user_input_event", "fn"])
+
+
 class Agent(Generic[T]):
     _kind: str
     _spec_type: Type[T]
     _dynamic_contracts: List[Callable[[T, Metadata], Awaitable[None] | None]]
-    _actions: Tuple[Dict[str, Tuple[str, Optional[str], Optional[str], List[str], Type[BaseModel], Type, bool, Callable[..., AsyncIterable[StreamEvent]]]], Dict[str, Tuple[str, Optional[str], Optional[str], List[str], Type[BaseModel], Type, bool, Callable[..., AsyncIterable[StreamEvent]]]]]
+    _actions: Tuple[Dict[str, _ActionState], Dict[str, _ActionState]]
     _create_process_hooks: Tuple[List[Callable[[str], Awaitable[None]]], List[Callable[[str], Awaitable[None]]]]
-    _delete_process_hooks: Tuple[List[Callable[[str], Awaitable[None]]], List[Callable[[str], Awaitable[None]]]]
+    _delete_process_hooks: List[Callable[[str], Awaitable[None]]]
     _initialized: bool
 
     def __init__(self, kind: str, spec: Type[T]):
@@ -29,7 +33,7 @@ class Agent(Generic[T]):
         self._dynamic_contracts = []
         self._actions = ({}, {})
         self._create_process_hooks = ([], [])
-        self._delete_process_hooks = ([], [])
+        self._delete_process_hooks = []
         self._locked = False
         self._specable = None
 
@@ -53,7 +57,7 @@ class Agent(Generic[T]):
             input_model: Optional[Type[BaseModel]] = None,
             output_model: Type = Any,
             custom_user_input_event: bool = False,
-    ) -> Callable[[Callable[..., AsyncIterable[StreamEvent]]], ...]:
+    ) -> Callable[[Callable[..., AsyncIterable[StreamEvent]]], Any]:
         """
         Registers an action with the agent.
 
@@ -106,14 +110,12 @@ class Agent(Generic[T]):
         async def on_process_deleted(process_id: str):
             print(f"Process {process_id} deleted")
         """
-        hooks = self._delete_process_hooks[1] if self._locked else self._delete_process_hooks[0]
-        hooks.append(fn)
+        self._delete_process_hooks.append(fn)
         return fn
 
     def _reset(self):
         self._actions[1].clear()
         self._create_process_hooks[1].clear()
-        self._delete_process_hooks[1].clear()
 
     # super fucked up logic written to transition support to Agent mechanism. todo, remove before merging
     def specable(_self):  # Temporary wrapper for legacy mechanism for defining agents.
@@ -131,7 +133,6 @@ class Agent(Generic[T]):
                         self.startup_tasks.append(built)
 
                 self.create_process_hooks = [*_self._create_process_hooks[0], *_self._create_process_hooks[1]]
-                self.delete_process_hooks = [*_self._delete_process_hooks[0], *_self._delete_process_hooks[1]]
 
                 for action_name, (title, sub_title, description, allowed_states, input_model, output_model, custom_user_input_event, fn) in dict(**_self._actions[0], **_self._actions[1]).items():
                     def _build(_fn):
@@ -159,8 +160,9 @@ class Agent(Generic[T]):
                 for hook in self.create_process_hooks:
                     await hook(process_id)
 
-            async def delete_process(self, process_id: str):
-                for hook in self.delete_process_hooks:
+            @classmethod
+            async def delete_process(cls, process_id: str):
+                for hook in _self._delete_process_hooks:
                     await hook(process_id)
 
             async def start(self):
