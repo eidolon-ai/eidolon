@@ -271,7 +271,12 @@ class AgentController:
 
     async def agent_event_stream(self, handler, process, last_state, **kwargs) -> AsyncIterator[StreamEvent]:
         is_async_gen = inspect.isasyncgenfunction(handler.fn)
-        stream = handler.fn(self.agent, **kwargs) if is_async_gen else self.stream_agent_fn(handler, **kwargs)
+        if not is_async_gen:
+            stream = self.stream_agent_fn(handler, **kwargs)
+        elif getattr(self.agent, "built_with_agent_builder", False):
+            stream = handler.fn(**kwargs)
+        else:
+            stream = handler.fn(self.agent, **kwargs)
 
         def get_start_event():
             extra = {}
@@ -382,7 +387,10 @@ class AgentController:
                 yield ErrorEvent(reason=str(e), details=dict(status_code=500))
 
     async def stream_agent_fn(self, handler, **kwargs) -> AsyncIterator[StreamEvent]:
-        response = await handler.fn(self.agent, **kwargs)
+        if getattr(self.agent, "built_with_agent_builder", False):
+            response = await handler.fn(**kwargs)
+        else:
+            response = await handler.fn(self.agent, **kwargs)
         if isinstance(response, AgentState):
             yield OutputEvent.get(content=to_jsonable_python(response.data))
             yield AgentStateEvent(state=response.name, available_actions=self.get_available_actions(response.name))
