@@ -139,8 +139,8 @@ def named_builtins() -> List[ReferenceResource]:
         NoopFunctionalAuth,
         GlobPatternFunctionalAuthorizer,
         # agents
-        ("Agent", SimpleAgent),
-        SimpleAgent,
+        ("Agent", SimpleAgent.specable()),
+        SimpleAgent.specable(),
         TreeOfThoughtsAgent,
         RetrieverAgent,
         AutonomousSpeechAgent,

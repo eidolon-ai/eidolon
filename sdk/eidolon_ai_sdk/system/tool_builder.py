@@ -1,6 +1,11 @@
-from typing import Optional, Callable, Generic, Awaitable
+from typing import Optional, Callable, Generic, Awaitable, TypeVar
+
+from openai import BaseModel
 
 from eidolon_ai_sdk.apu.call_context import CallContext
+
+
+T = TypeVar("T", bound=BaseModel)
 
 
 class ToolUnit(Generic[T]):
