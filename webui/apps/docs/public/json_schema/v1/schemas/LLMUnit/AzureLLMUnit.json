@@ -1,5 +1,6 @@
 {
   "additionalProperties": false,
+  "description": "Azure LLM Unit. Requires model to be defined. See https://www.eidolonai.com/docs/howto/swap_llm for more details.\n\nAuthentication is handled oot with one of two mechanisms:\n* Static token defined with AZURE_OPENAI_API_KEY\n* Token provider defined by AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID\n\nTo use an alternative authentication mechanism, provide a custom token provider.",
   "properties": {
     "implementation": {
       "const": "AzureLLMUnit",

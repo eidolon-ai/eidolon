@@ -1,5 +1,6 @@
 {
   "additionalProperties": false,
+  "description": "An Agent that can call rest endpoints documented via OpenAPI (Swagger).",
   "properties": {
     "implementation": {
       "const": "APIAgent",

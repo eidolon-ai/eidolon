@@ -1,5 +1,6 @@
 {
   "additionalProperties": false,
+  "description": "Loads documents from an azure storage container.",
   "properties": {
     "implementation": {
       "const": "AzureLoader",

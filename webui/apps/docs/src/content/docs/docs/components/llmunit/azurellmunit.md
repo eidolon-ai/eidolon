@@ -3,6 +3,14 @@ title: AzureLLMUnit
 description: Description of the AzureLLMUnit component
 ---
 
+**Description:** Azure LLM Unit. Requires model to be defined. See https://www.eidolonai.com/docs/howto/swap_llm for more details.
+
+Authentication is handled oot with one of two mechanisms:
+* Static token defined with AZURE_OPENAI_API_KEY
+* Token provider defined by AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
+
+To use an alternative authentication mechanism, provide a custom token provider.
+
 | Property                                                 | Pattern | Type                | Deprecated | Definition            | Title/Description                                                                                                                                                                              |
 | -------------------------------------------------------- | ------- | ------------------- | ---------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | + [implementation](#implementation )                     | No      | const               | No         | -                     | Implementation                                                                                                                                                                                 |

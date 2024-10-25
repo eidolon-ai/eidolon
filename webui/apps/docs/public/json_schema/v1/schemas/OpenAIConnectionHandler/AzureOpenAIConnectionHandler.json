@@ -1,5 +1,6 @@
 {
   "additionalProperties": true,
+  "description": "Automatically infers the values from environment variables for:\n    - `api_key` from `AZURE_OPENAI_API_KEY` (IFF `api_key` AND 'azure_ad_token_provider' is not provided)\n    - `organization` from `OPENAI_ORG_ID`\n    - `azure_ad_token` from `AZURE_OPENAI_AD_TOKEN`\n    - `api_version` from `OPENAI_API_VERSION`\n    - `azure_endpoint` from `AZURE_OPENAI_ENDPOINT`",
   "properties": {
     "implementation": {
       "const": "AzureOpenAIConnectionHandler",

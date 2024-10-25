@@ -3,6 +3,8 @@ title: AzureLoader
 description: Description of the AzureLoader component
 ---
 
+**Description:** Loads documents from an azure storage container.
+
 | Property                                                       | Pattern | Type    | Deprecated | Definition            | Title/Description           |
 | -------------------------------------------------------------- | ------- | ------- | ---------- | --------------------- | --------------------------- |
 | + [implementation](#implementation )                           | No      | const   | No         | -                     | Implementation              |
