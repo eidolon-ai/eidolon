@@ -3,6 +3,13 @@ title: AzureOpenAIConnectionHandler
 description: Description of the AzureOpenAIConnectionHandler component
 ---
 
+**Description:** Automatically infers the values from environment variables for:
+    - `api_key` from `AZURE_OPENAI_API_KEY` (IFF `api_key` AND 'azure_ad_token_provider' is not provided)
+    - `organization` from `OPENAI_ORG_ID`
+    - `azure_ad_token` from `AZURE_OPENAI_AD_TOKEN`
+    - `api_version` from `OPENAI_API_VERSION`
+    - `azure_endpoint` from `AZURE_OPENAI_ENDPOINT`
+
 | Property                                               | Pattern | Type            | Deprecated | Definition            | Title/Description     |
 | ------------------------------------------------------ | ------- | --------------- | ---------- | --------------------- | --------------------- |
 | + [implementation](#implementation )                   | No      | const           | No         | -                     | Implementation        |

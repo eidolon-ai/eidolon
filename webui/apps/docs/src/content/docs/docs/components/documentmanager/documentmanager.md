@@ -3,6 +3,9 @@ title: DocumentManager
 description: Description of the DocumentManager component
 ---
 
+**Description:** Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents (
+provided by loader) into similarity memory where they can be searched.
+
 | Property                                   | Pattern | Type                         | Deprecated | Definition | Title/Description |
 | ------------------------------------------ | ------- | ---------------------------- | ---------- | ---------- | ----------------- |
 | + [implementation](#implementation )       | No      | const                        | No         | -          | Implementation    |

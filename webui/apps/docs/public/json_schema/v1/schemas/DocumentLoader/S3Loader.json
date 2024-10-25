@@ -1,5 +1,6 @@
 {
   "additionalProperties": false,
+  "description": "Loads documents from an S3 bucket.",
   "properties": {
     "implementation": {
       "const": "S3Loader",

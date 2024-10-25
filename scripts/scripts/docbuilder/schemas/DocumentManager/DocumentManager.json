@@ -1,5 +1,6 @@
 {
   "additionalProperties": false,
+  "description": "Manages a collection of documents and provides search functionality. Automatically embeds and syncs documents (\nprovided by loader) into similarity memory where they can be searched.",
   "properties": {
     "implementation": {
       "const": "DocumentManager",

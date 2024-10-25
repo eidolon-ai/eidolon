@@ -3,6 +3,8 @@ title: VectaraSearch
 description: Description of the VectaraSearch component
 ---
 
+**Description:** A logic unit for searching in Vectara. Requires the VECTARA_API_KEY environment variable to be set for authentication.
+
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
 | + [implementation](#implementation ) | No      | const  | No         | -          | Implementation    |

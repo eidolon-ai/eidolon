@@ -3,6 +3,8 @@ title: S3Loader
 description: Description of the S3Loader component
 ---
 
+**Description:** Loads documents from an S3 bucket.
+
 | Property                                           | Pattern | Type   | Deprecated | Definition | Title/Description     |
 | -------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
 | + [implementation](#implementation )               | No      | const  | No         | -          | Implementation        |

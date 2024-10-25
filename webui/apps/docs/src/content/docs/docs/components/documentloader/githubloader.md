@@ -3,6 +3,9 @@ title: GitHubLoader
 description: Description of the GitHubLoader component
 ---
 
+**Description:** Loads files from a GitHub repository. Note that you will likely hit rate limits on all but the smallest repositories
+unless a TOKEN is provided
+
 | Property                             | Pattern | Type        | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ----------- | ---------- | ---------- | ----------------- |
 | + [implementation](#implementation ) | No      | const       | No         | -          | Implementation    |

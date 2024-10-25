@@ -1,5 +1,6 @@
 {
   "additionalProperties": false,
+  "description": "A logic unit for searching in Vectara. Requires the VECTARA_API_KEY environment variable to be set for authentication.",
   "properties": {
     "implementation": {
       "const": "VectaraSearch",
