@@ -36,6 +36,8 @@ class Specable(Generic[T]):
         schema["title"] = cls.__name__
         if "extra" not in spec_clz.model_config:  # default to no extra props
             schema["additionalProperties"] = False
+        if "description" not in schema:
+            schema["description"] = textwrap.dedent(spec_clz.__doc__).strip()
         return schema
 
     @classmethod
