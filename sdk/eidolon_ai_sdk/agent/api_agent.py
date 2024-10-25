@@ -69,7 +69,7 @@ class APIAgent(Specable[APIAgentSpec]):
 
     def _add_action(self, action: Action):
         wrapped_schema = dict(type="object", properties=dict(body=action.action_schema), required=["body"])
-        model = schema_to_model(wrapped_schema, "InputModel")
+        model = schema_to_model(wrapped_schema, "InputModel", {})
         extra = {
             "title": action.title,
             "sub_title": action.sub_title,

@@ -103,13 +103,13 @@ class ActionDefinition(BaseModel):
             properties["body"]["required"].append("execute_on_apu")
 
         schema = {"type": "object", "properties": properties, "required": required}
-        return schema_to_model(schema, f"{handler.name.capitalize()}{self.name.capitalize()}InputModel")
+        return schema_to_model(schema, f"{handler.name.capitalize()}{self.name.capitalize()}InputModel", {})
 
     def make_output_schema(self, agent, handler):
         if not self.output_schema:
             raise ValueError("output_schema must be specified")
         model_name = f"{handler.name.capitalize()}{self.name.capitalize()}OutputModel"
-        return str if self.output_schema == "str" else schema_to_model(self.output_schema, model_name)
+        return str if self.output_schema == "str" else schema_to_model(self.output_schema, model_name, {})
 
 
 class NamedAPU(BaseModel):
