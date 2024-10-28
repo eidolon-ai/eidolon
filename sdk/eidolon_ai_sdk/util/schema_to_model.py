@@ -5,6 +5,7 @@ from typing import List
 from uuid import UUID
 
 from fastapi import UploadFile
+from jsonschema.validators import Draft202012Validator
 from pydantic import BaseModel, HttpUrl, EmailStr, Field, model_validator
 from pydantic import create_model, ValidationError
 from pydantic.fields import FieldInfo
@@ -77,6 +78,8 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
          - The function does not handle JSON Schema `$ref` references or other advanced features
            such as `additionalProperties`, `allOf`, `anyOf`, etc.
     """
+    Draft202012Validator.check_schema(schema)
+
     fields = {}
 
     if not schema.get("type") == "object":
@@ -126,7 +129,7 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
                     get_python_type(property_name, property_schema), makeFieldOrDefaultValue()
                 )
         except Exception as e:
-            raise ValueError(f"Error creating field '{property_name}': {e}")
+            raise ValueError(f"Error creating field '{property_name}': {e}") from e
 
     try:
         return create_model(model_name, **fields, __base__=JsonProofModel)

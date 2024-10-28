@@ -7,7 +7,7 @@ from typing import List, Literal, Optional, Union, Dict, Any, AsyncIterable
 from fastapi import Body
 from jinja2 import Environment, meta, StrictUndefined
 from pydantic import field_validator, model_validator, BaseModel
-from pydantic_core import to_jsonable_python
+from pydantic_core import to_jsonable_python, SchemaError
 
 from eidolon_ai_client.events import AgentStateEvent, StreamEvent, StringOutputEvent, UserInputEvent, FileHandle
 from eidolon_ai_client.util.logger import logger
@@ -109,7 +109,13 @@ class ActionDefinition(BaseModel):
         if not self.output_schema:
             raise ValueError("output_schema must be specified")
         model_name = f"{handler.name.capitalize()}{self.name.capitalize()}OutputModel"
-        return str if self.output_schema == "str" else schema_to_model(self.output_schema, model_name)
+        if self.output_schema == "str":
+            return str
+        else:
+            try:
+                return schema_to_model(self.output_schema, model_name)
+            except SchemaError as e:
+                raise ValueError(f"Invalid output_schema for action '{self.name}'") from e
 
 
 class NamedAPU(BaseModel):

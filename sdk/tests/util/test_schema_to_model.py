@@ -1,6 +1,7 @@
 import jsonref
 import pytest
 from fastapi import UploadFile
+from jsonschema.exceptions import SchemaError
 from pydantic import BaseModel, ValidationError, Field
 
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
@@ -136,3 +137,15 @@ class TestSchemaToModel:
         with pytest.raises(ValueError) as exc_info:
             schema_to_model(json_schema, "UnsupportedModel")
         assert "Error creating field 'name'" in str(exc_info.value)
+
+    def test_failing_schema(self):
+        schema = {
+            "type": "object",
+            "properties": {
+                "stock_prices": ["props cant be arrays"]
+            }
+        }
+        with pytest.raises(SchemaError) as e:
+            schema_to_model(schema, "InvalidModel")
+
+        assert "['props cant be arrays'] is not of type 'object'" in str(e.value)
