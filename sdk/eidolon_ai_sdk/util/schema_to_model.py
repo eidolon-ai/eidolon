@@ -27,7 +27,7 @@ type_mapping = {
 }
 
 
-def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
+def schema_to_model(schema: Dict[str, Any], model_name: str, validate=True) -> Type[BaseModel]:
     """
      Recursively converts a JSON Schema into a Pydantic model.
 
@@ -78,7 +78,8 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
          - The function does not handle JSON Schema `$ref` references or other advanced features
            such as `additionalProperties`, `allOf`, `anyOf`, etc.
     """
-    Draft202012Validator.check_schema(schema)
+    if validate:
+        Draft202012Validator.check_schema(schema)
 
     fields = {}
 
@@ -112,14 +113,14 @@ def schema_to_model(schema: Dict[str, Any], model_name: str) -> Type[BaseModel]:
             if field_type == "object":
                 # Recursive call for nested object
                 sub_model_name = property_schema.get("title", f"{model_name}_{property_name.capitalize()}Model")
-                nested_model = schema_to_model(property_schema, sub_model_name)
+                nested_model = schema_to_model(property_schema, sub_model_name, validate=False)
                 fields[property_name] = wrap_optional(nested_model, makeFieldOrDefaultValue())
             elif field_type == "array":
                 # Recursive call for arrays of objects
                 items_schema = property_schema.get("items", {})
                 if isinstance(items_schema, dict) and items_schema.get("type") == "object":
                     sub_model_name = property_schema.get("title", f"{model_name}_{property_name.capitalize()}Model")
-                    nested_item_model = schema_to_model(items_schema, sub_model_name)
+                    nested_item_model = schema_to_model(items_schema, sub_model_name, validate=False)
                     fields[property_name] = wrap_optional(List[nested_item_model], makeFieldOrDefaultValue())
                 else:
                     python_type = get_python_type(property_name, items_schema, str)

@@ -135,7 +135,7 @@ class TestSchemaToModel:
             "properties": {"name": {"type": "unsupported"}},
         }
         with pytest.raises(ValueError) as exc_info:
-            schema_to_model(json_schema, "UnsupportedModel")
+            schema_to_model(json_schema, "UnsupportedModel", validate=False)
         assert "Error creating field 'name'" in str(exc_info.value)
 
     def test_failing_schema(self):
