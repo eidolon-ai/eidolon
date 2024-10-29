@@ -6,7 +6,8 @@ from pydantic import Field
 from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import AzureOpenAIConnectionHandlerSpec, AzureOpenAIConnectionHandler, get_default_token_provider
 from eidolon_ai_sdk.apu.llm.open_ai_llm_unit import OpenAILLMBaseSpec, OpenAILLMBase
 from eidolon_ai_sdk.apu.llm_unit import LLMModel
-from eidolon_ai_sdk.system.reference_model import Specable, Reference
+from eidolon_ai_sdk.system.reference_model import Reference
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class AzureLLMSpec(OpenAILLMBaseSpec):

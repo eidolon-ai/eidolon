@@ -8,7 +8,8 @@ from pydantic import BaseModel, Field
 
 from eidolon_ai_sdk.agent_os_interfaces import FileMetadata
 from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
-from eidolon_ai_sdk.system.reference_model import Reference, Specable
+from eidolon_ai_sdk.system.reference_model import Reference
+from eidolon_ai_sdk.system.specable import Specable
 
 
 def _get_default_token_provider():

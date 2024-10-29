@@ -3,7 +3,7 @@ from pathlib import Path
 from pydantic import Field, BaseModel
 
 from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class InMemoryFileMemoryConfig(BaseModel):

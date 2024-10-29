@@ -74,7 +74,7 @@ class MeaningOfLife(LogicUnit):
 
 def r(name, **kwargs):
     spec = dict(
-        implementation=SimpleAgent.__name__,
+        implementation="SimpleAgent",
         **kwargs,
         apu=dict(
             implementation="APU",

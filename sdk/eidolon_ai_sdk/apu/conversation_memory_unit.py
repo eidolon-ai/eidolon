@@ -5,7 +5,7 @@ from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm_message import LLMMessage
 from eidolon_ai_sdk.apu.memory_unit import MemoryUnit, MemoryUnitConfig
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_client.util.logger import logger
 
 

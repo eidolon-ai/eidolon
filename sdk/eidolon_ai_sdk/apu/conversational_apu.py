@@ -34,7 +34,8 @@ from eidolon_ai_sdk.apu.llm_unit import LLMUnit
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit, LLMToolWrapper, llm_function
 from eidolon_ai_sdk.apu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.apu.processing_unit import ProcessingUnitLocator, PU_T
-from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference, Specable
+from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError
 from eidolon_ai_sdk.apu.longterm_memory_unit import LongTermMemoryUnit
 

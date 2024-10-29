@@ -24,7 +24,7 @@ def open_ai_image_unit():
 
 
 def r(name, **kwargs):
-    spec = dict(implementation=SimpleAgent.__name__, **kwargs, apu=dict(implementation="APU", audio_unit="OpenAiSpeech"))
+    spec = dict(implementation="SimpleAgent", **kwargs, apu=dict(implementation="APU", audio_unit="OpenAiSpeech"))
     return Resource(
         apiVersion="eidolon/v1",
         kind="Agent",

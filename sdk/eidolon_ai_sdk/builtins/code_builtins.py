@@ -33,7 +33,6 @@ from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTr
 from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import ResultSummarizer
 from eidolon_ai_sdk.agent.retriever_agent.retriever import Retriever
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
-from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent.sql_agent.agent import SqlAgent
 from eidolon_ai_sdk.agent.sql_agent.client import SqlClient, SqlAlchemy
 from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
@@ -105,7 +104,7 @@ def _to_resource(maybe_tuple: type | Tuple[type | str, type]) -> ReferenceResour
         return ReferenceResource(
             apiVersion="eidolon/v1",
             metadata=Metadata(name=name),
-            spec=maybe_tuple[1].__name__,
+            spec=maybe_tuple[1] if isinstance(maybe_tuple[1], str) else fqn(maybe_tuple[1])
         )
     else:
         return ReferenceResource(
@@ -139,8 +138,8 @@ def named_builtins() -> List[ReferenceResource]:
         NoopFunctionalAuth,
         GlobPatternFunctionalAuthorizer,
         # agents
-        ("Agent", SimpleAgent.specable()),
-        SimpleAgent.specable(),
+        ("Agent", "SimpleAgent"),
+        ("SimpleAgent", "eidolon_ai_sdk.agent.simple_agent.SimpleAgent"),
         TreeOfThoughtsAgent,
         RetrieverAgent,
         AutonomousSpeechAgent,

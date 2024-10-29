@@ -11,7 +11,7 @@ from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 
 def r(name, **kwargs):
     spec = dict(
-        implementation=SimpleAgent.__name__,
+        implementation="SimpleAgent",
         **kwargs,
         apu=dict(implementation="APU", audio_unit="OpenAiSpeech", image_unit="OpenAIImageUnit"),
     )

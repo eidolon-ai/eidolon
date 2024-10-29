@@ -6,7 +6,7 @@ from eidolon_ai_sdk.apu.llm_message import LLMMessage
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit
 from eidolon_ai_sdk.apu.processing_unit import ProcessingUnit
 from eidolon_ai_sdk.system.reference_model import Reference
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class LongTermMemoryUnitConfig(BaseModel):

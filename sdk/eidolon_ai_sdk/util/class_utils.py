@@ -25,28 +25,26 @@ def for_name(implementation_fqn: str, sub_class: Type = object) -> Type:
     Note:
     - The fully qualified name of the class is case-sensitive and must be correct.
     """
+    if not implementation_fqn:
+        raise ValueError("Implementation not provided.")
 
-    if implementation_fqn:
-        try:
-            module_name, class_name = implementation_fqn.rsplit(".", 1)
-        except ValueError:
-            raise ValueError(f"'{implementation_fqn}' is not a valid fully qualified class name.")
-        try:
-            module = importlib.import_module(module_name)
-            implementation_class = getattr(module, class_name)
-        except (ImportError, AttributeError) as e:
-            print(e)
-            raise ValueError(f"Unable to import {implementation_fqn}")
-        if implementation_class and issubclass(implementation_class, sub_class):
-            return implementation_class
-        else:
-            print(implementation_class)
-            print(sub_class)
-            print(issubclass(implementation_class, sub_class))
-            raise ValueError(
-                f"Implementation class '{implementation_fqn}' not found or is not a subclass of '{sub_class}'."
-            )
-    raise ValueError("Implementation not provided.")
+    implementation_class = get_from_fqn(implementation_fqn)
+    if implementation_class and issubclass(implementation_class, sub_class):
+        return implementation_class
+    else:
+        raise ValueError(f"Implementation class '{implementation_fqn}' not found or is not a subclass of '{sub_class}'.")
+
+
+def get_from_fqn(implementation_fqn: str):
+    try:
+        module_name, class_name = implementation_fqn.rsplit(".", 1)
+    except ValueError:
+        raise ValueError(f"'{implementation_fqn}' is not a valid fully qualified class name.")
+    try:
+        module = importlib.import_module(module_name)
+        return getattr(module, class_name)
+    except (ImportError, AttributeError) as e:
+        raise ValueError(f"Unable to import {implementation_fqn}") from e
 
 
 def fqn(clazz=Type) -> str:

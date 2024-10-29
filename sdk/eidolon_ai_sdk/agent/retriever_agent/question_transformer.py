@@ -4,7 +4,7 @@ from typing import List
 from pydantic import BaseModel
 
 from eidolon_ai_sdk.apu.apu import APU
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class QuestionTransformerSpec(BaseModel):

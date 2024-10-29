@@ -24,7 +24,7 @@ async def server(run_app):
             apiVersion="eidolon/v1",
             kind="Agent",
             metadata=Metadata(name="default"),
-            spec=dict(implementation=SimpleAgent.__name__, apu="Llamma3-8b"),
+            spec=dict(implementation="SimpleAgent", apu="Llamma3-8b"),
         )
     ]
     async with run_app(*resources) as ra:

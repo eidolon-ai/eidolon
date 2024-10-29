@@ -8,7 +8,8 @@ from eidolon_ai_client.events import ToolCall, StreamEvent, ObjectOutputEvent, S
 from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText, LLMMessage, AssistantMessage, \
     ToolResponseMessage
 from eidolon_ai_sdk.apu.llm_unit import LLMCallFunction, LLMUnit, LLMModel
-from eidolon_ai_sdk.system.reference_model import Specable, Reference, AnnotatedReference
+from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class _DefaultModel(LLMModel):

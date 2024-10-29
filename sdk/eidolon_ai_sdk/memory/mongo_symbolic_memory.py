@@ -8,7 +8,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorClient
 from pydantic import Field, BaseModel
 
 from eidolon_ai_sdk.memory.semantic_memory import SymbolicMemoryBase
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class MongoSymbolicMemoryConfig(BaseModel):

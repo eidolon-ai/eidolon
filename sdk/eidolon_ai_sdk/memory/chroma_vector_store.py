@@ -28,7 +28,7 @@ from urllib.parse import urlparse, parse_qs
 from eidolon_ai_sdk.memory.document import EmbeddedDocument
 from eidolon_ai_sdk.memory.file_system_vector_store import FileSystemVectorStore, FileSystemVectorStoreSpec, tracer
 from eidolon_ai_sdk.memory.vector_store import QueryItem
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.util.str_utils import replace_env_var_in_string
 
 

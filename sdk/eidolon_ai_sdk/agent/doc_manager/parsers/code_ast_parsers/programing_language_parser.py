@@ -6,7 +6,7 @@ from eidolon_ai_sdk.agent.doc_manager.parsers.code_ast_parsers.javascript import
 from eidolon_ai_sdk.agent.doc_manager.parsers.code_ast_parsers.python import PythonASTGenerator
 from eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters import Language
 from eidolon_ai_sdk.memory.document import Document
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 LANGUAGE_EXTENSIONS: Dict[str, str] = {
     "py": Language.PYTHON,

@@ -10,7 +10,8 @@ from pydantic import BaseModel, Field
 from fastapi import HTTPException
 
 from eidolon_ai_sdk.apu.apu import APUException
-from eidolon_ai_sdk.system.reference_model import Specable, Reference
+from eidolon_ai_sdk.system.reference_model import Reference
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.util.replay import replayable
 
 

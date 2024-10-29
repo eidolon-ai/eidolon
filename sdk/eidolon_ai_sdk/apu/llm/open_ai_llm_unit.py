@@ -28,7 +28,8 @@ from eidolon_ai_sdk.apu.llm_message import (
     UserMessageImage,
 )
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit, LLMCallFunction, LLMModel, LLMUnitSpec
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference, Reference
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Reference
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.util.image_utils import scale_image
 
 logger = eidolon_logger.getChild("llm_unit")

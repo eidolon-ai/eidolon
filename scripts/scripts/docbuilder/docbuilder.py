@@ -45,7 +45,7 @@ def main():
 
 
 class AgentBuilder(BaseModel):
-    documented_agents: Reference["Agent", "SimpleAgent", SimpleAgent.specable() | RetrieverAgent | APIAgent | SqlAgent | AutonomousSpeechAgent]
+    documented_agents: Reference["Agent", "SimpleAgent", SimpleAgent | RetrieverAgent | APIAgent | SqlAgent | AutonomousSpeechAgent]
 
 
 def generate_schema():

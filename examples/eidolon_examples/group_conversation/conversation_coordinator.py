@@ -8,7 +8,7 @@ from eidolon_ai_client.events import AgentStateEvent, StringOutputEvent, ObjectO
 from eidolon_ai_client.group_conversation import GroupConversation
 from eidolon_ai_sdk.agent.agent import register_program, AgentState, register_action
 from eidolon_ai_sdk.apu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_examples.group_conversation.conversation_agent import Thought, AgentThought
 
 

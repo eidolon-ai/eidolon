@@ -13,7 +13,8 @@ from eidolon_ai_sdk.apu.apu import APU, Thread
 from eidolon_ai_sdk.apu.agent_io import APUMessageTypes, SystemAPUMessage
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit
-from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Specable, Reference
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Reference
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager
 
 

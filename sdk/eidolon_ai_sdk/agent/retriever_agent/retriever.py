@@ -9,7 +9,8 @@ from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTr
 from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import ResultSummarizer, DocSummary
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.apu.apu import APU
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class RetrieverSpec(BaseModel):

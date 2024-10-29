@@ -16,7 +16,8 @@ from .agent_controller import AgentController
 from .kernel import AgentOSKernel
 from .process_file_system import ProcessFileSystem
 from .processes import ProcessDoc
-from .reference_model import AnnotatedReference, Specable
+from .reference_model import AnnotatedReference
+from .specable import Specable
 from .resource_load_error_handler import register_instantiate_error, register_agent_start_error
 from .resources.agent_resource import AgentResource
 from .resources.resources_base import Resource

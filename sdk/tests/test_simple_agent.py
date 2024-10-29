@@ -41,7 +41,7 @@ class ComplexAgent:
         return "You shouldn't call this function"
 
 
-def r(name, impl=SimpleAgent.__name__, **kwargs):
+def r(name, impl="SimpleAgent", **kwargs):
     return Resource(
         apiVersion="eidolon/v1",
         kind="Agent",
@@ -210,7 +210,7 @@ class TestSimpleTests:
     async def server(self, run_app, apu):
         res_copy = []
         for res in resources:
-            if res.spec["implementation"] == SimpleAgent.__name__:
+            if res.spec["implementation"] == "SimpleAgent":
                 copy = res.model_dump()
                 if "apu" in copy["spec"] and not isinstance(copy["spec"]["apu"], str):
                     copy["spec"]["apu"]["implementation"] = apu

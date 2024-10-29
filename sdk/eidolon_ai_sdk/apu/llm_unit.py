@@ -7,7 +7,8 @@ from eidolon_ai_client.events import StreamEvent, ToolCall
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm_message import LLMMessage, AssistantMessage, ToolResponseMessage
 from eidolon_ai_sdk.apu.processing_unit import ProcessingUnit
-from eidolon_ai_sdk.system.reference_model import Specable, Reference
+from eidolon_ai_sdk.system.reference_model import Reference
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class LLMModel(BaseModel):

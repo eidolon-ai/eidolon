@@ -9,7 +9,7 @@ from bson import ObjectId
 from pydantic import BaseModel, Field, field_validator
 from pydantic_core.core_schema import ValidationInfo
 
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.memory.document import Document
 
 logger = logging.getLogger("eidolon")

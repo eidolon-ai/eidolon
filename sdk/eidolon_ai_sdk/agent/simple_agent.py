@@ -128,7 +128,7 @@ generate_title_message = (
     "The title should be no longer than 5 words. Do not wrap the title in quotes. Answer only with the title."
 )
 
-SimpleAgent = Agent("SimpleAgent", SimpleAgentSpec)
+SimpleAgent = Agent(SimpleAgentSpec)
 
 
 @SimpleAgent.dynamic_contract

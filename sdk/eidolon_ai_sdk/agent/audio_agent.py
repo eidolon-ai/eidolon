@@ -7,7 +7,8 @@ from eidolon_ai_client.events import FileHandle
 from eidolon_ai_sdk.agent.agent import register_program
 from eidolon_ai_sdk.apu.audio_unit import AudioUnit
 from eidolon_ai_sdk.system.processes import ProcessDoc
-from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Specable
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class AutonomousSpeechAgentSpec(BaseModel):

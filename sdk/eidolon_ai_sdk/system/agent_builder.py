@@ -1,6 +1,7 @@
 import inspect
 import types
 from collections import namedtuple
+from functools import wraps
 from textwrap import dedent
 from typing import TypeVar, Optional, Callable, Generic, Type, AsyncIterable, Tuple, List, Awaitable, Dict, Any
 
@@ -9,8 +10,13 @@ from pydantic import BaseModel
 
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_sdk.agent.agent import register_action
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
+
+
+class EmptySpec(BaseModel):
+    pass
+
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -19,7 +25,6 @@ _ActionState = namedtuple("_ActionState", ["title", "sub_title", "description", 
 
 
 class Agent(Generic[T]):
-    _kind: str
     _spec_type: Type[T]
     _dynamic_contracts: List[Callable[[T, Metadata], Awaitable[None] | None]]
     _actions: Tuple[Dict[str, _ActionState], Dict[str, _ActionState]]
@@ -27,9 +32,8 @@ class Agent(Generic[T]):
     _delete_process_hooks: List[Callable[[str], Awaitable[None]]]
     _initialized: bool
 
-    def __init__(self, kind: str, spec: Type[T]):
-        self._kind = kind
-        self._spec_type = spec
+    def __init__(self, spec_type: Type[T] = EmptySpec):
+        self._spec_type = spec_type
         self._dynamic_contracts = []
         self._actions = ({}, {})
         self._create_process_hooks = ([], [])
@@ -37,11 +41,7 @@ class Agent(Generic[T]):
         self._locked = False
         self._specable = None
 
-    @property
-    def __name__(self):
-        return self._kind
-
-    def dynamic_contract(self, fn: Callable[[T], Awaitable[None] | None]):
+    def dynamic_contract(self, fn: Callable[[T, Metadata], Awaitable[None] | None]):
         if self._locked:
             raise ValueError("Cannot add dynamic contracts after agent has been initialized")
         self._dynamic_contracts.append(fn)
@@ -82,8 +82,6 @@ class Agent(Generic[T]):
             allowed_states_ = allowed_states or ["initialized"]
             if name_ in self._actions[0] or name_ in self._actions[1]:
                 raise ValueError(f"Action with name {name_} already exists")
-            if not input_model:
-                raise ValueError("todo: automatically generate input model from type signature")
             actions = self._actions[1] if self._locked else self._actions[0]
             actions[name_] = (title, sub_title, description_, allowed_states_, input_model, output_model, custom_user_input_event, fn)
             return fn
@@ -117,8 +115,8 @@ class Agent(Generic[T]):
         self._actions[1].clear()
         self._create_process_hooks[1].clear()
 
-    # super fucked up logic written to transition support to Agent mechanism. todo, remove before merging
-    def specable(_self):  # Temporary wrapper for legacy mechanism for defining agents.
+    # Logic written to wrap legacy agent definition mechanism. We can remove this after ripping out the old mechanism.
+    def specable(_self, name: str):  # Temporary wrapper for legacy mechanism for defining agents.
         if not _self._specable:
             _self._locked = True
 
@@ -128,13 +126,27 @@ class Agent(Generic[T]):
 
                 _self._reset()
                 for builder in _self._dynamic_contracts:
-                    built = builder(spec, metadata)
+                    sig = inspect.signature(builder)
+                    has_kwargs = any(p.kind == p.VAR_KEYWORD for p in sig.parameters.values())
+                    kwargs = {}
+                    if has_kwargs or 'spec' in sig.parameters:
+                        kwargs["spec"] = spec
+                    if has_kwargs or "metadata" in sig.parameters:
+                        kwargs["metadata"] = metadata
+                    built = builder(**kwargs)
                     if inspect.isawaitable(built):
                         self.startup_tasks.append(built)
 
                 self.create_process_hooks = [*_self._create_process_hooks[0], *_self._create_process_hooks[1]]
 
                 for action_name, (title, sub_title, description, allowed_states, input_model, output_model, custom_user_input_event, fn) in dict(**_self._actions[0], **_self._actions[1]).items():
+                    sig = inspect.signature(fn)
+                    has_kwargs = any(p.kind == p.VAR_KEYWORD for p in sig.parameters.values())
+                    kwargs = {}
+                    if has_kwargs or 'spec' in sig.parameters:
+                        kwargs["spec"] = spec
+                    if has_kwargs or "metadata" in sig.parameters:
+                        kwargs["metadata"] = metadata
                     setattr(
                         self,
                         action_name,
@@ -143,11 +155,11 @@ class Agent(Generic[T]):
                             name=action_name,
                             title=title,
                             sub_title=sub_title,
-                            description=lambda o, h, d=description: d,
-                            input_model=lambda o, h, i=input_model: i,
-                            output_model=lambda o, h, om=output_model: om,
+                            description=(lambda o, h, d=description: d) if description else None,
+                            input_model=(lambda o, h, i=input_model: i) if input_model else None,
+                            output_model=(lambda o, h, om=output_model: om) if output_model else None,
                             custom_user_input_event=custom_user_input_event,
-                        )(fn),
+                        )(partial(fn, **kwargs)),
                     )
 
             async def create_process(self, process_id: str):
@@ -163,26 +175,10 @@ class Agent(Generic[T]):
                 for task in self.startup_tasks:
                     await task
 
-            # Create registry module
-            if _self._kind in sys.modules[__name__].__dict__:
-                raise ValueError(f"Agent with name {_self._kind} already exists")
-
-            # Create metaclass that handles init_subclass without kwargs
-            class NoKwargsMeta(type):
-                @classmethod
-                def __prepare__(metacls, name, bases, **kwds):
-                    return {}
-
-                def __new__(metacls, name, bases, namespace, **kwds):
-                    return super().__new__(metacls, name, bases, namespace)
-
-                def __init__(cls, name, bases, namespace, **kwds):
-                    super().__init__(name, bases, namespace)
-
             new_class = types.new_class(
-                _self._kind,
+                name,
                 (Specable[_self._spec_type],),
-                {"__module__": __name__, "metaclass": NoKwargsMeta},
+                {},
                 lambda ns: ns.update({
                     "__init__": __init__,
                     "create_process": create_process,
@@ -192,7 +188,32 @@ class Agent(Generic[T]):
                 })
             )
 
-            setattr(sys.modules[__name__], _self._kind, new_class)
+            setattr(sys.modules[__name__], name, new_class)
             _self._specable = new_class
 
         return _self._specable
+
+
+#  funktools partial does not preserve the signature of the function it wraps, so we need to do it manually
+def partial(fn, **partial_kwargs):
+    if inspect.iscoroutinefunction(fn):
+        @wraps(fn)
+        async def wrapper(*args, **kwargs):
+            merged_kwargs = {**partial_kwargs, **kwargs}
+            return await fn(*args, **merged_kwargs)
+    elif inspect.isasyncgenfunction(fn):
+        @wraps(fn)
+        async def wrapper(*args, **kwargs):
+            merged_kwargs = {**partial_kwargs, **kwargs}
+            async for item in fn(*args, **merged_kwargs):
+                yield item
+    else:
+        raise ValueError("Handler must be an async function")
+
+    sig = inspect.signature(fn)
+    parameters = [param for name, param in sig.parameters.items() if name not in partial_kwargs]
+    wrapper.__signature__ = sig.replace(parameters=parameters, return_annotation=sig.return_annotation)
+    wrapper.__annotations__ = {k: v for k, v in fn.__annotations__.items() if k not in partial_kwargs}
+
+    return wrapper
+

@@ -15,7 +15,8 @@ from eidolon_ai_sdk.apu.agent_io import UserTextAPUMessage, SystemAPUMessage
 from eidolon_ai_sdk.apu.conversational_apu import ConversationalAPU
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit, llm_function
 from eidolon_ai_client.events import AgentStateEvent
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.util.stream_collector import StringStreamCollector
 

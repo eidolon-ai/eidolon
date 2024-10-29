@@ -9,7 +9,7 @@ from eidolon_ai_sdk.apu.logic_unit import LogicUnit
 from eidolon_ai_sdk.builtins.logic_units.api_helper import get_content, build_call
 from eidolon_ai_sdk.builtins.logic_units.openapi_helper import Operation, build_actions, Action
 from eidolon_ai_sdk.system.fn_handler import FnHandler
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 

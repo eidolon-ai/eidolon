@@ -6,7 +6,8 @@ from eidolon_ai_sdk.agent_os_interfaces import SimilarityMemory
 from eidolon_ai_sdk.memory.document import Document, EmbeddedDocument
 from eidolon_ai_sdk.memory.embeddings import Embedding
 from eidolon_ai_sdk.memory.vector_store import VectorStore, QueryItem
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class SimilarityMemorySpec(BaseModel):
