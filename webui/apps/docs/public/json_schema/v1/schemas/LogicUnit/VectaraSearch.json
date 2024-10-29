@@ -21,6 +21,25 @@
       "default": "https://api.vectara.io/",
       "title": "Vectara Url",
       "type": "string"
+    },
+    "read_document_enabled": {
+      "default": false,
+      "description": "Enable read_document tool.",
+      "title": "Read Document Enabled",
+      "type": "boolean"
+    },
+    "read_document_description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "Read a document from {corpus_key}.",
+      "description": "Description of the tool presented to LLM. Will be formatted with corpus_key.",
+      "title": "Read Document Description"
     }
   },
   "reference_details": {
