@@ -6,7 +6,6 @@ from functools import wraps
 from textwrap import dedent
 from typing import TypeVar, Optional, Callable, Generic, Type, AsyncIterable, Tuple, List, Awaitable, Dict, Any
 
-import sys
 from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import StreamEvent
