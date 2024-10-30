@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import Optional, Callable, Generic, Awaitable, TypeVar, AsyncGenerator, AsyncIterable, Any
+from typing import Optional, Callable, Generic, Awaitable, TypeVar, AsyncIterable, Any
 
 from openai import BaseModel
 
