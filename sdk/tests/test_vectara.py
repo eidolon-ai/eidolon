@@ -36,7 +36,7 @@ async def server(run_app):
                 kind="Agent",
                 metadata=Metadata(name="vectara_agent"),
                 spec=dict(
-                    implementation=fqn(SimpleAgent),
+                    implementation="SimpleAgent",
                     apu=dict(
                         logic_units=[
                             dict(
@@ -52,7 +52,7 @@ async def server(run_app):
                 kind="Agent",
                 metadata=Metadata(name="vectara_agent_with_doc_read"),
                 spec=dict(
-                    implementation=fqn(SimpleAgent),
+                    implementation="SimpleAgent",
                     apu=dict(
                         logic_units=[
                             dict(
