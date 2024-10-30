@@ -260,9 +260,7 @@ def _make_input_schema(spec: SimpleAgentSpec, action: ActionDefinition, metadata
         required.append("body")
 
     if action.allow_file_upload:
-        properties["body"]["properties"]["attached_files"] = dict(
-            type="array", items=FileHandleWithInclude.model_json_schema(), required=False
-        )
+        properties["body"]["properties"]["attached_files"] = dict(type="array", items=FileHandleWithInclude.model_json_schema())
 
     if spec.apus:
         apu_names = [apu.title for apu in spec.apus]

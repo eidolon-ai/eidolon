@@ -1,3 +1,4 @@
+import sys
 import typing
 from contextlib import contextmanager
 from typing import List, Optional, Annotated, Literal, cast
@@ -68,7 +69,8 @@ class AgentMachine(Specable[MachineSpec]):
                     else:
                         agents[name] = r.spec.instantiate()
                 except Exception as e:
-                    register_instantiate_error(name, r.kind, e)
+                    _, _, tb = sys.exc_info()
+                    register_instantiate_error(name, r.kind, e, tb)
         self.memory = self.spec.get_agent_memory()
         self.agent_controllers = [AgentController(name, agent) for name, agent in agents.items()]
         self.app = None
