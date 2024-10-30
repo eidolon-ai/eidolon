@@ -1,6 +1,6 @@
 import asyncio
 import hashlib
-from typing import Dict, Any, AsyncIterator, Optional, TypeVar
+from typing import Dict, Any, AsyncIterator, Optional
 
 from opentelemetry import trace
 

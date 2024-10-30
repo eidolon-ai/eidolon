@@ -11,7 +11,6 @@ from eidolon_ai_client.events import (
     UserInputEvent,
     StringOutputEvent,
 )
-from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText, LLMMessage
 from eidolon_ai_sdk.apu.llm_unit import LLMCallFunction, LLMUnit
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit, llm_function

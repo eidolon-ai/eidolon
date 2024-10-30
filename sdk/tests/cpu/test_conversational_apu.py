@@ -4,7 +4,6 @@ import pytest
 
 from eidolon_ai_client.client import Agent
 from eidolon_ai_client.events import FileHandle
-from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.apu.agent_io import FileHandleWithInclude
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 
