@@ -3,8 +3,7 @@ title: SimpleAgent
 description: Description of the SimpleAgent component
 ---
 
-**Description:** The `SimpleAgentSpec` class defines the basic configuration for a SimpleAgent within the Eidolon framework. This
-agent is designed to be a flexible, modular component that can interact with various processing units and perform a
+**Description:** agent is designed to be a flexible, modular component that can interact with various processing units and perform a
 range of actions based on its configuration.
 
 | Property                                           | Pattern | Type             | Deprecated | Definition | Title/Description     |

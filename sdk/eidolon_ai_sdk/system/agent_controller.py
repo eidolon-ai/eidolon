@@ -514,7 +514,7 @@ class AgentController:
             if is_root:
                 resource_class = get_from_fqn(implementation)
                 if hasattr(resource_class, "specable"):
-                    resource_class = resource_class.specable(implementation.split(".")[-1])
+                    resource_class = resource_class.specable()
                 if hasattr(resource_class, "delete_process"):
                     await resource_class.delete_process(process_id)
                     logger.info(f"Successfully {resource_class.__name__} records associated with process {process_id}")

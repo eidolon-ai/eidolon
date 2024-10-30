@@ -91,7 +91,7 @@ class Reference(BaseModel):
             pointer = overrides.pop("implementation")
             clz = get_from_fqn(pointer)
             if hasattr(clz, "specable"):
-                clz = clz.specable(name=pointer.split(".")[-1])
+                clz = clz.specable()
             if issubclass(clz, cls._membership):
                 reference_details = dict(
                     overrides=overrides,
@@ -235,7 +235,7 @@ class Reference(BaseModel):
     def _get_reference_class(self):
         found = get_from_fqn(self.implementation)
         if hasattr(found, "specable"):
-            found = found.specable(name=self.implementation.split(".")[-1])
+            found = found.specable()
         if not found:
             raise ValueError(f'Unable to find reference implementation "{self.implementation}"')
         if self._bound and (not isinstance(found, type) or not issubclass(found, self._bound)):

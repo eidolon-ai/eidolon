@@ -137,7 +137,7 @@ class Agent(Generic[T]):
         self._create_process_hooks[1].clear()
 
     # Logic written to wrap legacy agent definition mechanism. We can remove this after ripping out the old mechanism.
-    def specable(_self, name: str):  # Temporary wrapper for legacy mechanism for defining agents.
+    def specable(_self, name="AgentImpl"):  # Temporary wrapper for legacy mechanism for defining agents.
         if not _self._specable:
             _self._locked = True
 
@@ -208,8 +208,6 @@ class Agent(Generic[T]):
                     "built_with_agent_builder": True,
                 })
             )
-
-            setattr(sys.modules[__name__], name, new_class)
             _self._specable = new_class
 
         return _self._specable
