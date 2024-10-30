@@ -19,6 +19,12 @@ from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
 
 
+T = TypeVar("T", bound=BaseModel)
+
+
+_ActionState = namedtuple("_ActionState", ["title", "sub_title", "description", "allowed_states", "input_model", "output_model", "custom_user_input_event", "fn"])
+
+
 class DefaultAgentSpec(BaseModel):
     apu: AnnotatedReference[APU]
     references: List[str | Reference[LogicUnit]] = Field(
@@ -36,12 +42,6 @@ class DefaultAgentSpec(BaseModel):
         apu = copy.deepcopy(self.apu)
         apu.logic_units.extend(logic_units)
         return apu.instantiate()
-
-
-T = TypeVar("T", bound=BaseModel)
-
-
-_ActionState = namedtuple("_ActionState", ["title", "sub_title", "description", "allowed_states", "input_model", "output_model", "custom_user_input_event", "fn"])
 
 
 class Agent(Generic[T]):
@@ -62,6 +62,20 @@ class Agent(Generic[T]):
         self._specable = None
 
     def dynamic_contract(self, fn: Callable[[T, Metadata], Awaitable[None] | None]):
+        """
+        A decorator used to build an agent template dynamically based on the spec and metadata.
+        Decorated function may be synchronous or asynchronous.
+
+        @agent.dynamic_contract
+        async def fn(spec: MySpec, metadata: Metadata):
+            @agent.action(description=spec.description)
+            async def my_action(process_id):
+                thread = await spec.apu_instance().main_thread(process_id)
+                yield StringOutputEvent(content="Hmm, let me think about that...")
+                async for event in thread.stream_request(...)
+                    yield event
+                yield AgentStateEvent(state="idle")
+        """
         if self._locked:
             raise ValueError("Cannot add dynamic contracts after agent has been initialized")
         self._dynamic_contracts.append(fn)
@@ -77,13 +91,17 @@ class Agent(Generic[T]):
             input_model: Optional[Type[BaseModel]] = None,
             output_model: Type = Any,
             custom_user_input_event: bool = False,
-    ) -> Callable[[Callable[..., AsyncIterable[StreamEvent]]], Any]:
+    ) -> Callable[[Callable[..., Awaitable[Any] | AsyncIterable[StreamEvent]]], Callable]:
         """
-        Registers an action with the agent.
+        A decorator to registers an action with the agent.
+        Decorated function must be asynchronous and may return a value or yield StreamEvent(s).
 
         @agent.action(description="This is my action")
-        async def my_action(self, input: MyInputModel) -> MyOutputModel:
-            yield StringOutputEvent(content="Here is your output!")
+        def my_action(process_id):
+            thread = await spec.apu_instance().main_thread(process_id)
+            yield StringOutputEvent(content="Hmm, let me think about that...")
+            async for event in thread.stream_request(...)
+                yield event
             yield AgentStateEvent(state="idle")
 
         :param name: Name of the action. If not provided, the name of the function will be used.
