@@ -47,7 +47,7 @@ from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.processes import ProcessDoc, store_events, load_events
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
-from eidolon_ai_sdk.util.class_utils import for_name, get_from_fqn
+from eidolon_ai_sdk.util.class_utils import get_from_fqn
 
 
 # todo, agent controller has become a mega impl, we should break up responsibilities

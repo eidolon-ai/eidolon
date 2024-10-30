@@ -12,7 +12,7 @@ from pydantic_core import core_schema as cs
 
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.specable import Specable
-from eidolon_ai_sdk.util.class_utils import for_name, fqn, get_from_fqn
+from eidolon_ai_sdk.util.class_utils import fqn, get_from_fqn
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 B = TypeVar("B")
