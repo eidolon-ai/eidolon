@@ -89,7 +89,9 @@ class Reference(BaseModel):
             # there is not a class for these psudo references, we can either make those classes dynamically, or create a custom ?generator? to handle them
             overrides = Reference[object, r.metadata.name]._transform(r.spec)
             pointer = overrides.pop("implementation")
-            clz = for_name(pointer, object)
+            clz = get_from_fqn(pointer)
+            if hasattr(clz, "specable"):
+                clz = clz.specable(name=pointer.split(".")[-1])
             if issubclass(clz, cls._membership):
                 reference_details = dict(
                     overrides=overrides,
