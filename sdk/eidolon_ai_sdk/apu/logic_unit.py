@@ -71,12 +71,17 @@ class LLMToolWrapper:
                     new_name = logic_unit.__class__.__name__ + "_" + handler.name + "_" + str(i)
                     i += 1
                 input_model = handler.input_model_fn(logic_unit, handler)
-                schema = copy.deepcopy(
-                    jsonref.replace_refs(
-                        input_model.model_json_schema(),
-                        jsonschema=True,
+                if isinstance(input_model, BaseModel):
+                    schema = copy.deepcopy(
+                        jsonref.replace_refs(
+                            input_model.model_json_schema(),
+                            jsonschema=True,
+                        )
                     )
-                )
+                elif isinstance(input_model, dict):
+                    schema = input_model
+                else:
+                    raise ValueError("input_model must be a BaseModel or a dict")
                 acc[new_name] = LLMToolWrapper(
                     logic_unit=logic_unit,
                     llm_message=LLMCallFunction(
