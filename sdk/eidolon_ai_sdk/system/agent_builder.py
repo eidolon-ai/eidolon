@@ -1,3 +1,4 @@
+import copy
 import inspect
 import types
 from collections import namedtuple
@@ -6,16 +7,36 @@ from textwrap import dedent
 from typing import TypeVar, Optional, Callable, Generic, Type, AsyncIterable, Tuple, List, Awaitable, Dict, Any
 
 import sys
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_sdk.agent.agent import register_action
+from eidolon_ai_sdk.apu.agents_logic_unit import AgentsLogicUnit
+from eidolon_ai_sdk.apu.apu import APU
+from eidolon_ai_sdk.apu.logic_unit import LogicUnit
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Reference
 from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
+from eidolon_ai_sdk.util.class_utils import fqn
 
 
-class EmptySpec(BaseModel):
-    pass
+class DefaultAgentSpec(BaseModel):
+    apu: AnnotatedReference[APU]
+    references: List[str | Reference[LogicUnit]] = Field(
+        default_factory=list,
+        description="A list of references available to the agent. References can be another agent's name, or the definition of a [logic unit](https://www.eidolonai.com/docs/components/logicunit/overview).")
+
+    def apu_instance(self) -> APU:
+        logic_units = [r for r in self.references if isinstance(r, Reference)]
+        agent_refs = [r for r in self.references if isinstance(r, str)]
+        if agent_refs:
+            logic_units.append(Reference(
+                implementation=fqn(AgentsLogicUnit),
+                agents=agent_refs,
+            ))
+        apu = copy.deepcopy(self.apu)
+        apu.logic_units.extend(logic_units)
+        return apu.instantiate()
 
 
 T = TypeVar("T", bound=BaseModel)
@@ -32,7 +53,7 @@ class Agent(Generic[T]):
     _delete_process_hooks: List[Callable[[str], Awaitable[None]]]
     _initialized: bool
 
-    def __init__(self, spec_type: Type[T] = EmptySpec):
+    def __init__(self, spec_type: Type[T] = DefaultAgentSpec):
         self._spec_type = spec_type
         self._dynamic_contracts = []
         self._actions = ({}, {})

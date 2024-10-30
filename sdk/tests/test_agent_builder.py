@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 from eidolon_ai_client import client
 from eidolon_ai_client.events import StringOutputEvent
-from eidolon_ai_sdk.system.agent_builder import Agent
+from eidolon_ai_sdk.system.agent_builder import Agent, DefaultAgentSpec
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 
 

@@ -8,13 +8,11 @@ from typing import TypeVar, Type, Annotated, Optional, ClassVar
 
 from pydantic import BaseModel, model_validator, Field, ConfigDict, GetJsonSchemaHandler
 from pydantic.json_schema import JsonSchemaValue
+from pydantic_core import core_schema as cs
 
-from eidolon_ai_sdk.system.agent_builder import Agent
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.util.class_utils import for_name, fqn, get_from_fqn
-from pydantic_core import core_schema as cs
-
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 B = TypeVar("B")
@@ -234,7 +232,7 @@ class Reference(BaseModel):
 
     def _get_reference_class(self):
         found = get_from_fqn(self.implementation)
-        if isinstance(found, Agent):
+        if hasattr(found, "specable"):
             found = found.specable(name=self.implementation.split(".")[-1])
         if not found:
             raise ValueError(f'Unable to find reference implementation "{self.implementation}"')
