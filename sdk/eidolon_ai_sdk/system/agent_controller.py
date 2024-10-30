@@ -47,7 +47,7 @@ from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.processes import ProcessDoc, store_events, load_events
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
-from eidolon_ai_sdk.util.class_utils import for_name
+from eidolon_ai_sdk.util.class_utils import for_name, get_from_fqn
 
 
 # todo, agent controller has become a mega impl, we should break up responsibilities
@@ -512,7 +512,9 @@ class AgentController:
             implementation = to_jsonable_python(r.spec)["implementation"]
             is_root = not AgentOSKernel.get_resource(ReferenceResource, implementation, default=None)
             if is_root:
-                resource_class = for_name(implementation)
+                resource_class = get_from_fqn(implementation)
+                if hasattr(resource_class, "specable"):
+                    resource_class = resource_class.specable(implementation.split(".")[-1])
                 if hasattr(resource_class, "delete_process"):
                     await resource_class.delete_process(process_id)
                     logger.info(f"Successfully {resource_class.__name__} records associated with process {process_id}")
