@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import textwrap
 from typing import Generic, TypeVar
 
 from pydantic import GetJsonSchemaHandler, BaseModel
@@ -22,15 +23,6 @@ class Specable(Generic[T]):
         self.spec = spec
 
     @classmethod
-    def model_json_schema(cls):
-        spec_clz = cls.specable_cls()
-        schema = spec_clz.model_json_schema()
-        schema["title"] = cls.__name__
-        if "extra" not in spec_clz.model_config:  # default to no extra props
-            schema["additionalProperties"] = False
-        return schema
-
-    @classmethod
     @property
     def __pydantic_core_schema__(cls):
         schema__ = cls.specable_cls().__pydantic_core_schema__
@@ -46,6 +38,8 @@ class Specable(Generic[T]):
         json_schema["title"] = cls.__name__
         if "extra" not in cls.specable_cls().model_config:  # default to no extra props
             json_schema["additionalProperties"] = False
+        if "description" not in json_schema and cls.specable_cls().__doc__:
+            json_schema["description"] = textwrap.dedent(cls.specable_cls().__doc__).strip()
         return json_schema
 
     @classmethod
