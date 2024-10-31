@@ -67,8 +67,10 @@ class AgentMachine(Specable[MachineSpec]):
             with _error_wrapper(r):
                 try:
                     agents[name] = r.spec.instantiate()
+                    agents[name] = r.spec.instantiate()
                     if isinstance(agents[name], Agent):
-                        agents[name].start = partial(agents[name].start, metadata=r.metadata)
+                        cast(Agent, agents[name]).set_metadata(r.metadata)
+
                 except Exception as e:
                     _, _, tb = sys.exc_info()
                     register_instantiate_error(name, r.kind, e, tb)
