@@ -1,5 +1,4 @@
 import inspect
-import typing
 from collections import namedtuple
 from contextlib import contextmanager
 from inspect import Parameter
@@ -10,7 +9,7 @@ from pydantic import create_model, BaseModel
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.system.fn_handler import FnHandler
-from eidolon_ai_sdk.util.partial import partial
+from eidolon_ai_sdk.util.partial import partial, return_value
 
 _ToolUnitState = namedtuple("_ToolUnitState", ["dynamic_contracts", "tools"])
 _ToolDefinition = namedtuple("_ToolDefinition", ["name", "description", "input_schema", "fn"])
@@ -97,7 +96,7 @@ class ToolUnit(BaseModel):
         return cls._state_attr
 
     @classmethod
-    def _is_locked(cls) -> _ToolUnitState:
+    def _is_locked(cls) -> bool:
         return getattr(cls, "_lock", False)
 
     @classmethod
@@ -131,6 +130,7 @@ class ToolUnit(BaseModel):
 
             acc = []
             for tool in tools:
+                # todo, logic to grab docs, input model, etc should happen when registering the tool, not when building
                 sig = inspect.signature(tool.fn)
                 has_kwargs = any(p.kind == p.VAR_KEYWORD for p in sig.parameters.values())
                 kwargs = {}
@@ -140,21 +140,14 @@ class ToolUnit(BaseModel):
                 acc.append(
                     FnHandler(
                         name=tool.name,
-                        description=_return(tool.description or tool.fn.__doc__ or f"Execute function {tool.name}"),
-                        input_model_fn=_return(tool.input_schema or _model_from_sig(tool_fn)),
+                        description=return_value(tool.description or tool.fn.__doc__ or f"Execute function {tool.name}"),
+                        input_model_fn=return_value(tool.input_schema or _model_from_sig(tool_fn)),
                         output_model_fn=_output_model_fn,
                         fn=tool_fn,
                         extra=dict(title=tool.name),
                     )
                 )
             return acc
-
-
-S = TypeVar("S")
-
-
-def _return(return_value: S) -> typing.Callable[[object, FnHandler], T]:
-    return lambda *args, **kwargs: return_value
 
 
 def _output_model_fn(*args, **kwargs):

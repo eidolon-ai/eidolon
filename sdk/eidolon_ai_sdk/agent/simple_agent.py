@@ -83,7 +83,7 @@ class NamedAPU(BaseModel):
     default: bool = False
 
 
-class SimpleAgentSpec(BaseModel):
+class SimpleAgent(Agent):
     """
     agent is designed to be a flexible, modular component that can interact with various processing units and perform a
     range of actions based on its configuration.
@@ -117,6 +117,15 @@ class SimpleAgentSpec(BaseModel):
             raise ValueError("Must specify either apu or apus")
         return self
 
+    async def create_process(self, process_id: str):
+        if self.apu:
+            default_apu_ref = self.apu
+        else:
+            default_apu_ref = ([apu.apu for apu in self.apus if apu.default] or [self.apus[0].apu])[0]
+        default_apu = default_apu_ref.instantiate()
+        t = await default_apu.main_thread(process_id)
+        await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=self.system_prompt)])
+
 
 # todo, this should be in spec
 generate_title_message = (
@@ -127,11 +136,9 @@ generate_title_message = (
     "The title should be no longer than 5 words. Do not wrap the title in quotes. Answer only with the title."
 )
 
-SimpleAgent = Agent(SimpleAgentSpec)
-
 
 @SimpleAgent.dynamic_contract
-def fn(spec: SimpleAgentSpec, metadata: Metadata):
+def fn(spec: SimpleAgent, metadata: Metadata):
     apus: Dict[str, APU] = {}
     for apu_spec in spec.apus or [NamedAPU(apu=spec.apu, default=True)]:
         apu = apu_spec.apu.instantiate()
@@ -139,11 +146,6 @@ def fn(spec: SimpleAgentSpec, metadata: Metadata):
         _register_refs_logic_unit(apu, spec.agent_refs)
         apus[apu_spec.title] = apu
     default_apu: APU = apus[(list(filter(lambda apu: apu.default, spec.apus)) or [NamedAPU(apu=spec.apu, default=True)])[0].title]
-
-    @SimpleAgent.create_process_hook
-    async def create_process(process_id: str):
-        t = await default_apu.main_thread(process_id)
-        await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=spec.system_prompt)])
 
     if spec.title_generation_mode == "on_request":
         @SimpleAgent.action(description="Generate a title for the conversation", allowed_states=["initialized", "idle"])
@@ -243,7 +245,7 @@ def _register_refs_logic_unit(apu, agent_refs):
         )
 
 
-def _make_input_schema(spec: SimpleAgentSpec, action: ActionDefinition, metadata: Metadata):
+def _make_input_schema(spec: SimpleAgent, action: ActionDefinition, metadata: Metadata):
     properties: Dict[str, Any] = {}
     required = []
     user_vars = meta.find_undeclared_variables(Environment().parse(action.user_prompt))

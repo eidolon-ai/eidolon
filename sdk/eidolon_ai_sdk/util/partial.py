@@ -1,5 +1,7 @@
 import inspect
+import typing
 from functools import wraps
+from typing import TypeVar
 
 
 #  functools partial does not preserve the signature of the function it wraps, so we need to do it manually
@@ -26,3 +28,10 @@ def partial(fn, **partial_kwargs):
     wrapper.__annotations__ = {k: v for k, v in fn.__annotations__.items() if k not in partial_kwargs}
 
     return wrapper
+
+
+T = TypeVar("T")
+
+
+def return_value(value: T) -> typing.Callable[[typing.Any, typing.Any], T]:
+    return lambda *args, **kwargs: value
