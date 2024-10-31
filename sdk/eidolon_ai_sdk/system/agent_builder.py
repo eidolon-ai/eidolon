@@ -3,14 +3,12 @@ import inspect
 from collections import namedtuple
 from contextlib import contextmanager
 from textwrap import dedent
-from typing import TypeVar, Optional, Callable, Type, AsyncIterable, List, Awaitable, Dict, Any, cast, \
-    Literal
+from typing import TypeVar, Optional, Callable, Type, AsyncIterable, List, Awaitable, Dict, Any, Literal
 
 from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_sdk.agent.agent import register_action
 from eidolon_ai_sdk.apu.agents_logic_unit import AgentsLogicUnit
 from eidolon_ai_sdk.apu.apu import APU
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit

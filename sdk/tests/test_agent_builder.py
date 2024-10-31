@@ -1,5 +1,4 @@
 import pytest
-from pydantic import BaseModel
 
 from eidolon_ai_client import client
 from eidolon_ai_client.events import StringOutputEvent
