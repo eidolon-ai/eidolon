@@ -12,6 +12,15 @@ from eidolon_ai_sdk.util.str_utils import replace_env_var_in_string
 
 
 class LocalFileMemoryConfig(BaseModel):
+    """
+    Retrieve documents from a local file system. Note that this is the file system where the Eidolon application is
+    running. This means building the files onto the runtime image, or mounting a volume to the container.
+
+    [Build the files into the runtime image](https://docs.docker.com/reference/dockerfile/#copy)
+    [Docker bind mounts](https://docs.docker.com/engine/storage/bind-mounts/)
+    [Kubernetes volumes](https://kubernetes.io/docs/concepts/storage/volumes/)
+    """
+
     root_dir: str = Field("/tmp/eidolon/file_memory", description="The root directory to store files in.")
 
     @field_validator("root_dir", mode="before")
