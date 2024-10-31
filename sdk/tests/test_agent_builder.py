@@ -1,14 +1,9 @@
 import pytest
-from pydantic import BaseModel
 
 from eidolon_ai_client import client
 from eidolon_ai_client.events import StringOutputEvent
 from eidolon_ai_sdk.system.agent_builder import Agent
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
-
-
-class Spec(BaseModel):
-    foo: str
 
 
 def r(impl, **kwargs):
@@ -20,25 +15,28 @@ def r(impl, **kwargs):
     )
 
 
-basic_agent = Agent(Spec)
+class basic_agent(Agent):
+    foo: str
 
 
 @basic_agent.action()
-async def ba_action(spec: Spec):
+async def ba_action(spec: basic_agent):
     return spec.foo
 
 
-dynamic_agent = Agent(Spec)
+class dynamic_agent(Agent):
+    foo: str
 
 
 @dynamic_agent.dynamic_contract
-def da_contract(spec: Spec):
+def da_contract(spec: dynamic_agent):
     @dynamic_agent.action()
     async def da_action():
         return spec.foo
 
 
-yielding_agent = Agent()
+class yielding_agent(Agent):
+    pass
 
 
 @yielding_agent.action()

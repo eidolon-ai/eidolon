@@ -12,6 +12,7 @@ from eidolon_ai_client.events import FileHandle
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, SimilarityMemory, SecurityManager
 from eidolon_ai_sdk.memory.agent_memory import AgentMemory
+from .agent_builder import Agent
 from .agent_contract import StateSummary, CreateProcessArgs, DeleteProcessResponse, ListProcessesResponse
 from .agent_controller import AgentController
 from .kernel import AgentOSKernel
@@ -64,10 +65,11 @@ class AgentMachine(Specable[MachineSpec]):
         for name, r in AgentOSKernel.get_resources(AgentResource).items():
             with _error_wrapper(r):
                 try:
-                    if getattr(r.spec._get_reference_class(), "built_with_agent_builder", False):
-                        agents[name] = r.spec.instantiate(metadata=r.metadata)
-                    else:
-                        agents[name] = r.spec.instantiate()
+                    agents[name] = r.spec.instantiate()
+                    agents[name] = r.spec.instantiate()
+                    if isinstance(agents[name], Agent):
+                        cast(Agent, agents[name]).set_metadata(r.metadata)
+
                 except Exception as e:
                     _, _, tb = sys.exc_info()
                     register_instantiate_error(name, r.kind, e, tb)
