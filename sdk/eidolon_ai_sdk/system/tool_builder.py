@@ -1,50 +1,45 @@
+import inspect
+import typing
 from collections import namedtuple
-from typing import Optional, Callable, Awaitable, TypeVar, AsyncIterable, Any, List
+from contextlib import contextmanager
+from inspect import Parameter
+from typing import Optional, Callable, Awaitable, TypeVar, AsyncIterable, Any, List, cast, Type, get_type_hints
 
-from openai import BaseModel
+from pydantic import create_model, BaseModel
 
 from eidolon_ai_client.events import StreamEvent
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.system.fn_handler import FnHandler
-
-T = TypeVar("T", bound=BaseModel)
+from eidolon_ai_sdk.util.partial import partial
 
 _ToolUnitState = namedtuple("_ToolUnitState", ["dynamic_contracts", "tools"])
 _ToolDefinition = namedtuple("_ToolDefinition", ["name", "description", "input_schema", "fn"])
 
 
+T = TypeVar("T", bound="ToolUnit")
+
+
 class ToolUnit(BaseModel):
     @classmethod
-    def _state(cls) -> _ToolUnitState:
-        if not hasattr(cls, "_state"):
-            cls._state = _ToolUnitState(
-                dynamic_contracts=[],
-                tools=([], []),
-            )
-        return cls._state
-
-    @classmethod
-    def _locked(cls) -> _ToolUnitState:
-        return getattr(cls, "_locked", False)
-
-    @classmethod
-    def dynamic_contract(cls, fn: Callable[[T, CallContext], Awaitable[None] | None]):
+    def dynamic_contract(cls: Type[T], fn: Callable[[T, CallContext], Awaitable[None] | None]):
         """
         A decorator to dynamically build a ToolUnit.
         Decorated function may be synchronous or asynchronous.
 
-        @tool_unit.dynamic_contract
-        def fn(spec: MySpec, call_context: CallContext):
-            @tool_unit.tool(description = spec.description)
+        ```python
+        @MyToolUnit.dynamic_contract
+        def fn(spec: MyToolUnit, call_context: CallContext):
+            @MyToolUnit.tool(description = spec.description)
             async def add(a: int, b: int):
                 return a + b
+        ```
         """
         cls._state().dynamic_contracts.append(fn)
         return fn
 
     @classmethod
     def tool(
-            cls,
+            cls: Type[T],
             name: str = None,
             description: Optional[str] = None,
             input_schema: dict = None
@@ -53,9 +48,11 @@ class ToolUnit(BaseModel):
         A decorator to define a tool.
         Decorated function must be asynchronous and may return a value or yield StreamEvent(s).
 
+        ```python
         @tool_unit.tool(description = "add two numbers")
         async def add(a: int, b: int):
             return a + b
+        ```
 
         :param name: The name of the tool presented to the llm
         :param description: The description of the tool presented to the llm
@@ -65,7 +62,7 @@ class ToolUnit(BaseModel):
 
         def decorator(fn: Callable[..., Awaitable[Any] | AsyncIterable[StreamEvent]]):
             name_ = name or fn.__name__
-            if cls._locked():
+            if cls._is_locked():
                 cls._state().tools[1].append(_ToolDefinition(name_, description, input_schema, fn))
             else:
                 cls._state().tools[0].append(_ToolDefinition(name_, description, input_schema, fn))
@@ -90,6 +87,93 @@ class ToolUnit(BaseModel):
         """
         pass
 
+    @classmethod
+    def _state(cls) -> _ToolUnitState:
+        if not hasattr(cls, "_state_attr"):
+            setattr(cls, "_state_attr", _ToolUnitState(
+                dynamic_contracts=[],
+                tools=([], []),
+            ))
+        return cls._state_attr
+
+    @classmethod
+    def _is_locked(cls) -> _ToolUnitState:
+        return getattr(cls, "_lock", False)
+
+    @classmethod
+    @contextmanager
+    def _locked(cls):
+        if cls._is_locked():
+            raise ValueError("Cannot define tools while building tools")
+        setattr(type(cls), "_lock", True)
+        try:
+            yield
+        finally:
+            setattr(type(cls), "_lock", False)
+
     async def build_tools(self, call_context: CallContext) -> List[FnHandler]:
-        ...
-        # todo
+        with self._locked():
+            try:
+                for builder in self._state().dynamic_contracts:
+                    sig = inspect.signature(builder)
+                    has_kwargs = any(p.kind == p.VAR_KEYWORD for p in sig.parameters.values())
+                    kwargs = {}
+                    if has_kwargs or 'spec' in sig.parameters:
+                        kwargs["spec"] = self
+                    if has_kwargs or "call_context" in sig.parameters:
+                        kwargs["call_context"] = call_context
+                    built = builder(**kwargs)
+                    if inspect.isawaitable(built):
+                        await built
+            finally:
+                tools: List[_ToolDefinition] = [*self._state().tools[0], *self._state().tools[1]]
+                cast(list, self._state().tools[1]).clear()
+
+            acc = []
+            for tool in tools:
+                sig = inspect.signature(tool.fn)
+                has_kwargs = any(p.kind == p.VAR_KEYWORD for p in sig.parameters.values())
+                kwargs = {}
+                if has_kwargs or 'spec' in sig.parameters:
+                    kwargs["spec"] = self
+                tool_fn = partial(tool.fn, **kwargs)
+                acc.append(
+                    FnHandler(
+                        name=tool.name,
+                        description=_return(tool.description or tool.fn.__doc__ or f"Execute function {tool.name}"),
+                        input_model_fn=_return(tool.input_schema or _model_from_sig(tool_fn)),
+                        output_model_fn=_output_model_fn,
+                        fn=tool_fn,
+                        extra=dict(title=tool.name),
+                    )
+                )
+            return acc
+
+
+S = TypeVar("S")
+
+
+def _return(return_value: S) -> typing.Callable[[object, FnHandler], T]:
+    return lambda *args, **kwargs: return_value
+
+
+def _output_model_fn(*args, **kwargs):
+    raise NotImplementedError("output_model_fn not implemented")
+
+
+def _model_from_sig(fn: callable) -> dict:
+    sig = inspect.signature(fn)
+    type_hints = get_type_hints(fn)
+
+    fields = {}
+    for param_name, param in sig.parameters.items():
+        if param.kind == Parameter.VAR_POSITIONAL:
+            raise ValueError("Cannot create a json schema from a function with *args")
+        else:
+            field_type = type_hints.get(param_name, None)
+            if param.default is Parameter.empty:
+                fields[param_name] = (field_type, ...)
+            else:
+                fields[param_name] = (field_type, param.default)
+
+    return create_model(f"{fn.__name__.title()}Model", **fields)

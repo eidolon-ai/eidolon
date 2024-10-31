@@ -2,7 +2,6 @@ import copy
 import inspect
 import types
 from collections import namedtuple
-from functools import wraps
 from textwrap import dedent
 from typing import TypeVar, Optional, Callable, Generic, Type, AsyncIterable, Tuple, List, Awaitable, Dict, Any
 
@@ -17,7 +16,7 @@ from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Reference
 from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
-
+from eidolon_ai_sdk.util.partial import partial
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -185,6 +184,8 @@ class Agent(Generic[T]):
                         kwargs["spec"] = spec
                     if has_kwargs or "metadata" in sig.parameters:
                         kwargs["metadata"] = metadata
+                    if not inspect.iscoroutinefunction(fn) and not inspect.isasyncgenfunction(fn):
+                        raise ValueError("action must be an async function")
                     setattr(
                         self,
                         action_name,
@@ -228,28 +229,3 @@ class Agent(Generic[T]):
             _self._specable = new_class
 
         return _self._specable
-
-
-#  funktools partial does not preserve the signature of the function it wraps, so we need to do it manually
-def partial(fn, **partial_kwargs):
-    if inspect.iscoroutinefunction(fn):
-        @wraps(fn)
-        async def wrapper(*args, **kwargs):
-            merged_kwargs = {**partial_kwargs, **kwargs}
-            return await fn(*args, **merged_kwargs)
-    elif inspect.isasyncgenfunction(fn):
-        @wraps(fn)
-        async def wrapper(*args, **kwargs):
-            merged_kwargs = {**partial_kwargs, **kwargs}
-            async for item in fn(*args, **merged_kwargs):
-                yield item
-    else:
-        raise ValueError("Handler must be an async function")
-
-    sig = inspect.signature(fn)
-    parameters = [param for name, param in sig.parameters.items() if name not in partial_kwargs]
-    wrapper.__signature__ = sig.replace(parameters=parameters, return_annotation=sig.return_annotation)
-    wrapper.__annotations__ = {k: v for k, v in fn.__annotations__.items() if k not in partial_kwargs}
-
-    return wrapper
-
