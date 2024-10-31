@@ -1,5 +1,6 @@
 {
   "additionalProperties": false,
+  "description": "Retrieve documents from a local file system. Note that this is the file system where the Eidolon application is\nrunning. This means building the files onto the runtime image, or mounting a volume to the container.\n\n[Build the files into the runtime image](https://docs.docker.com/reference/dockerfile/#copy)\n[Docker bind mounts](https://docs.docker.com/engine/storage/bind-mounts/)\n[Kubernetes volumes](https://kubernetes.io/docs/concepts/storage/volumes/)",
   "properties": {
     "implementation": {
       "const": "LocalFileMemory",
