@@ -32,12 +32,14 @@ class ToolUnit(BaseModel):
         """
         A decorator to dynamically build a ToolUnit.
         Decorated function may be synchronous or asynchronous.
-
+        
+        ```python
         @tool_unit.dynamic_contract
         def fn(spec: MySpec, call_context: CallContext):
             @tool_unit.tool(description = spec.description)
             async def add(a: int, b: int):
                 return a + b
+        ```
         """
         cls._state().dynamic_contracts.append(fn)
         return fn
