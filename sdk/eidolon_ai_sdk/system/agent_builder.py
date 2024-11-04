@@ -104,7 +104,7 @@ class Agent(BaseModel):
         pass
 
     @classmethod
-    def delete_process(cls, process_id: str) -> None:
+    async def delete_process(cls, process_id: str) -> None:
         """
         A function to be called when a process is deleted.
         """
