@@ -12,59 +12,114 @@ description: Create a S3 RAG agent that dynamically embeds and retrieves documen
   </a>
 </div>
 
+This recipe shows how a chatbot agent working with a RAG agent can use documents stored in an Amazon S3 bucket to find answers to questions.
 
-In this recipe we have created a RAG chatbot powered by documents living in s3.
+### Core Concepts
 
-It dynamically pulls in information via similarity search to answer user queries.
+This example highlights the following core concepts:
+- [Multi-agent communication](/docs/howto/communication)
+- [Configuring Components](/docs/howto/configure_builtins)
+- [Dynamic embedding management](/docs/components/retriever_agent)
 
-This is important if you have a body of information that is constantly changing, but you need real time information about (ie, a git repository).
+### Prerequisites
+Specific to this example, you need:
+- access to an AWS bucket that contains at least one document
 
-## Core Concepts
-###### [Multi-agent communication](/docs/howto/communication)
-###### [Sub-component customization](/docs/howto/communication)
-###### [Dynamic embedding management](/docs/components/retriever_agent)
+If you completed the [Quickstart](/docs/quickstart) you should be all set with the remaining prerequisites. If not, make sure to:
+- confirm `make` and `poetry` are installed
+- you have a [funded OpenAI account](/docs/howto/authenticate_llm)
 
 ## Agents
-### [Conversational Agent](https://github.com/eidolon-ai/eidolon-s3-rag/blob/main/resources/conversational_agent.eidolon.yaml)
-The user facing copilot. Ask this agent questions and it use the llm to provide answers while reaching out to the S3
-Search Agent as needed for relevant documents as needed assistance of the repo search agent.
+This example uses two agents: 
+- [conversational-agent](https://github.com/eidolon-ai/eidolon-s3-rag/blob/main/resources/conversational_agent.eidolon.yaml): a user-facing copilot that is instantiated from the built-in <a href="/docs/components/agent/simpleagent" target=_blank>SimpleAgent</a>, which is the default agent if none is specified
+- [s3-search](https://github.com/eidolon-ai/eidolon-s3-rag/blob/main/resources/s3_search.eidolon.yaml): a RAG agent that is instantiated from the built-in <a href="/docs/components/agent/retrieveragent" target-_blank>RetrieverAgent</a>
 
-The SimpleAgent template defines a shorthand mechanism to add an agent as a logic unit. Just add the downstream agent 
-to the `agent_refs` list.
+| Note: you can name agents as you wish. You can use hyphens (dashes) but not underscores in agent names.
+
+### Conversational Agent: the user-facing copilot
+
+Resources of kind Agent can use an LLM to:
+- reason
+- converse with you and other agents
+
 ```yaml
-agent_refs: [s3_search]
+apiVersion: server.eidolonai.com/v1alpha1
+kind: Agent
+metadata:
+  name: conversational-agent
+```
+The conversational-agent can delegate tasks to the s3-search agent. This relationship is configured through [agent_refs](/docs/components/agent/simpleagent#agent_refs), which is a property specified ("spec'd") by SimpleAgent.
+
+Typically, you would reference elements of an array on separate lines, with each element preceded by a hyphen (dash). In this example, the array has one element: `s3-search`.
+```yaml
+spec:
+  agent_refs:
+  -  s3-search
 ```
 
-### [S3 RAG](https://github.com/eidolon-ai/eidolon-s3-rag/blob/main/resources/repo_search.eidolon.yaml)
-Handles loading, embedding, and re-embedding documents ensuring they are up-to-date.
+Note that the elements in this array are of type string (as opposed to objects). You can use a shorthand mechanism that is built into SimpleAgent for a more compact presentation. 
+```yaml
+spec:
+  agent_refs: [s3-search]
+```
 
-Translates queries into a vector search query and returns the top results.
+### S3 Search: the RAG agent that searches documents
 
-You will notice that this agent uses the RetrieverAgent template. By default, this template is defined to use 
-a loader that reads files from disk, but Eidolon has a GitHub loader built in that we can use.
+The s3-search agent's job is to load, embed, and re-embed documents that may change frequently.
+
+This agent also translates requests (in this case, from the conversational-agent) into a vector search query and returns the top results.
+
+```yaml
+apiVersion: server.eidolonai.com/v1alpha1
+kind: Agent
+metadata:primary 
+  name: s3-search
+
+spec:
+  implementation: RetrieverAgent
+  name: "agentic-papers"
+  description: "Search curated papers on building Agentic AI"
+```
+
+RetrieverAgent, upon which the s3-agent is instantiated, uses a default loader that reads files from disk. We can override this default by specifying the built-in S3Loader instead.
+
 ```yaml
   document_manager:
     loader:
       implementation: S3Loader
       bucket: agentic-papers
       region_name: us-east-2
-      aws_access_key_id: ####
-      aws_secret_access_key: ####
 ```
+| Note: See the description for the [RetrieverAgent](/docs/components/agent/retrieveragent) regarding volume processing. To process a large body of data, you will want to set up an ingestion pipeline.
 
 ## Try it out!
 
-First clone Eidolon's chatbot repository and then start your server.
+1. First clone Eidolon's chatbot repository.
+
 ```bash
 git clone https://github.com/eidolon-ai/eidolon-s3-rag.git
 cd eidolon-s3-rag
-make docker-serve  # launches agent server and webui
 ```
 
-🚨make sure you set your tokens
+2. Use a text editor to add your LLM API key and AWS keys to a plain-text `.env` file, e.g.:
 
-Now you can interact with the Repo Expert via the Eidolon UI or the CLI.
+```text
+OPENAI_API_KEY=your_openai_key
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_access_key
+```
+3. Change the `bucket` and `region_name`
 
+```yaml title=s3_search.eidolon.yaml
+    loader:
+      implementation: S3Loader
+      bucket: agentic-papers # change to a bucket you can access with your AWS keys
+      region_name: us-east-2 # change to the region that hosts the s3 bucket
+```
 
+4. Start your server.
+```bash
+make docker-serve  # or sudo make docker serve; launches agent server and webui
+```
 
-Now Head over to the [dev tool ui](http://localhost:3000/eidolon-apps/dev-tool) in your favorite browser and start chatting with your new agent.
+5. Use the online [dev tool ui](http://localhost:3000/) in your browser. As you converse with the chatbot, it can retrieve information from the S3 buckets before responding back to you.
