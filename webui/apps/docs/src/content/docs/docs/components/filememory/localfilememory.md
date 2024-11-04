@@ -7,7 +7,7 @@ description: Description of the LocalFileMemory component
 running. This means building the files onto the runtime image, or mounting a volume to the container.
 
 [Build the files into the runtime image](https://docs.docker.com/reference/dockerfile/#copy)
-[Docker bind mounts](https://docs.docker.com/engine/storage/bind-mounts/)
+[Docker volume](https://docs.docker.com/engine/storage/volumes/#use-a-volume-with-docker-compose)
 [Kubernetes volumes](https://kubernetes.io/docs/concepts/storage/volumes/)
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
