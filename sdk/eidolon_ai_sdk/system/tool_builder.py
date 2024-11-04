@@ -143,7 +143,7 @@ class ToolUnit(BaseModel):
                         description=return_value(tool.description or tool.fn.__doc__ or f"Execute function {tool.name}"),
                         input_model_fn=return_value(tool.input_schema or _model_from_sig(tool_fn)),
                         output_model_fn=_output_model_fn,
-                        fn=tool_fn,
+                        fn=lambda self, **kwargs: tool_fn(**kwargs),
                         extra=dict(title=tool.name),
                     )
                 )

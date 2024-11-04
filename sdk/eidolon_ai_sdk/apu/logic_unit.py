@@ -48,10 +48,8 @@ class LLMToolWrapper:
                 kwargs = copy.deepcopy(tool_call.arguments)
             else:
                 raise ValueError("input_model must be a BaseModel or a dict")
-            # check if fn takes self as first argument
-            if "self" in inspect.signature(self.eidolon_handler.fn).parameters:
-                kwargs["self"] = self.logic_unit
-            result = self.eidolon_handler.fn(**kwargs)
+            # passing in self is workaround for legacy logic units.
+            result = self.eidolon_handler.fn(self.logic_unit, **kwargs)
             if isinstance(result, Coroutine):
                 result = await result
 
