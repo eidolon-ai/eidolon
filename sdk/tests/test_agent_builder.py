@@ -15,31 +15,31 @@ def r(impl, **kwargs):
     )
 
 
-class basic_agentBuilderBase(AgentBuilderBase):
+class BasicAgent(AgentBuilderBase):
     foo: str
 
 
-@basic_agentBuilderBase.action()
-async def ba_action(spec: basic_agentBuilderBase):
+@BasicAgent.action()
+async def ba_action(spec: BasicAgent):
     return spec.foo
 
 
-class dynamic_agentBuilderBase(AgentBuilderBase):
+class DynamicAgent(AgentBuilderBase):
     foo: str
 
 
-@dynamic_agentBuilderBase.dynamic_contract
-def da_contract(spec: dynamic_agentBuilderBase):
-    @dynamic_agentBuilderBase.action()
+@DynamicAgent.dynamic_contract
+def da_contract(spec: DynamicAgent):
+    @DynamicAgent.action()
     async def da_action():
         return spec.foo
 
 
-class yielding_agentBuilderBase(AgentBuilderBase):
+class YieldingAgent(AgentBuilderBase):
     pass
 
 
-@yielding_agentBuilderBase.action()
+@YieldingAgent.action()
 async def ya_action():
     yield StringOutputEvent(content="b")
     yield StringOutputEvent(content="a")
@@ -57,18 +57,18 @@ async def server(run_app):
 
 
 async def test_action():
-    process = await client.Agent.get("basic_agent").create_process()
+    process = await client.Agent.get(BasicAgent.__name__).create_process()
     resp = await process.action("ba_action")
     assert resp.data == "bar"
 
 
 async def test_dynamic_contract():
-    process = await client.Agent.get("dynamic_agent").create_process()
+    process = await client.Agent.get(DynamicAgent.__name__).create_process()
     resp = await process.action("da_action")
     assert resp.data == "bar"
 
 
 async def test_yielding_agent():
-    process = await client.Agent.get("yielding_agent").create_process()
+    process = await client.Agent.get(YieldingAgent.__name__).create_process()
     resp = await process.action("ya_action")
     assert resp.data == "bar"

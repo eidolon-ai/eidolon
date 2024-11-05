@@ -33,7 +33,7 @@ from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTr
 from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import ResultSummarizer
 from eidolon_ai_sdk.agent.retriever_agent.retriever import Retriever
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
-from eidolon_ai_sdk.agent.simple_agent import SimpleAgentBuilderBase
+from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent.sql_agent.agent import SqlAgent
 from eidolon_ai_sdk.agent.sql_agent.client import SqlClient, SqlAlchemy
 from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
@@ -139,8 +139,8 @@ def named_builtins() -> List[ReferenceResource]:
         NoopFunctionalAuth,
         GlobPatternFunctionalAuthorizer,
         # agents
-        ("Agent", SimpleAgentBuilderBase),
-        SimpleAgentBuilderBase,
+        ("Agent", SimpleAgent),
+        SimpleAgent,
         TreeOfThoughtsAgent,
         RetrieverAgent,
         AutonomousSpeechAgent,

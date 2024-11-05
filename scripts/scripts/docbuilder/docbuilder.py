@@ -14,7 +14,7 @@ from pydantic import BaseModel
 from eidolon_ai_sdk.agent.api_agent import APIAgent
 from eidolon_ai_sdk.agent.audio_agent import AutonomousSpeechAgent
 from eidolon_ai_sdk.agent.retriever_agent.retriever_agent import RetrieverAgent
-from eidolon_ai_sdk.agent.simple_agent import SimpleAgentBuilderBase
+from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.agent.sql_agent.agent import SqlAgent
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.resources.machine_resource import MachineResource
@@ -45,7 +45,7 @@ def main():
 
 
 class AgentBuilder(BaseModel):
-    documented_agents: Reference["Agent", "SimpleAgentBuilderBase", SimpleAgentBuilderBase | RetrieverAgent | APIAgent | SqlAgent | AutonomousSpeechAgent]
+    documented_agents: Reference["Agent", "SimpleAgent", SimpleAgent | RetrieverAgent | APIAgent | SqlAgent | AutonomousSpeechAgent]
 
 
 def generate_schema():
