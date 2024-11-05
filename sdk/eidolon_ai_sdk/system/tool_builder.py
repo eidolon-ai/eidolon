@@ -11,24 +11,24 @@ from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.util.partial import partial, return_value
 
-_ToolUnitState = namedtuple("_ToolUnitState", ["dynamic_contracts", "tools"])
+_ToolBuilderState = namedtuple("_ToolBuilderState", ["dynamic_contracts", "tools"])
 _ToolDefinition = namedtuple("_ToolDefinition", ["name", "description", "input_schema", "fn"])
 
 
-T = TypeVar("T", bound="ToolUnit")
+T = TypeVar("T", bound="ToolBuilder")
 
 
 class ToolBuilder(BaseModel):
     @classmethod
     def dynamic_contract(cls: Type[T], fn: Callable[[T, CallContext], Awaitable[None] | None]):
         """
-        A decorator to dynamically build a ToolUnit.
+        A decorator to dynamically build a ToolBuilder.
         Decorated function may be synchronous or asynchronous.
 
         ```python
-        @MyToolUnit.dynamic_contract
-        def fn(spec: MyToolUnit, call_context: CallContext):
-            @MyToolUnit.tool(description = spec.description)
+        @MyToolBuilder.dynamic_contract
+        def fn(spec: MyToolBuilder, call_context: CallContext):
+            @MyToolBuilder.tool(description = spec.description)
             async def add(a: int, b: int):
                 return a + b
         ```
@@ -87,9 +87,9 @@ class ToolBuilder(BaseModel):
         pass
 
     @classmethod
-    def _state(cls) -> _ToolUnitState:
+    def _state(cls) -> _ToolBuilderState:
         if not hasattr(cls, "_state_attr"):
-            setattr(cls, "_state_attr", _ToolUnitState(
+            setattr(cls, "_state_attr", _ToolBuilderState(
                 dynamic_contracts=[],
                 tools=([], []),
             ))
