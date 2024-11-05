@@ -183,8 +183,8 @@ export default defineConfig({
                     "link": "/docs/components/agent/retrieveragent"
                   },
                   {
-                    "label": "SimpleAgentBuilderBase",
-                    "link": "/docs/components/agent/simpleagentbuilderbase"
+                    "label": "SimpleAgent",
+                    "link": "/docs/components/agent/simpleagent"
                   },
                   {
                     "label": "SqlAgent",

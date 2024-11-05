@@ -2,7 +2,7 @@
   "description": "agent is designed to be a flexible, modular component that can interact with various processing units and perform a\nrange of actions based on its configuration.",
   "properties": {
     "implementation": {
-      "const": "SimpleAgentBuilderBase",
+      "const": "SimpleAgent",
       "title": "Implementation"
     },
     "description": {
@@ -79,15 +79,15 @@
     }
   },
   "reference_details": {
-    "clz": "eidolon_ai_sdk.agent.simple_agent.SimpleAgentBuilderBase",
+    "clz": "eidolon_ai_sdk.agent.simple_agent.SimpleAgent",
     "group": "Agent",
-    "name": "SimpleAgentBuilderBase",
+    "name": "SimpleAgent",
     "overrides": {}
   },
   "required": [
     "implementation"
   ],
-  "title": "SimpleAgentBuilderBase",
+  "title": "SimpleAgent",
   "type": "object",
   "$defs": {
     "ActionDefinition": {
