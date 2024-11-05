@@ -1,17 +1,20 @@
+from typing import Type
+
 import pytest
 
 from eidolon_ai_client import client
 from eidolon_ai_client.events import StringOutputEvent
 from eidolon_ai_sdk.system.agent_builder import AgentBuilderBase
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
+from eidolon_ai_sdk.util.class_utils import fqn
 
 
-def r(impl, **kwargs):
+def r(impl: Type[AgentBuilderBase], **kwargs):
     return Resource(
         apiVersion="eidolon/v1",
         kind="Agent",
-        metadata=Metadata(name=impl),
-        spec=dict(implementation=__name__ + "." + impl, **kwargs),
+        metadata=Metadata(name=impl.__name__),
+        spec=dict(implementation=fqn(impl), **kwargs),
     )
 
 
@@ -49,9 +52,9 @@ async def ya_action():
 @pytest.fixture(scope="module", autouse=True)
 async def server(run_app):
     async with run_app(
-            r("basic_agent", foo="bar"),
-            r("dynamic_agent", foo="bar"),
-            r("yielding_agent"),
+            r(BasicAgent, foo="bar"),
+            r(DynamicAgent, foo="bar"),
+            r(YieldingAgent),
     ) as ra:
         yield ra
 
