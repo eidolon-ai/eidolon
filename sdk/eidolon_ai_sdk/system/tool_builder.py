@@ -18,7 +18,7 @@ _ToolDefinition = namedtuple("_ToolDefinition", ["name", "description", "input_s
 T = TypeVar("T", bound="ToolUnit")
 
 
-class ToolUnit(BaseModel):
+class ToolBuilder(BaseModel):
     @classmethod
     def dynamic_contract(cls: Type[T], fn: Callable[[T, CallContext], Awaitable[None] | None]):
         """

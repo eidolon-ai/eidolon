@@ -2,7 +2,7 @@ import pytest
 
 from eidolon_ai_client import client
 from eidolon_ai_client.events import StringOutputEvent
-from eidolon_ai_sdk.system.agent_builder import Agent
+from eidolon_ai_sdk.system.agent_builder import AgentBuilderBase
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 
 
@@ -15,31 +15,31 @@ def r(impl, **kwargs):
     )
 
 
-class basic_agent(Agent):
+class basic_agentBuilderBase(AgentBuilderBase):
     foo: str
 
 
-@basic_agent.action()
-async def ba_action(spec: basic_agent):
+@basic_agentBuilderBase.action()
+async def ba_action(spec: basic_agentBuilderBase):
     return spec.foo
 
 
-class dynamic_agent(Agent):
+class dynamic_agentBuilderBase(AgentBuilderBase):
     foo: str
 
 
-@dynamic_agent.dynamic_contract
-def da_contract(spec: dynamic_agent):
-    @dynamic_agent.action()
+@dynamic_agentBuilderBase.dynamic_contract
+def da_contract(spec: dynamic_agentBuilderBase):
+    @dynamic_agentBuilderBase.action()
     async def da_action():
         return spec.foo
 
 
-class yielding_agent(Agent):
+class yielding_agentBuilderBase(AgentBuilderBase):
     pass
 
 
-@yielding_agent.action()
+@yielding_agentBuilderBase.action()
 async def ya_action():
     yield StringOutputEvent(content="b")
     yield StringOutputEvent(content="a")

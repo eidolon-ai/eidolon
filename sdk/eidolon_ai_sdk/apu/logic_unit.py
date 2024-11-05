@@ -24,7 +24,7 @@ from eidolon_ai_client.events import (
 )
 from eidolon_ai_sdk.system.fn_handler import register_handler, FnHandler, get_handlers
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_sdk.system.tool_builder import ToolUnit
+from eidolon_ai_sdk.system.tool_builder import ToolBuilder
 
 
 @dataclass
@@ -125,7 +125,7 @@ def llm_function(
 
 class LogicUnitMeta(ABCMeta):
     def __subclasscheck__(cls, subclass):
-        if issubclass(subclass, ToolUnit):
+        if issubclass(subclass, ToolBuilder):
             return True
         return super().__subclasscheck__(subclass)
 

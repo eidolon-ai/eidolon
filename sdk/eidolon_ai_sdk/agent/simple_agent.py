@@ -16,7 +16,7 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.apu.agent_io import SystemAPUMessage, UserTextAPUMessage, AttachedFileMessage, FileHandleWithInclude
 from eidolon_ai_sdk.apu.agents_logic_unit import AgentsLogicUnitSpec, AgentsLogicUnit
 from eidolon_ai_sdk.apu.apu import APU
-from eidolon_ai_sdk.system.agent_builder import Agent
+from eidolon_ai_sdk.system.agent_builder import AgentBuilderBase
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.reference_model import AnnotatedReference
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
@@ -83,7 +83,7 @@ class NamedAPU(BaseModel):
     default: bool = False
 
 
-class SimpleAgent(Agent):
+class SimpleAgentBuilderBase(AgentBuilderBase):
     """
     agent is designed to be a flexible, modular component that can interact with various processing units and perform a
     range of actions based on its configuration.
@@ -137,8 +137,8 @@ generate_title_message = (
 )
 
 
-@SimpleAgent.dynamic_contract
-def fn(spec: SimpleAgent, metadata: Metadata):
+@SimpleAgentBuilderBase.dynamic_contract
+def fn(spec: SimpleAgentBuilderBase, metadata: Metadata):
     apus: Dict[str, APU] = {}
     for apu_spec in spec.apus or [NamedAPU(apu=spec.apu, default=True)]:
         apu = apu_spec.apu.instantiate()
@@ -148,7 +148,7 @@ def fn(spec: SimpleAgent, metadata: Metadata):
     default_apu: APU = apus[(list(filter(lambda apu: apu.default, spec.apus)) or [NamedAPU(apu=spec.apu, default=True)])[0].title]
 
     if spec.title_generation_mode == "on_request":
-        @SimpleAgent.action(description="Generate a title for the conversation", allowed_states=["initialized", "idle"])
+        @SimpleAgentBuilderBase.action(description="Generate a title for the conversation", allowed_states=["initialized", "idle"])
         async def generate_title(process_id: str):
             last_state = RequestContext.get("__last_state__")
             title_message = UserTextAPUMessage(prompt=generate_title_message)
@@ -172,7 +172,7 @@ def fn(spec: SimpleAgent, metadata: Metadata):
             raise ValueError(f"Invalid output_schema for action '{action.name}'") from e
         input_schema = _make_input_schema(spec, action, metadata)
 
-        @SimpleAgent.action(action.name, action.title, action.sub_title, action.description, action.allowed_states, input_schema, output_schema, custom_user_input_event=True)
+        @SimpleAgentBuilderBase.action(action.name, action.title, action.sub_title, action.description, action.allowed_states, input_schema, output_schema, custom_user_input_event=True)
         async def action_fn(process_id, action=action, **kwargs):
             execute_on_apu = None
             request_body = to_jsonable_python(kwargs.get("body") or {})
@@ -245,7 +245,7 @@ def _register_refs_logic_unit(apu, agent_refs):
         )
 
 
-def _make_input_schema(spec: SimpleAgent, action: ActionDefinition, metadata: Metadata):
+def _make_input_schema(spec: SimpleAgentBuilderBase, action: ActionDefinition, metadata: Metadata):
     properties: Dict[str, Any] = {}
     required = []
     user_vars = meta.find_undeclared_variables(Environment().parse(action.user_prompt))
