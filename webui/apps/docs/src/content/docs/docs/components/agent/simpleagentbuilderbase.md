@@ -1,6 +1,6 @@
 ---
-title: SimpleAgent
-description: Description of the SimpleAgent component
+title: SimpleAgentBuilderBase
+description: Description of the SimpleAgentBuilderBase component
 ---
 
 **Description:** agent is designed to be a flexible, modular component that can interact with various processing units and perform a
@@ -26,7 +26,7 @@ range of actions based on its configuration.
 | **Type**     | `const` |
 | **Required** | Yes     |
 
-Specific value: `"SimpleAgent"`
+Specific value: `"SimpleAgentBuilderBase"`
 
 ## <a name="description"></a>2. Property `description`
 

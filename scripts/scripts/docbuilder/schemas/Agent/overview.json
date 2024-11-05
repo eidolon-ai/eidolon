@@ -7,7 +7,7 @@
       "$ref": "../Agent/RetrieverAgent.json"
     },
     {
-      "$ref": "../Agent/SimpleAgent.json"
+      "$ref": "../Agent/SimpleAgentBuilderBase.json"
     },
     {
       "$ref": "../Agent/SqlAgent.json"
@@ -17,7 +17,7 @@
     }
   ],
   "reference_pointer": {
-    "default_impl": "SimpleAgent",
+    "default_impl": "SimpleAgentBuilderBase",
     "type": "Agent"
   },
   "title": "Agent"
