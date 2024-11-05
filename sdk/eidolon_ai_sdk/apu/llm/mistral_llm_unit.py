@@ -160,9 +160,12 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
                 )
 
                 for tool_call in message.tool_calls or []:
-                    tools_to_call.append(
-                        dict(id=tool_call.id, name=tool_call.function.name, arguments=tool_call.function.arguments)
-                    )
+                    if tool_call.function.name == "RespondDirectly":
+                        complete_message += json.dumps(json.loads(tool_call.function.arguments)["response"])
+                    else:
+                        tools_to_call.append(
+                            dict(id=tool_call.id, name=tool_call.function.name, arguments=tool_call.function.arguments)
+                        )
 
                 if message.content:
                     if can_stream_message:
@@ -173,7 +176,7 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
                     else:
                         complete_message += message.content
 
-            logger.info(f"open ai llm tool calls: {json.dumps(tools_to_call)}", extra=dict(tool_calls=tools_to_call))
+            logger.info(f"mistral ai llm tool calls: {json.dumps(tools_to_call)}", extra=dict(tool_calls=tools_to_call))
             if len(tools_to_call) > 0:
                 for tool in tools_to_call:
                     tool_call = _convert_tool_call(tool)
@@ -227,6 +230,13 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
         }
         if output_format == "str" or output_format["type"] == "string":
             is_string = True
+        elif tools:
+            is_string = False
+            tools.append(dict(type="function", function=Function(
+                name="RespondDirectly",
+                description="respond directly to the user without calling any other tools",
+                parameters=dict(type="object", properties=dict(response=output_format))
+            ).model_dump()))
         else:
             is_string = False
             force_json_msg = (
