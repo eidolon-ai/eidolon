@@ -31,8 +31,20 @@ def tool_build(spec: Toolhouse):
     tools = th.get_tools()
     breakpoint()
 
+    for tool in tools:
+        ## Register tool?
+
+
     ## Loop through tools (prob array of tools) Register it on toolhouse class @Toolhouse.tool (name, desc, json), function that i register, is supposed to run the tool w/ proper arguments 
     ## Get pytest running and debugger 
+
+    ## To do on or before 11/1 
+    ## Loop through tools, array, and register each tool on toolhouse class
+    ## @Toolhouse.tool (name, desc, json), the function I register 
+    ## Is supposed to run the tool w/ proper arguments. 
+    ## So ... Get each tool, register it, and run it? What to do with response?
+    ## Note: Check tool_builder and test_tool_builder for reference.
+    ## Get pytest running and debugger --> Check out docs and Luke's code for this
 
    
 
