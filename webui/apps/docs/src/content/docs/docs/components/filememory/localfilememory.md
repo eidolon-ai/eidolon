@@ -6,8 +6,8 @@ description: Description of the LocalFileMemory component
 **Description:** Retrieve documents from a local file system. Note that this is the file system where the Eidolon application is
 running. This means building the files onto the runtime image, or mounting a volume to the container.
 
-[Build the files into the runtime image](https://docs.docker.com/reference/dockerfile/#copy)
 [Docker volume](https://docs.docker.com/engine/storage/volumes/#use-a-volume-with-docker-compose)
+[Build the files into the runtime image](https://docs.docker.com/reference/dockerfile/#copy)
 [Kubernetes volumes](https://kubernetes.io/docs/concepts/storage/volumes/)
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
