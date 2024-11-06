@@ -1,6 +1,8 @@
 import importlib
 from typing import Type
 
+from eidolon_ai_client.util.logger import logger
+
 
 def for_name(implementation_fqn: str, sub_class: Type = object) -> Type:
     """
@@ -43,8 +45,9 @@ def get_from_fqn(implementation_fqn: str):
     try:
         module = importlib.import_module(module_name)
         return getattr(module, class_name)
-    except (ImportError, AttributeError) as e:
-        raise ValueError(f"Unable to import {implementation_fqn}") from e
+    except (ImportError, AttributeError):
+        logger.exception(f"Unable to import {implementation_fqn}")
+        raise ValueError(f"Unable to import {implementation_fqn}")
 
 
 def fqn(clazz=Type) -> str:

@@ -240,10 +240,11 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         logic_unit_wrapper = ["NaN"]
 
         if tc.name not in tool_defs:
+            logger.warning("Invalid tool call " + tc.name)
             message = self.llm_unit.create_tool_response_message(
                 logic_unit_name=logic_unit_wrapper[0],
                 tc=tc,
-                content=f"Invalid tool call {tc.name}. Check the name and try again.",
+                content=f"Error: {tc.name} is not a valid tool as this time.",
             )
         else:
             tool_def = tool_defs[tc.name]

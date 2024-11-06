@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import copy
-import inspect
 import logging
 import typing
 from abc import ABC, ABCMeta
@@ -25,7 +24,7 @@ from eidolon_ai_client.events import (
 )
 from eidolon_ai_sdk.system.fn_handler import register_handler, FnHandler, get_handlers
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_sdk.system.tool_builder import ToolUnit
+from eidolon_ai_sdk.system.tool_builder import ToolBuilder
 
 
 @dataclass
@@ -48,10 +47,8 @@ class LLMToolWrapper:
                 kwargs = copy.deepcopy(tool_call.arguments)
             else:
                 raise ValueError("input_model must be a BaseModel or a dict")
-            # check if fn takes self as first argument
-            if "self" in inspect.signature(self.eidolon_handler.fn).parameters:
-                kwargs["self"] = self.logic_unit
-            result = self.eidolon_handler.fn(**kwargs)
+            # passing in self is workaround for legacy logic units.
+            result = self.eidolon_handler.fn(self.logic_unit, **kwargs)
             if isinstance(result, Coroutine):
                 result = await result
 
@@ -128,7 +125,7 @@ def llm_function(
 
 class LogicUnitMeta(ABCMeta):
     def __subclasscheck__(cls, subclass):
-        if issubclass(subclass, ToolUnit):
+        if issubclass(subclass, ToolBuilder):
             return True
         return super().__subclasscheck__(subclass)
 

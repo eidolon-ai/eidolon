@@ -37,7 +37,7 @@ from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.agent_os_interfaces import SecurityManager
 from eidolon_ai_sdk.apu.agent_call_history import AgentCallHistory
-from eidolon_ai_sdk.system.agent_builder import Agent
+from eidolon_ai_sdk.system.agent_builder import AgentBuilderBase
 from eidolon_ai_sdk.system.agent_contract import (
     SyncStateResponse,
     StateSummary,
@@ -68,7 +68,7 @@ class AgentController:
         if hasattr(self.agent, "start"):
             await self.agent.start()
 
-        handlers = await self.agent.get_handlers() if isinstance(self.agent, Agent) else get_handlers(self.agent)
+        handlers = await self.agent.get_handlers() if isinstance(self.agent, AgentBuilderBase) else get_handlers(self.agent)
         for handler in handlers:
             if handler.name in self.actions:
                 self.actions[handler.name].extra["allowed_states"] = (
@@ -275,7 +275,7 @@ class AgentController:
         is_async_gen = inspect.isasyncgenfunction(handler.fn)
         if not is_async_gen:
             stream = self.stream_agent_fn(handler, **kwargs)
-        elif isinstance(self.agent, Agent):
+        elif isinstance(self.agent, AgentBuilderBase):
             stream = handler.fn(**kwargs)
         else:
             stream = handler.fn(self.agent, **kwargs)
@@ -389,7 +389,7 @@ class AgentController:
                 yield ErrorEvent(reason=str(e), details=dict(status_code=500))
 
     async def stream_agent_fn(self, handler, **kwargs) -> AsyncIterator[StreamEvent]:
-        if isinstance(self.agent, Agent):
+        if isinstance(self.agent, AgentBuilderBase):
             response = await handler.fn(**kwargs)
         else:
             response = await handler.fn(self.agent, **kwargs)

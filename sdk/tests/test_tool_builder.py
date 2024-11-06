@@ -5,11 +5,11 @@ from pydantic import BaseModel
 
 from eidolon_ai_client import client
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
-from eidolon_ai_sdk.system.tool_builder import ToolUnit
+from eidolon_ai_sdk.system.tool_builder import ToolBuilder
 from eidolon_ai_sdk.util.class_utils import fqn
 
 
-def r(tool: ToolUnit, agent_name: str = None):
+def r(tool: ToolBuilder, agent_name: str = None):
     return Resource(
         apiVersion="eidolon/v1",
         kind="Agent",
@@ -21,7 +21,7 @@ def r(tool: ToolUnit, agent_name: str = None):
     )
 
 
-class BasicTool(ToolUnit):
+class BasicTool(ToolBuilder):
     foo: str
 
 
@@ -30,7 +30,7 @@ def get_magic_word(spec: BasicTool):
     return spec.foo
 
 
-class DynamicTool(ToolUnit):
+class DynamicTool(ToolBuilder):
     tools: List[str]
 
 
@@ -42,7 +42,7 @@ def fn(spec: DynamicTool):
             return tool
 
 
-class CustomDescription(ToolUnit):
+class CustomDescription(ToolBuilder):
     pass
 
 
@@ -51,7 +51,7 @@ def cd_fn():
     return "foo", "bar", "baz"
 
 
-class SimpleSigTool(ToolUnit):
+class SimpleSigTool(ToolBuilder):
     pass
 
 
@@ -61,7 +61,7 @@ def add(a: int, b: int):
     return a + b
 
 
-class PydanticSigTool(ToolUnit):
+class PydanticSigTool(ToolBuilder):
     pass
 
 

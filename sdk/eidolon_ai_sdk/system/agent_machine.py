@@ -12,7 +12,7 @@ from eidolon_ai_client.events import FileHandle
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, SimilarityMemory, SecurityManager
 from eidolon_ai_sdk.memory.agent_memory import AgentMemory
-from .agent_builder import Agent
+from .agent_builder import AgentBuilderBase
 from .agent_contract import StateSummary, CreateProcessArgs, DeleteProcessResponse, ListProcessesResponse
 from .agent_controller import AgentController
 from .kernel import AgentOSKernel
@@ -67,8 +67,8 @@ class AgentMachine(Specable[MachineSpec]):
                 try:
                     agents[name] = r.spec.instantiate()
                     agents[name] = r.spec.instantiate()
-                    if isinstance(agents[name], Agent):
-                        cast(Agent, agents[name]).set_metadata(r.metadata)
+                    if isinstance(agents[name], AgentBuilderBase):
+                        cast(AgentBuilderBase, agents[name]).set_metadata(r.metadata)
 
                 except Exception as e:
                     _, _, tb = sys.exc_info()
