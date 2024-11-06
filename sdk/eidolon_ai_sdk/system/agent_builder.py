@@ -25,7 +25,7 @@ _ActionState = namedtuple("_ActionState", ["name", "title", "sub_title", "descri
 _AgentState = namedtuple("_AgentState", ["dynamic_contracts", "actions"])
 
 
-class Agent(BaseModel):
+class AgentBuilderBase(BaseModel):
     _metadata: Metadata = None
     _handlers: List[FnHandler] = None
 
@@ -104,7 +104,7 @@ class Agent(BaseModel):
         pass
 
     @classmethod
-    def delete_process(cls, process_id: str) -> None:
+    async def delete_process(cls, process_id: str) -> None:
         """
         A function to be called when a process is deleted.
         """
@@ -188,7 +188,7 @@ class Agent(BaseModel):
         return self._handlers
 
 
-class ApuPoweredAgent(Agent):
+class AgentBuilder(AgentBuilderBase):
     apu: AnnotatedReference[APU]
     references: List[Dict[Literal["agent"], str] | Dict[Literal["tool"], Reference[LogicUnit]]] = Field(
         default_factory=list,

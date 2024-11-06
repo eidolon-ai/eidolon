@@ -219,4 +219,4 @@ async def test_wrap_exe_call_yields_empty_string_event_if_no_tools():
 async def test_end_to_end():
     process = await Agent.get("simple").create_process()
     resp = await process.action("converse", body=dict(body="what is the meaning of life?"))
-    print(resp)
+    assert "42" in str(resp)
