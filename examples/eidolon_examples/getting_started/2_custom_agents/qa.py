@@ -3,9 +3,10 @@ from typing import Annotated, Literal, List
 from fastapi import Body, HTTPException
 from pydantic import BaseModel
 
-from eidolon_ai_sdk.agent.agent import register_program, Agent, AgentSpec
+from eidolon_ai_sdk.agent.agent import register_program
+from eidolon_ai_sdk.agent.deprecated import Agent, AgentSpec
 from eidolon_ai_sdk.apu.agent_io import SystemAPUMessage, UserTextAPUMessage
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_client.util.logger import logger
 
 

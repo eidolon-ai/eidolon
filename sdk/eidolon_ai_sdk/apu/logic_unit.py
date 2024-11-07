@@ -3,10 +3,11 @@ from __future__ import annotations
 import copy
 import logging
 import typing
-from abc import ABC
+from abc import ABC, ABCMeta
 from dataclasses import dataclass
 
 import jsonref
+from jsonschema.validators import validate
 from pydantic import BaseModel, TypeAdapter
 from typing import Dict, List, AsyncIterator, Coroutine
 
@@ -23,6 +24,7 @@ from eidolon_ai_client.events import (
 )
 from eidolon_ai_sdk.system.fn_handler import register_handler, FnHandler, get_handlers
 from eidolon_ai_client.util.logger import logger
+from eidolon_ai_sdk.system.tool_builder import ToolBuilder
 
 
 @dataclass
@@ -38,7 +40,15 @@ class LLMToolWrapper:
         try:
             # if this is a sync tool call just call execute, if it is not we need to store the state of the conversation and call in memory
             input_model = self.eidolon_handler.input_model_fn(self.logic_unit, self.eidolon_handler)
-            result = self.eidolon_handler.fn(self.logic_unit, **dict(input_model.model_validate(tool_call.arguments)))
+            if isinstance(input_model, type) and issubclass(input_model, BaseModel):
+                kwargs = dict(input_model.model_validate(tool_call.arguments))
+            elif isinstance(input_model, dict):
+                validate(tool_call.arguments, input_model)
+                kwargs = copy.deepcopy(tool_call.arguments)
+            else:
+                raise ValueError("input_model must be a BaseModel or a dict")
+            # passing in self is workaround for legacy logic units.
+            result = self.eidolon_handler.fn(self.logic_unit, **kwargs)
             if isinstance(result, Coroutine):
                 result = await result
 
@@ -46,8 +56,7 @@ class LLMToolWrapper:
                 async for event in result:
                     yield event
             else:
-                ret_type = self.eidolon_handler.output_model_fn(self.logic_unit, self.eidolon_handler)
-                model = TypeAdapter(ret_type)
+                model = TypeAdapter(type(result))
                 result = model.dump_python(result)
                 if isinstance(result, str):
                     yield StringOutputEvent(content=result)
@@ -71,12 +80,18 @@ class LLMToolWrapper:
                     new_name = logic_unit.__class__.__name__ + "_" + handler.name + "_" + str(i)
                     i += 1
                 input_model = handler.input_model_fn(logic_unit, handler)
-                schema = copy.deepcopy(
-                    jsonref.replace_refs(
-                        input_model.model_json_schema(),
-                        jsonschema=True,
+                if isinstance(input_model, type) and issubclass(input_model, BaseModel):
+                    schema = copy.deepcopy(
+                        jsonref.replace_refs(
+                            input_model.model_json_schema(),
+                            jsonschema=True,
+                        )
                     )
-                )
+                    del schema['title']
+                elif isinstance(input_model, dict):
+                    schema = input_model
+                else:
+                    raise ValueError("input_model must be a BaseModel or a dict", input_model)
                 acc[new_name] = LLMToolWrapper(
                     logic_unit=logic_unit,
                     llm_message=LLMCallFunction(
@@ -108,7 +123,14 @@ def llm_function(
     )
 
 
-class LogicUnit(ProcessingUnit, ABC):
+class LogicUnitMeta(ABCMeta):
+    def __subclasscheck__(cls, subclass):
+        if issubclass(subclass, ToolBuilder):
+            return True
+        return super().__subclasscheck__(subclass)
+
+
+class LogicUnit(ProcessingUnit, ABC, metaclass=LogicUnitMeta):
     async def build_tools(self, call_context: CallContext) -> List[FnHandler]:
         handlers = get_handlers(self)
         for handler in handlers:

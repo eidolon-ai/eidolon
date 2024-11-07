@@ -13,8 +13,7 @@ from eidolon_ai_client.events import StringOutputEvent, StartStreamContextEvent,
     EndStreamContextEvent, AgentStateEvent
 from eidolon_ai_sdk.agent.agent import register_action
 from eidolon_ai_sdk.system.processes import MongoDoc
-from eidolon_ai_sdk.system.reference_model import Specable
-
+from eidolon_ai_sdk.system.specable import Specable
 
 os.environ.setdefault("VECTARA_API_KEY", "test")
 

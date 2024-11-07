@@ -6,7 +6,7 @@ from jose import jwt
 from pydantic import BaseModel, Field
 
 from eidolon_ai_sdk.security.jwt_processor import BaseJWTProcessor
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class AzureJWTProcessorSpec(BaseModel):

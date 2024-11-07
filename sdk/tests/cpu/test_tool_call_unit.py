@@ -11,7 +11,6 @@ from eidolon_ai_client.events import (
     UserInputEvent,
     StringOutputEvent,
 )
-from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText, LLMMessage
 from eidolon_ai_sdk.apu.llm_unit import LLMCallFunction, LLMUnit
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit, llm_function
@@ -74,7 +73,7 @@ class MeaningOfLife(LogicUnit):
 
 def r(name, **kwargs):
     spec = dict(
-        implementation=SimpleAgent.__name__,
+        implementation="SimpleAgent",
         **kwargs,
         apu=dict(
             implementation="APU",
@@ -220,4 +219,4 @@ async def test_wrap_exe_call_yields_empty_string_event_if_no_tools():
 async def test_end_to_end():
     process = await Agent.get("simple").create_process()
     resp = await process.action("converse", body=dict(body="what is the meaning of life?"))
-    print(resp)
+    assert "42" in str(resp)

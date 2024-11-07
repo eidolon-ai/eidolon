@@ -6,7 +6,7 @@ from eidolon_ai_client.events import StringOutputEvent
 from eidolon_ai_sdk.agent.agent import register_program
 from eidolon_ai_sdk.builtins.logic_units.web_search import SearchSpec, do_google_search
 from eidolon_ai_sdk.system.processes import ProcessDoc
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class SearchParams(BaseModel):

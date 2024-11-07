@@ -12,7 +12,8 @@ from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.image_unit import ImageUnitSpec, ImageUnit, ImageCreationCapabilities
 from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import OpenAIConnectionHandler
-from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Specable
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.util.image_utils import scale_image
 
 logger = eidolon_logger.getChild("llm_unit")

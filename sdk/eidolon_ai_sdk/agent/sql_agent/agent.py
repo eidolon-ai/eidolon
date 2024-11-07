@@ -18,7 +18,8 @@ from eidolon_ai_sdk.agent.sql_agent.logic_unit import SqlLogicUnit
 from eidolon_ai_sdk.apu.agent_io import SystemAPUMessage, UserTextAPUMessage
 from eidolon_ai_sdk.apu.apu import APU
 from eidolon_ai_sdk.apu.processing_unit import ProcessingUnitLocator
-from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Specable
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.util.stream_collector import stream_manager
 
 

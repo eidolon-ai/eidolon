@@ -105,7 +105,7 @@ def _to_resource(maybe_tuple: type | Tuple[type | str, type]) -> ReferenceResour
         return ReferenceResource(
             apiVersion="eidolon/v1",
             metadata=Metadata(name=name),
-            spec=maybe_tuple[1].__name__,
+            spec=maybe_tuple[1] if isinstance(maybe_tuple[1], str) else fqn(maybe_tuple[1])
         )
     else:
         return ReferenceResource(

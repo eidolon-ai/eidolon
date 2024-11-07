@@ -6,7 +6,7 @@ from pydantic import Field
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformerSpec, QuestionTransformer
 from eidolon_ai_sdk.apu.agent_io import UserTextAPUMessage
 from eidolon_ai_sdk.apu.apu import APU
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class HydeQuestionTransformerSpec(QuestionTransformerSpec):

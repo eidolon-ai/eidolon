@@ -4,7 +4,7 @@ from openai import AsyncOpenAI
 from pydantic import Field, BaseModel
 
 from eidolon_ai_sdk.apu.audio_unit import AudioUnit
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class OpenAiSpeechSpec(BaseModel):

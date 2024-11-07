@@ -9,7 +9,6 @@ from pydantic import Field
 from eidolon_ai_client.client import Agent
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.agent import register_program
-from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.apu.logic_unit import llm_function, LogicUnit
 from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
@@ -41,7 +40,7 @@ class ComplexAgent:
         return "You shouldn't call this function"
 
 
-def r(name, impl=SimpleAgent.__name__, **kwargs):
+def r(name, impl="SimpleAgent", **kwargs):
     return Resource(
         apiVersion="eidolon/v1",
         kind="Agent",
@@ -58,7 +57,7 @@ resources = [
         "json_input",
         actions=[
             dict(
-                user_prompt="echo the following text: {{ one_int }}, {{ two_optional }}, {{ three_default }}",
+                user_prompt="format the following words as a json array: {{ one_int }}, {{ two_optional }}, {{ three_default }}",
                 input_schema=dict(
                     one_int=dict(type="integer"),
                     two_optional=dict(type="string", default="default"),
@@ -210,7 +209,7 @@ class TestSimpleTests:
     async def server(self, run_app, apu):
         res_copy = []
         for res in resources:
-            if res.spec["implementation"] == SimpleAgent.__name__:
+            if res.spec["implementation"] == "SimpleAgent":
                 copy = res.model_dump()
                 if "apu" in copy["spec"] and not isinstance(copy["spec"]["apu"], str):
                     copy["spec"]["apu"]["implementation"] = apu
@@ -240,15 +239,16 @@ class TestSimpleTests:
     async def test_json_input(self):
         process = await Agent.get("json_input").create_process()
         resp = await process.action("converse", body=dict(one_int=1, three_default="three"))
-        assert "1, default, three" in resp.data
+        assert "1" in resp.data
+        assert "default" in resp.data
+        assert "three" in resp.data
 
     async def test_json_output(self):
         process = await Agent.get("json_output").create_process()
         resp = await process.action("converse", body="What is the population of France?")
         assert "population" in resp.data
-        assert (isinstance(resp.data["population"], int) or isinstance(resp.data["population"], float)) and resp.data[
-            "population"
-        ] > 0
+        assert isinstance(resp.data["population"], int) or isinstance(resp.data["population"], float)
+        assert resp.data["population"] > 0
 
     async def test_states(self):
         process = await Agent.get("states").create_process()

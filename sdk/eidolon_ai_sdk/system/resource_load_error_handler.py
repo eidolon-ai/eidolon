@@ -26,11 +26,12 @@ def register_load_error(file_loc: str, e: Exception):
         raise e
 
 
-def register_instantiate_error(name: str, resourceKind: str, e: Exception):
-    logger.exception(f"Error instantiating resource {name} of kind {resourceKind}", e)
-    _add_load_error(name, f"Error instantiating resource {name} of kind {resourceKind}: {e}")
+def register_instantiate_error(name: str, resourceKind: str, e: Exception, traceback):
     if fail_on_agent_start_error:
-        raise e
+        raise e.with_traceback(traceback)
+    else:
+        logger.error(f"Error instantiating resource {name} of kind {resourceKind}", exc_info=(type(e), e, traceback))
+        _add_load_error(name, f"Error instantiating resource {name} of kind {resourceKind}: {e}")
 
 
 def register_agent_start_error(agentName: str, e: Exception):

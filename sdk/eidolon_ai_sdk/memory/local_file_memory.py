@@ -5,7 +5,7 @@ from pydantic import Field, field_validator, BaseModel
 
 from eidolon_ai_sdk.agent_os_interfaces import FileMetadata
 from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.util.async_wrapper import make_async
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.str_utils import replace_env_var_in_string

@@ -4,14 +4,13 @@ import pytest
 
 from eidolon_ai_client.client import Agent
 from eidolon_ai_client.events import FileHandle
-from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.apu.agent_io import FileHandleWithInclude
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 
 
 def r(name, **kwargs):
     spec = dict(
-        implementation=SimpleAgent.__name__,
+        implementation="SimpleAgent",
         **kwargs,
         apu=dict(implementation="APU", audio_unit="OpenAiSpeech", image_unit="OpenAIImageUnit"),
     )

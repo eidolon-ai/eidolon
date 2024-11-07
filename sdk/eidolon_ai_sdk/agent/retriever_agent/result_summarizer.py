@@ -3,7 +3,7 @@ from typing import AsyncIterable
 from pydantic import BaseModel
 
 from eidolon_ai_sdk.memory.document import Document
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class DocSummary(BaseModel):

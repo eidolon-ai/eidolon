@@ -11,7 +11,8 @@ from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser,
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.memory.document import Document
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.util.async_wrapper import make_async
 
 tracer = trace.get_tracer(__name__)

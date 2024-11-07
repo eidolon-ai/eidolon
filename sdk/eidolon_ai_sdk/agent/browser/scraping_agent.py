@@ -11,7 +11,7 @@ from pydantic import BaseModel
 
 from eidolon_ai_sdk.agent.agent import register_program
 from eidolon_ai_sdk.system.processes import ProcessDoc
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class WebScrapeResponse(BaseModel):

@@ -11,7 +11,8 @@ from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import DocSummary
 from eidolon_ai_sdk.agent.retriever_agent.retriever import RetrieverSpec, Retriever
 from eidolon_ai_sdk.apu.apu import APU
 from eidolon_ai_sdk.system.fn_handler import FnHandler
-from eidolon_ai_sdk.system.reference_model import Specable, Reference, AnnotatedReference
+from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.util.class_utils import fqn
 
 

@@ -13,7 +13,7 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
     RemovedFile,
 )
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
-from eidolon_ai_sdk.system.reference_model import Specable, T
+from eidolon_ai_sdk.system.specable import Specable
 
 
 def hash_file(file_path, chunk_size=8192):
@@ -40,7 +40,7 @@ class FilesystemLoaderSpec(DocumentLoaderSpec):
 
 # noinspection PyShadowingNames
 class FilesystemLoader(DocumentLoader, Specable[FilesystemLoaderSpec]):
-    def __init__(self, spec: T, **kwargs: object):
+    def __init__(self, spec: FilesystemLoaderSpec, **kwargs: object):
         super().__init__(spec, **kwargs)
         root_dir = os.path.expanduser(os.path.expandvars(self.spec.root_dir))
         self.root_path = Path(root_dir).absolute()

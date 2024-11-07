@@ -2,7 +2,6 @@ from contextlib import asynccontextmanager
 
 import pytest
 
-from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm.open_ai_image_unit import OpenAIImageUnit
 from eidolon_ai_sdk.system.reference_model import Reference
@@ -24,7 +23,7 @@ def open_ai_image_unit():
 
 
 def r(name, **kwargs):
-    spec = dict(implementation=SimpleAgent.__name__, **kwargs, apu=dict(implementation="APU", audio_unit="OpenAiSpeech"))
+    spec = dict(implementation="SimpleAgent", **kwargs, apu=dict(implementation="APU", audio_unit="OpenAiSpeech"))
     return Resource(
         apiVersion="eidolon/v1",
         kind="Agent",

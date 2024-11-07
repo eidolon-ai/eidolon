@@ -2,7 +2,7 @@ from typing import Iterable, Dict, Union, Sequence
 
 from bs4 import BeautifulSoup
 
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser, DataBlob, DocumentParserSpec
 from eidolon_ai_sdk.memory.document import Document
 

@@ -5,7 +5,7 @@ from typing import List, Any, AsyncIterator, Optional
 from urllib.parse import urljoin
 
 import jsonref
-from pydantic import BaseModel, Field, Extra
+from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import StreamEvent, StartAgentCallEvent, AgentStateEvent, FileHandle
 from eidolon_ai_client.util.aiohttp import stream_content, get_content, post_content, delete, get_raw

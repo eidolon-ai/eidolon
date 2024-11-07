@@ -7,7 +7,7 @@ from eidolon_ai_sdk.apu.apu import APU
 from eidolon_ai_sdk.apu.agent_io import UserTextAPUMessage
 from eidolon_ai_sdk.agent.tot_agent.prompts import CHECKER_PROMPT
 from eidolon_ai_sdk.agent.tot_agent.thought import ThoughtValidity
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class TotCheckerConfig(BaseModel):

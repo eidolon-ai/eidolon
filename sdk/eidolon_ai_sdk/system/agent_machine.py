@@ -1,3 +1,4 @@
+import sys
 import typing
 from contextlib import contextmanager
 from typing import List, Optional, Annotated, Literal, cast
@@ -11,12 +12,14 @@ from eidolon_ai_client.events import FileHandle
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, SimilarityMemory, SecurityManager
 from eidolon_ai_sdk.memory.agent_memory import AgentMemory
+from .agent_builder import AgentBuilderBase
 from .agent_contract import StateSummary, CreateProcessArgs, DeleteProcessResponse, ListProcessesResponse
 from .agent_controller import AgentController
 from .kernel import AgentOSKernel
 from .process_file_system import ProcessFileSystem
 from .processes import ProcessDoc
-from .reference_model import AnnotatedReference, Specable
+from .reference_model import AnnotatedReference
+from .specable import Specable
 from .resource_load_error_handler import register_instantiate_error, register_agent_start_error
 from .resources.agent_resource import AgentResource
 from .resources.resources_base import Resource
@@ -63,8 +66,13 @@ class AgentMachine(Specable[MachineSpec]):
             with _error_wrapper(r):
                 try:
                     agents[name] = r.spec.instantiate()
+                    agents[name] = r.spec.instantiate()
+                    if isinstance(agents[name], AgentBuilderBase):
+                        cast(AgentBuilderBase, agents[name]).set_metadata(r.metadata)
+
                 except Exception as e:
-                    register_instantiate_error(name, r.kind, e)
+                    _, _, tb = sys.exc_info()
+                    register_instantiate_error(name, r.kind, e, tb)
         self.memory = self.spec.get_agent_memory()
         self.agent_controllers = [AgentController(name, agent) for name, agent in agents.items()]
         self.app = None

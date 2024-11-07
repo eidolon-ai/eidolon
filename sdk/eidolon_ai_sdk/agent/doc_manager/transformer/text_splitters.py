@@ -24,7 +24,7 @@ import requests
 from pydantic import Field
 
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import TextSplitterSpec, TextSplitter
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.memory.document import Document
 
 TS = TypeVar("TS", bound="TextSplitter")

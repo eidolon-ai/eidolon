@@ -20,7 +20,7 @@ from eidolon_ai_sdk.agent.tot_agent.prompts import (
     PREAMBLE,
     POST_AMBLE_MULTI,
 )
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class TGSConfig(BaseModel):

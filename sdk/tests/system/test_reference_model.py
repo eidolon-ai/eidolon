@@ -4,7 +4,8 @@ import pytest
 from pydantic import BaseModel, Field
 
 from eidolon_ai_sdk.system.kernel import AgentOSKernel
-from eidolon_ai_sdk.system.reference_model import Reference, Specable, AnnotatedReference
+from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
 from eidolon_ai_sdk.util.class_utils import fqn
 

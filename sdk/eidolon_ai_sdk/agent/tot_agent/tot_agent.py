@@ -7,7 +7,8 @@ from fastapi import HTTPException
 from jinja2 import StrictUndefined, Environment
 from pydantic import Field, BaseModel
 
-from eidolon_ai_sdk.agent.agent import register_program, Agent, AgentSpec
+from eidolon_ai_sdk.agent.agent import register_program
+from eidolon_ai_sdk.agent.deprecated import Agent, AgentSpec
 from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.agent.tot_agent.checker import ToTChecker
 from eidolon_ai_sdk.agent.tot_agent.controller import ToTController
@@ -18,7 +19,8 @@ from eidolon_ai_sdk.agent.tot_agent.thought_generators import (
 )
 from eidolon_ai_sdk.apu.agent_io import UserTextAPUMessage
 from eidolon_ai_sdk.apu.llm_message import LLMMessage
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 

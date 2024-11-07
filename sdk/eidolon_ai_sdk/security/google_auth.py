@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Any
 
 from eidolon_ai_sdk.security.jwt_processor import BaseJWTProcessor
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class GoogleJWTProcessorSpec(BaseModel):

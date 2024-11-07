@@ -6,7 +6,8 @@ from opentelemetry.sdk.trace.sampling import Sampler, SamplingResult, Decision
 from pydantic import BaseModel
 
 from eidolon_ai_client.util.logger import logger
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class NoopSpanExporter(SpanExporter):

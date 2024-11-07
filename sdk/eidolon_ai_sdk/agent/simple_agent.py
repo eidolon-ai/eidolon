@@ -2,22 +2,24 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime
-from typing import List, Literal, Optional, Union, Dict, Any, AsyncIterable
+from typing import List, Literal, Optional, Union, Dict, Any
 
 from fastapi import Body
 from jinja2 import Environment, meta, StrictUndefined
 from pydantic import field_validator, model_validator, BaseModel
 from pydantic_core import to_jsonable_python, SchemaError
 
-from eidolon_ai_client.events import AgentStateEvent, StreamEvent, StringOutputEvent, UserInputEvent, FileHandle
+from eidolon_ai_client.events import AgentStateEvent, StringOutputEvent, UserInputEvent, FileHandle, \
+    StartStreamContextEvent, EndStreamContextEvent
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import RequestContext
-from eidolon_ai_sdk.agent.agent import register_action
 from eidolon_ai_sdk.apu.agent_io import SystemAPUMessage, UserTextAPUMessage, AttachedFileMessage, FileHandleWithInclude
 from eidolon_ai_sdk.apu.agents_logic_unit import AgentsLogicUnitSpec, AgentsLogicUnit
 from eidolon_ai_sdk.apu.apu import APU
+from eidolon_ai_sdk.system.agent_builder import AgentBuilderBase
 from eidolon_ai_sdk.system.processes import ProcessDoc
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference
+from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 
@@ -74,49 +76,6 @@ class ActionDefinition(BaseModel):
 
         return supported_mime_types
 
-    def make_input_schema(self, agent, handler):
-        properties: Dict[str, Any] = {}
-        required = []
-        user_vars = meta.find_undeclared_variables(Environment().parse(self.user_prompt))
-        # pop out any reserved keywords we will inject
-        if "datetime_iso" in user_vars:
-            user_vars.remove("datetime_iso")
-        if len(user_vars) == 1 and "body" in user_vars and not agent.spec.apus and not self.allow_file_upload:
-            properties["body"] = dict(type="string", default=Body(..., media_type="text/plain"))
-            required.append("body")
-        elif user_vars:
-            props = {v: self.input_schema.get(v, dict(type="string")) for v in user_vars}
-            properties["body"] = dict(type="object", properties=props)
-            required.append("body")
-
-        if self.allow_file_upload:
-            properties["body"]["properties"]["attached_files"] = dict(
-                type="array", items=FileHandleWithInclude.model_json_schema()
-            )
-
-        if agent.spec.apus:
-            apu_names = [apu.title for apu in agent.spec.apus]
-            default = agent.apu.title
-            properties["body"]["properties"]["execute_on_apu"] = dict(type="string", enum=apu_names, default=default)
-            if "required" not in properties["body"]:
-                properties["body"]["required"] = []
-            properties["body"]["required"].append("execute_on_apu")
-
-        schema = {"type": "object", "properties": properties, "required": required}
-        return schema_to_model(schema, f"{handler.name.capitalize()}{self.name.capitalize()}InputModel")
-
-    def make_output_schema(self, agent, handler):
-        if not self.output_schema:
-            raise ValueError("output_schema must be specified")
-        model_name = f"{handler.name.capitalize()}{self.name.capitalize()}OutputModel"
-        if self.output_schema == "str":
-            return str
-        else:
-            try:
-                return schema_to_model(self.output_schema, model_name)
-            except SchemaError as e:
-                raise ValueError(f"Invalid output_schema for action '{self.name}'") from e
-
 
 class NamedAPU(BaseModel):
     title: Optional[str] = None
@@ -124,9 +83,8 @@ class NamedAPU(BaseModel):
     default: bool = False
 
 
-class SimpleAgentSpec(BaseModel):
+class SimpleAgent(AgentBuilderBase):
     """
-    The `SimpleAgentSpec` class defines the basic configuration for a SimpleAgent within the Eidolon framework. This
     agent is designed to be a flexible, modular component that can interact with various processing units and perform a
     range of actions based on its configuration.
     """
@@ -137,7 +95,7 @@ class SimpleAgentSpec(BaseModel):
     )
     agent_refs: List[str] = []
     actions: List[ActionDefinition] = [ActionDefinition()]
-    apu: AnnotatedReference[APU] = None
+    apu: AnnotatedReference[APU]
     apus: List[NamedAPU] = []
     title_generation_mode: Literal["none", "on_request", "auto"] = "none"
 
@@ -155,186 +113,163 @@ class SimpleAgentSpec(BaseModel):
     def validate_apus(self):
         if self.apus:
             self.apu = None
+        if not self.apu and not self.apus:
+            raise ValueError("Must specify either apu or apus")
         return self
 
-
-class SimpleAgent(Specable[SimpleAgentSpec]):
-    generate_title_prompt = (
-        "You are generating a title for a conversation. Consider the context and content of the discussion or text. "
-        "Create a concise, relevant, and accurate representation of the main topic or theme in the content."
-        "Create a title that draws inspiration from key phrases or ideas in the content. "
-        "Do not use any tools to generate the title. "
-        "The title should be no longer than 5 words. Do not wrap the title in quotes. Answer only with the title. The prompt for the conversation is:\n"
-    )
-
-    def __init__(self, spec):
-        super().__init__(spec=spec)
-        if self.spec.apu:
-            self.apu = self.spec.apu.instantiate()
-            self.apu.title = self.apu.__class__.__name__
-            self._register_refs_logic_unit(self.apu, self.spec.agent_refs)
+    async def create_process(self, process_id: str):
+        if self.apu:
+            default_apu_ref = self.apu
         else:
-            self.apus = []
-            for apu_spec in self.spec.apus:
-                apu = apu_spec.apu.instantiate()
-                apu.title = apu_spec.title or apu.__class__.__name__
-                if apu_spec.default:
-                    apu.default = True
-                    self.apu = apu
-                self._register_refs_logic_unit(apu, self.spec.agent_refs)
-                self.apus.append(apu)
+            default_apu_ref = ([apu.apu for apu in self.apus if apu.default] or [self.apus[0].apu])[0]
+        default_apu = default_apu_ref.instantiate()
+        t = await default_apu.main_thread(process_id)
+        await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=self.system_prompt)])
 
-        if self.spec.title_generation_mode == "on_request":
-            # add a title generation action
-            action = ActionDefinition(
-                name="generate_title",
-                description="Generate a title for the conversation",
-                user_prompt=self.generate_title_prompt + "{{ body }}",
-                output_schema="str",
-                allowed_states=["initialized", "idle"],
-                output_state="idle",
+
+# todo, this should be in spec
+generate_title_message = (
+    "Generating a title for this conversation. Consider the context and content of the discussion or text. "
+    "Create a concise, relevant, and accurate representation of the main topic or theme in the content."
+    "Create a title that draws inspiration from key phrases or ideas in the content. "
+    "Do not use any tools to generate the title. "
+    "The title should be no longer than 5 words. Do not wrap the title in quotes. Answer only with the title."
+)
+
+
+@SimpleAgent.dynamic_contract
+def fn(spec: SimpleAgent, metadata: Metadata):
+    apus: Dict[str, APU] = {}
+    for apu_spec in spec.apus or [NamedAPU(apu=spec.apu, default=True)]:
+        apu = apu_spec.apu.instantiate()
+        apu.title = apu_spec.title or apu.__class__.__name__
+        _register_refs_logic_unit(apu, spec.agent_refs)
+        apus[apu_spec.title] = apu
+    default_apu: APU = apus[(list(filter(lambda apu: apu.default, spec.apus)) or [NamedAPU(apu=spec.apu, default=True)])[0].title]
+
+    if spec.title_generation_mode == "on_request":
+        @SimpleAgent.action(description="Generate a title for the conversation", allowed_states=["initialized", "idle"])
+        async def generate_title(process_id: str):
+            last_state = RequestContext.get("__last_state__")
+            title_message = UserTextAPUMessage(prompt=generate_title_message)
+            response = await (await apu.clone_thread(process_id)).run_request(prompts=[title_message])
+
+            process_obj = await ProcessDoc.find_one(query={"_id": process_id})
+            await process_obj.update(title=response)
+
+            yield StartStreamContextEvent(context_id="title_generation", title="GeneratingTitle")
+            yield StringOutputEvent(stream_context="title_generation", content=response)
+            yield EndStreamContextEvent(context_id="title_generation")
+            yield AgentStateEvent(state=last_state)
+
+    for action in spec.actions:
+        if not action.output_schema:
+            raise ValueError("output_schema must be specified")
+        model_name = f"{metadata.name.capitalize()}{action.name.capitalize()}OutputModel"
+        try:
+            output_schema = str if action.output_schema == "str" else schema_to_model(action.output_schema, model_name)
+        except SchemaError as e:
+            raise ValueError(f"Invalid output_schema for action '{action.name}'") from e
+        input_schema = _make_input_schema(spec, action, metadata)
+
+        @SimpleAgent.action(action.name, action.title, action.sub_title, action.description, action.allowed_states, input_schema, output_schema, custom_user_input_event=True)
+        async def action_fn(process_id, action=action, **kwargs):
+            execute_on_apu = None
+            request_body = to_jsonable_python(kwargs.get("body") or {})
+            if isinstance(request_body, dict) and "execute_on_apu" in request_body:
+                execute_on_apu = request_body.pop("execute_on_apu")
+
+            attached_files: List[FileHandle] = []
+            attached_files_messages = []
+            if isinstance(request_body, dict) and "attached_files" in request_body:
+                # add a new file handle message
+                attached_files_list = request_body.pop("attached_files") or []
+                for file in attached_files_list:
+                    include_directly = file.pop("include_directly", False)
+                    fh = FileHandle(**file)
+                    attached_files_messages.append(AttachedFileMessage(file=fh, include_directly=include_directly))
+                    attached_files.append(fh)
+
+            body = dict(datetime_iso=datetime.now().isoformat(), body=str(request_body))
+            if isinstance(request_body, dict):
+                body.update(request_body)
+
+            env = Environment(undefined=StrictUndefined)
+            text_message = UserTextAPUMessage(prompt=env.from_string(action.user_prompt).render(**body))
+
+            if execute_on_apu and execute_on_apu in apus:
+                apu = apus[execute_on_apu]
+            elif execute_on_apu:
+                logger.warning(f"APU {execute_on_apu} not found, using default APU")
+                apu = default_apu
+            else:
+                apu = default_apu
+
+            yield UserInputEvent(input=request_body, files=attached_files)
+
+            # generate the tile if it is not generated
+            gen_title_task = None
+            process_obj = await ProcessDoc.find_one(query={"_id": process_id})
+
+            if spec.title_generation_mode == "auto" and not process_obj.title:
+                async def genTitle():
+                    title_message = UserTextAPUMessage(prompt=generate_title_message)
+                    new_thread = await (await apu.main_thread(process_id)).clone()
+                    title_response = await new_thread.run_request(prompts=[title_message])
+                    await process_obj.update(title=title_response)
+
+                gen_title_task = asyncio.create_task(genTitle())
+
+            thread = await apu.main_thread(process_id)
+            response = thread.stream_request(
+                output_format=action.output_schema, prompts=[*attached_files_messages, text_message]
             )
 
-            setattr(
-                self,
-                action.name,
-                register_action(
-                    *action.allowed_states,
-                    name=action.name,
-                    input_model=action.make_input_schema,
-                    output_model=action.make_output_schema,
-                    description=action.description,
-                )(self._act_wrapper(action, SimpleAgent._gen_title)),
+            async for event in response:
+                yield event
+            yield AgentStateEvent(state=action.output_state)
+            if gen_title_task:
+                try:
+                    await gen_title_task
+                except Exception:
+                    logger.exception("Error generating title")
+
+
+def _register_refs_logic_unit(apu, agent_refs):
+    if agent_refs and hasattr(apu, "logic_units"):
+        apu.logic_units.append(
+            AgentsLogicUnit(
+                processing_unit_locator=apu,
+                spec=AgentsLogicUnitSpec(agents=agent_refs),
             )
-
-        for action in self.spec.actions:
-            setattr(
-                self,
-                action.name,
-                register_action(
-                    *action.allowed_states,
-                    name=action.name,
-                    title=action.title,
-                    sub_title=action.sub_title,
-                    input_model=action.make_input_schema,
-                    output_model=action.make_output_schema,
-                    description=action.description,
-                    custom_user_input_event=True,
-                )(self._act_wrapper(action, SimpleAgent._act)),
-            )
-
-    def _register_refs_logic_unit(self, apu, agent_refs):
-        if agent_refs and hasattr(apu, "logic_units"):
-            apu.logic_units.append(
-                AgentsLogicUnit(
-                    processing_unit_locator=apu,
-                    spec=AgentsLogicUnitSpec(agents=agent_refs),
-                )
-            )
-
-    async def create_process(self, process_id):
-        t = await self.apu.main_thread(process_id)
-        await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=self.spec.system_prompt)])
-
-    @staticmethod
-    def _act_wrapper(action, action_fn):
-        async def fn(self, process_id, **kwargs):
-            async for e in action_fn(self, action, process_id, **kwargs):
-                yield e
-
-        return fn
-
-    async def _act(self, action: ActionDefinition, process_id, **kwargs) -> AsyncIterable[StreamEvent]:
-        execute_on_apu = None
-        request_body = to_jsonable_python(kwargs.get("body") or {})
-        if isinstance(request_body, dict) and "execute_on_apu" in request_body:
-            execute_on_apu = request_body.pop("execute_on_apu")
-
-        attached_files: List[FileHandle] = []
-        attached_files_messages = []
-        if isinstance(request_body, dict) and "attached_files" in request_body:
-            # add a new file handle message
-            attached_files_list = request_body.pop("attached_files") or []
-            for file in attached_files_list:
-                include_directly = file.pop("include_directly", False)
-                fh = FileHandle(**file)
-                attached_files_messages.append(AttachedFileMessage(file=fh, include_directly=include_directly))
-                attached_files.append(fh)
-
-        body = dict(datetime_iso=datetime.now().isoformat(), body=str(request_body))
-        if isinstance(request_body, dict):
-            body.update(request_body)
-
-        env = Environment(undefined=StrictUndefined)
-        text_message = UserTextAPUMessage(prompt=env.from_string(action.user_prompt).render(**body))
-
-        if execute_on_apu:
-            apu = self.apu
-            for named_apu in self.apus:
-                if named_apu.title == execute_on_apu:
-                    apu = named_apu
-                    break
-        else:
-            apu = self.apu
-
-        yield UserInputEvent(input=request_body, files=attached_files)
-
-        # generate the tile if it is not generated
-        gen_title_task = None
-        process_obj = await ProcessDoc.find_one(query={"_id": process_id})
-        if self.spec.title_generation_mode == "auto" and not process_obj.title:
-            async def genTitle():
-                title_message = UserTextAPUMessage(prompt=self.generate_title_prompt + text_message.prompt)
-                new_thread = await apu.new_thread(process_id)
-                title_response = await new_thread.run_request(prompts=[title_message])
-                await process_obj.update(title=title_response)
-
-            # noinspection PyAsyncCall
-            gen_title_task = asyncio.create_task(genTitle())
-
-        thread = await apu.main_thread(process_id)
-        response = thread.stream_request(
-            output_format=action.output_schema, prompts=[*attached_files_messages, text_message]
         )
 
-        async for event in response:
-            yield event
-        yield AgentStateEvent(state=action.output_state)
-        if gen_title_task:
-            try:
-                await gen_title_task
-            except Exception:
-                logger.exception("Error generating title")
 
-    async def _gen_title(self, action: ActionDefinition, process_id, **kwargs) -> AsyncIterable[StreamEvent]:
-        last_state = RequestContext.get("__last_state__")
+def _make_input_schema(spec: SimpleAgent, action: ActionDefinition, metadata: Metadata):
+    properties: Dict[str, Any] = {}
+    required = []
+    user_vars = meta.find_undeclared_variables(Environment().parse(action.user_prompt))
+    # pop out any reserved keywords we will inject
+    if "datetime_iso" in user_vars:
+        user_vars.remove("datetime_iso")
+    if len(user_vars) == 1 and "body" in user_vars and not spec.apus and not action.allow_file_upload:
+        properties["body"] = dict(type="string", default=Body(..., media_type="text/plain"))
+        required.append("body")
+    elif user_vars:
+        props = {v: action.input_schema.get(v, dict(type="string")) for v in user_vars}
+        properties["body"] = dict(type="object", properties=props)
+        required.append("body")
 
-        process_obj = await ProcessDoc.find_one(query={"_id": process_id})
-        execute_on_apu = None
-        request_body = to_jsonable_python(kwargs.get("body") or {})
-        if "execute_on_apu" in request_body:
-            execute_on_apu = request_body.pop("execute_on_apu")
+    if action.allow_file_upload:
+        properties["body"]["properties"]["attached_files"] = dict(type="array", items=FileHandleWithInclude.model_json_schema())
 
-        body = dict(datetime_iso=datetime.now().isoformat(), body=str(request_body))
-        if isinstance(request_body, dict):
-            body.update(request_body)
+    if spec.apus:
+        apu_names = [apu.title for apu in spec.apus]
+        default = (list(filter(lambda apu: apu.default, spec.apus)) or spec.apus)[0].title
+        properties["body"]["properties"]["execute_on_apu"] = dict(type="string", enum=apu_names, default=default)
+        if "required" not in properties["body"]:
+            properties["body"]["required"] = []
+        properties["body"]["required"].append("execute_on_apu")
 
-        env = Environment(undefined=StrictUndefined)
-        text_message = UserTextAPUMessage(prompt=env.from_string(action.user_prompt).render(**body))
-
-        if execute_on_apu:
-            apu = self.apu
-            for named_apu in self.apus:
-                if named_apu.title == execute_on_apu:
-                    apu = named_apu
-                    break
-        else:
-            apu = self.apu
-
-        title_message = UserTextAPUMessage(prompt=self.generate_title_prompt + text_message.prompt)
-        response = await (await apu.new_thread(process_id)).run_request(prompts=[title_message])
-        await process_obj.update(title=response)
-
-        yield StringOutputEvent(content=response)
-        # return to the previous state
-        yield AgentStateEvent(state=last_state)
+    schema = {"type": "object", "properties": properties, "required": required}
+    return schema_to_model(schema, f"{metadata.name.capitalize()}{action.name.capitalize()}InputModel")

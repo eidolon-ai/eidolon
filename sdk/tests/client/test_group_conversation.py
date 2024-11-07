@@ -16,7 +16,7 @@ from eidolon_ai_client.events import (
 )
 from eidolon_ai_client.group_conversation import GroupConversation
 from eidolon_ai_sdk.agent.agent import register_action
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
 from eidolon_ai_sdk.util.class_utils import fqn
 

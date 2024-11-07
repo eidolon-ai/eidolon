@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import DocumentLoader
 from eidolon_ai_sdk.agent.doc_manager.loaders.memorywrapper_loader import WrappedMemoryLoader, WrappedMemoryLoaderSpec
 from eidolon_ai_sdk.memory.s3_file_memory import S3FileMemory
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.util.class_utils import fqn
 
 

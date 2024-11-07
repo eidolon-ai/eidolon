@@ -10,7 +10,8 @@ from eidolon_ai_sdk.security.functional_authorizer import FunctionalAuthorizer
 from eidolon_ai_sdk.agent_os_interfaces import Permission, SecurityManager
 from eidolon_ai_sdk.security.process_authorizer import ProcessAuthorizer
 from eidolon_ai_sdk.security.user import User
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class SecurityManagerSpec(BaseModel):

@@ -16,8 +16,8 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.agent_os_interfaces import FileMetadata
 from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
-from eidolon_ai_sdk.system.reference_model import Specable, T, Reference
-
+from eidolon_ai_sdk.system.reference_model import Reference
+from eidolon_ai_sdk.system.specable import Specable
 
 tracer = trace.get_tracer("memory wrapper loader")
 
@@ -43,7 +43,7 @@ class WrappedMemoryLoaderSpec(DocumentLoaderSpec):
 class WrappedMemoryLoader(DocumentLoader, Specable[WrappedMemoryLoaderSpec]):
     memory: FileMemoryBase
 
-    def __init__(self, spec: T, **kwargs: object):
+    def __init__(self, spec: WrappedMemoryLoaderSpec, **kwargs: object):
         super().__init__(spec, **kwargs)
         self.memory = spec.memory.instantiate()
 

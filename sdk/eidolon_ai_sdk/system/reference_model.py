@@ -4,63 +4,16 @@ import copy
 import logging
 import textwrap
 from functools import cache
-from typing import TypeVar, Generic, Type, Annotated, Optional, ClassVar
+from typing import TypeVar, Type, Annotated, Optional, ClassVar
 
 from pydantic import BaseModel, model_validator, Field, ConfigDict, GetJsonSchemaHandler
 from pydantic.json_schema import JsonSchemaValue
-
-from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
-from eidolon_ai_sdk.util.class_utils import for_name, fqn
 from pydantic_core import core_schema as cs
 
+from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
+from eidolon_ai_sdk.system.specable import Specable
+from eidolon_ai_sdk.util.class_utils import fqn, get_from_fqn
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
-
-T = TypeVar("T", bound=BaseModel)
-
-
-class Specable(Generic[T]):
-    """
-    A generic type which can be used to describe a specable type. Specable types are expected to accept "spec" in kwarg.
-    If Specable is not used, There will be no spec validation and the spec will be passed through as-is.
-    """
-
-    spec: T
-
-    def __init__(self, spec: T, **kwargs: object):
-        self.spec = spec
-
-    @classmethod
-    @property
-    def __pydantic_core_schema__(cls):
-        schema__ = cls.specable_cls().__pydantic_core_schema__
-        schema__["ref"] = cls.__name__
-        return schema__
-
-    @classmethod
-    def __get_pydantic_json_schema__(
-            cls, core_schema: cs.CoreSchema, handler: GetJsonSchemaHandler
-    ) -> JsonSchemaValue:
-        ref = handler(core_schema)
-        json_schema = handler.resolve_ref_schema(ref)
-        json_schema["title"] = cls.__name__
-        if "extra" not in cls.specable_cls().model_config:  # default to no extra props
-            json_schema["additionalProperties"] = False
-        if "description" not in json_schema and cls.specable_cls().__doc__:
-            json_schema["description"] = textwrap.dedent(cls.specable_cls().__doc__).strip()
-        return json_schema
-
-    @classmethod
-    def specable_cls(cls):
-        bases = getattr(cls, "__orig_bases__", [])
-        specable = next(
-            (base for base in bases if getattr(base, "__origin__", None) is Specable),
-            None,
-        )
-        if specable:
-            return specable.__args__[0]
-        else:
-            raise ValueError(f"Specable base {cls} not found")
-
 
 B = TypeVar("B")
 D = TypeVar("D")
@@ -136,7 +89,9 @@ class Reference(BaseModel):
             # there is not a class for these psudo references, we can either make those classes dynamically, or create a custom ?generator? to handle them
             overrides = Reference[object, r.metadata.name]._transform(r.spec)
             pointer = overrides.pop("implementation")
-            clz = for_name(pointer, object)
+            clz = get_from_fqn(pointer)
+            if hasattr(clz, "specable"):
+                clz = clz.specable()
             if issubclass(clz, cls._membership):
                 reference_details = dict(
                     overrides=overrides,
@@ -278,7 +233,14 @@ class Reference(BaseModel):
         return None
 
     def _get_reference_class(self):
-        return for_name(self.implementation, self._bound or object)
+        found = get_from_fqn(self.implementation)
+        if hasattr(found, "specable"):
+            found = found.specable()
+        if not found:
+            raise ValueError(f'Unable to find reference implementation "{self.implementation}"')
+        if self._bound and (not isinstance(found, type) or not issubclass(found, self._bound)):
+            raise ValueError(f'Implementation "{self.implementation}" is not a subclass of "{self._bound}"')
+        return found
 
     def instantiate(self, *args, **kwargs):
         reference_class = self._get_reference_class()

@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from eidolon_ai_client.events import FileHandle
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.agent_os_interfaces import ProcessFileSystem
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class ProcessFileSystemSpec(BaseModel):

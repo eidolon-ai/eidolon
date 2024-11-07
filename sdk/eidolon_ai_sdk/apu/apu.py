@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field, TypeAdapter
 from eidolon_ai_client.events import StreamEvent, convert_output_object, ObjectOutputEvent, ErrorEvent, StringOutputEvent
 from eidolon_ai_sdk.apu.agent_io import APUMessageTypes
 from eidolon_ai_sdk.apu.call_context import CallContext
-from eidolon_ai_sdk.system.reference_model import Specable
+from eidolon_ai_sdk.system.specable import Specable
 
 
 class APUCapabilities(BaseModel):

@@ -7,7 +7,8 @@ from opentelemetry import trace
 from pydantic import BaseModel, Field
 
 from eidolon_ai_sdk.apu.llm.open_ai_connection_handler import OpenAIConnectionHandler
-from eidolon_ai_sdk.system.reference_model import Specable, AnnotatedReference
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference
+from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.memory.document import Document, EmbeddedDocument
 
 tracer = trace.get_tracer("memory wrapper loader")

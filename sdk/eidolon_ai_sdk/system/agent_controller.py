@@ -37,6 +37,7 @@ from eidolon_ai_sdk.agent.agent import AgentState
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.agent_os_interfaces import SecurityManager
 from eidolon_ai_sdk.apu.agent_call_history import AgentCallHistory
+from eidolon_ai_sdk.system.agent_builder import AgentBuilderBase
 from eidolon_ai_sdk.system.agent_contract import (
     SyncStateResponse,
     StateSummary,
@@ -47,7 +48,7 @@ from eidolon_ai_sdk.system.kernel import AgentOSKernel
 from eidolon_ai_sdk.system.processes import ProcessDoc, store_events, load_events
 from eidolon_ai_sdk.system.resources.agent_resource import AgentResource
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
-from eidolon_ai_sdk.util.class_utils import for_name
+from eidolon_ai_sdk.util.class_utils import get_from_fqn
 
 
 # todo, agent controller has become a mega impl, we should break up responsibilities
@@ -67,7 +68,8 @@ class AgentController:
         if hasattr(self.agent, "start"):
             await self.agent.start()
 
-        for handler in get_handlers(self.agent):
+        handlers = await self.agent.get_handlers() if isinstance(self.agent, AgentBuilderBase) else get_handlers(self.agent)
+        for handler in handlers:
             if handler.name in self.actions:
                 self.actions[handler.name].extra["allowed_states"] = (
                     *self.actions[handler.name].extra["allowed_states"],
@@ -271,7 +273,12 @@ class AgentController:
 
     async def agent_event_stream(self, handler, process, last_state, **kwargs) -> AsyncIterator[StreamEvent]:
         is_async_gen = inspect.isasyncgenfunction(handler.fn)
-        stream = handler.fn(self.agent, **kwargs) if is_async_gen else self.stream_agent_fn(handler, **kwargs)
+        if not is_async_gen:
+            stream = self.stream_agent_fn(handler, **kwargs)
+        elif isinstance(self.agent, AgentBuilderBase):
+            stream = handler.fn(**kwargs)
+        else:
+            stream = handler.fn(self.agent, **kwargs)
 
         def get_start_event():
             extra = {}
@@ -382,7 +389,10 @@ class AgentController:
                 yield ErrorEvent(reason=str(e), details=dict(status_code=500))
 
     async def stream_agent_fn(self, handler, **kwargs) -> AsyncIterator[StreamEvent]:
-        response = await handler.fn(self.agent, **kwargs)
+        if isinstance(self.agent, AgentBuilderBase):
+            response = await handler.fn(**kwargs)
+        else:
+            response = await handler.fn(self.agent, **kwargs)
         if isinstance(response, AgentState):
             yield OutputEvent.get(content=to_jsonable_python(response.data))
             yield AgentStateEvent(state=response.name, available_actions=self.get_available_actions(response.name))
@@ -504,7 +514,9 @@ class AgentController:
             implementation = to_jsonable_python(r.spec)["implementation"]
             is_root = not AgentOSKernel.get_resource(ReferenceResource, implementation, default=None)
             if is_root:
-                resource_class = for_name(implementation)
+                resource_class = get_from_fqn(implementation)
+                if hasattr(resource_class, "specable"):
+                    resource_class = resource_class.specable()
                 if hasattr(resource_class, "delete_process"):
                     await resource_class.delete_process(process_id)
                     logger.info(f"Successfully {resource_class.__name__} records associated with process {process_id}")

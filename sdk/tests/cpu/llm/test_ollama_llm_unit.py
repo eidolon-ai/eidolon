@@ -1,7 +1,6 @@
 from pytest import fixture
 
 from eidolon_ai_client.client import Agent
-from eidolon_ai_sdk.agent.simple_agent import SimpleAgent
 from eidolon_ai_sdk.apu.llm.ollama_llm_unit import OllamaLLMUnit
 from eidolon_ai_sdk.system.resources.resources_base import Resource, Metadata
 from eidolon_ai_sdk.util.class_utils import fqn
@@ -24,7 +23,7 @@ async def server(run_app):
             apiVersion="eidolon/v1",
             kind="Agent",
             metadata=Metadata(name="default"),
-            spec=dict(implementation=SimpleAgent.__name__, apu="Llamma3-8b"),
+            spec=dict(implementation="SimpleAgent", apu="Llamma3-8b"),
         )
     ]
     async with run_app(*resources) as ra:
