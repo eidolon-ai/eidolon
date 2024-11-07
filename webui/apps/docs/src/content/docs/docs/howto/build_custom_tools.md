@@ -9,25 +9,25 @@ capabilities that are not covered by the built-ins, you may need to create your 
 Tools are the capabilities your agent has to interact with the world. They can be as simple as a calculator or as 
 complex as you can imagine. Tools can be in-memory calculations, data manipulation, or even API-calls.
 
-## Is it an Agent or a tool?
+## Should I implement a new Agent or tool?
 Sometimes it is hard to distinguish between an agent and a tool. Both can implement logic and have no constraints on how
-they interact with the world. Agents are typically meant to be interacted with by users, while tools are capabilities 
-that can given to enhance an agent's capabilities.
+they interact with the world. Agents are typically meant to be interacted with by users (or other agents) and usually 
+use an LLM internally to plan / execute action. On the other hand, Tools are capabilities that are given to agents so 
+that they can interact with the outside world programmatically.
 
-## Defining a Tool
+## Building a Tool
+### Defining a Tool
 
 To create a new tool, extend the `ToolBuilder` class and decorate the methods you would like to expose as actions.
 
 ```python
 from eidolon_ai_sdk.system.tool_builder import ToolBuilder
 
-
 class Add(ToolBuilder):
   pass
 
-
 @Add.tool()
-async def add(a: int, b: int):
+def add(a: int, b: int):
   """Add two numbers together."""
   return a + b
 ```
@@ -36,21 +36,19 @@ async def add(a: int, b: int):
 When adding a tool to a `ToolBuilder` class, you can optionally define the `name`, `description`, and `parameters` 
 (json schema) of the tool. These values are derived from the function name, docstring, and function signature by default.
 
-In this example, the following values are inferred:
+In this example, the following values are inferred from the function definition:
 ```python
-@Add.tools(
-  name="add", 
-  description="Add two numbers together", 
-  schema=dict(
-    type="object", 
-    properties=dict(a=dict(type="integer"), b=dict(type="integer")), 
-    required=["a", "b"]
-  )
+name="add", 
+description="Add two numbers together", 
+parameters=dict(
+  type="object", 
+  properties=dict(a=dict(type="integer"), b=dict(type="integer")), 
+  required=["a", "b"]
 )
 ```
 
 
-### Defining Multiple Tools
+### Multiple Tools on a Single Builder
 
 You can define multiple tools in the same class by using the `tool` decorator multiple times.
 
@@ -59,12 +57,12 @@ class Calculator(ToolBuilder):
   pass
 
 @Calculator.tool()
-async def add(a: int, b: int):
+def add(a: int, b: int):
   """Add two numbers together."""
   return a + b
 
 @Calculator.tool()
-async def subtract(a: int, b: int):
+def subtract(a: int, b: int):
   """Subtract two numbers."""
   return a - b
 ```
@@ -72,20 +70,19 @@ async def subtract(a: int, b: int):
 Now when an agent is given the `Calculator` tool bundle, it will have two tools, `add` and `subtract`.
 
 
-### Defining Configuration
+### Configurable Tools
 
 Some tools will need to be configured when they are added to an agent. Perhaps they are hitting an API and need an API 
 key, or they need to know the location of a file. To add configuration to a tool, add attributes to the ToolBuilder 
 class. It is just a pydantic model, so head over to the [pydantic documentation](https://docs.pydantic.dev/latest/) for 
-more information. Remember that this defines the configuration for the tool when specified in the yaml file. 
+more information. Remember that this defines the configuration for the tool reference when specified in the yaml file. 
 
 ```python
 class Add(ToolBuilder):
   max_number: Optional[int] = None
 
-
 @Add.tool()
-async def add(a: int, b: int, spec: Add):
+def add(a: int, b: int, spec: Add):
   """Add two numbers together."""
   if a > spec.max_number:
     raise Exception(f"{a} is too big!")
@@ -106,17 +103,18 @@ configuration (or even the conversation history or agent state) to determine wha
 class Calculator(ToolBuilder):
   operations: List[str] = ["add"]
 
-@Calculator.dynamic_contract(spec: Calculator)
+@Calculator.dynamic_contract
 def math_tools(spec: Calculator):
+
   if "add" in spec.operations:
     @Calculator.tool()
-    async def add(a: int, b: int):
+    def add(a: int, b: int):
       """Add two numbers together."""
       return a + b
   
   if "subtract" in spec.operations:
     @Calculator.tool()
-    async def subtract(a: int, b: int):
+    def subtract(a: int, b: int):
       """Subtract two numbers."""
       return a - b
   
@@ -125,4 +123,19 @@ def math_tools(spec: Calculator):
     def multiply(a: int, b: int):
       """Multiply two numbers."""
       return a * b
+```
+
+### Asynchronous Tools
+We know that some tools may need to be asynchronous, so we have added support for that. Just add the `async` keyword to 
+your tool definition and we will take care of it for you. Similarly, you can use async functions to define your 
+`dymamic_contact` function as well.
+
+```python
+class AsyncAdd(ToolBuilder):
+  pass
+
+AsyncAdd.tool()
+async def add(a: int, b: int):
+  """Add two numbers together."""
+  return await io_bound_add(a, b)
 ```
