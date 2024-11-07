@@ -134,7 +134,7 @@ your tool definition and we will take care of it for you. Similarly, you can use
 class AsyncAdd(ToolBuilder):
   pass
 
-AsyncAdd.tool()
+@AsyncAdd.tool()
 async def add(a: int, b: int):
   """Add two numbers together."""
   return await io_bound_add(a, b)
