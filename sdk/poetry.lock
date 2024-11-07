@@ -1467,7 +1467,7 @@ gmpy2 = ["gmpy2"]
 
 [[package]]
 name = "eidolon-ai-client"
-version = "0.1.37"
+version = "0.1.38"
 description = "Eidolon python client and CLI"
 optional = false
 python-versions = ">=3.8,<3.13"
@@ -6286,4 +6286,4 @@ all = ["chromadb", "playwright", "unstructured"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "3c790a5ecf225c092533b650d978db5b63fa4791447930238a5eb02dda07d9e2"
+content-hash = "f7f1d1d83b993f2126e04b20b282cf31f76aa1fa26ddadae1ab7b633a4b8dabc"
