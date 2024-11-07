@@ -33,25 +33,46 @@ async def add(a: int, b: int):
 ```
 
 
-When the Add ToolBuilder is added to an agent, the agent will see a tool named `add` with the description "Add two numbers together."
-The json-schema for the tool will be automatically generated based on the type hints of the function. In this case the schema will be:
+When adding a tool to a `ToolBuilder` class, you can optionally define the `name`, `description`, and `parameters` 
+(json schema) of the tool. These values are derived from the function name, docstring, and function signature by default.
 
-```json
-{
-  "type": "object",
-  "properties": {
-    "a": {
-      "type": "integer"
-    },
-    "b": {
-      "type": "integer"
-    }
-  },
-  "required": ["a", "b"]
-}
+In this example, the following values are inferred:
+```python
+@Add.tools(
+  name="add", 
+  description="Add two numbers together", 
+  schema=dict(
+    type="object", 
+    properties=dict(a=dict(type="integer"), b=dict(type="integer")), 
+    required=["a", "b"]
+  )
+)
 ```
 
-### Defining configuration
+
+### Defining Multiple Tools
+
+You can define multiple tools in the same class by using the `tool` decorator multiple times.
+
+```python
+class Calculator(ToolBuilder):
+  pass
+
+@Calculator.tool()
+async def add(a: int, b: int):
+  """Add two numbers together."""
+  return a + b
+
+@Calculator.tool()
+async def subtract(a: int, b: int):
+  """Subtract two numbers."""
+  return a - b
+```
+
+Now when an agent is given the `Calculator` tool bundle, it will have two tools, `add` and `subtract`.
+
+
+### Defining Configuration
 
 Some tools will need to be configured when they are added to an agent. Perhaps they are hitting an API and need an API 
 key, or they need to know the location of a file. To add configuration to a tool, add attributes to the ToolBuilder 
@@ -76,58 +97,32 @@ In this example we added a `max_number` attribute to the `Add` tool. This attrib
 an agent. The `spec` parameter is a reference to the tool instance, so you can access any attributes defined on the tool.
 Note that the json schema created for the LLM will not include the `spec` parameter, it is a special keyword.
 
-### Defining multiple tools
-
-You can define multiple tools in the same class by using the `@ToolBuilder.tool` decorator multiple times.
-
-```python
-@Math.tool()
-async def add(a: int, b: int):
-  """Add two numbers together."""
-  return a + b
-
-@Math.tool()
-async def subtract(a: int, b: int):
-  """Subtract two numbers."""
-  return a - b
-```
-
-Now when an agent is given the `SimpleMath` tool bundle, it will have two tools, `add` and `subtract`.
-
-### Dynamically constructing tools
+### Building Tools Dynamically
 
 Similarly, you can dynamically construct tools by using the `@ToolBuilder.dynamic_contract` decorator to use 
 configuration (or even the conversation history or agent state) to determine what tools will be available to the agent.
 
 ```python
-class DynamicMath(ToolBuilder):
+class Calculator(ToolBuilder):
   operations: List[str] = ["add"]
 
-@DynamicMath.dynamic_contract(spec: DynamicMath)
-def math_tools(spec: DynamicMath):
-  for operation in spec.operations:
-    if operation == "add":
-      @DynamicMath.tool()
-      async def add(a: int, b: int):
-        """Add two numbers together."""
-        return a + b
-    elif operation == "subtract":
-      @DynamicMath.tool()
-      async def subtract(a: int, b: int):
-        """Subtract two numbers."""
-        return a - b
-    elif operation == "multiply":
-      @DynamicMath.tool()
-      def multiply(a: int, b: int):
-        """Multiply two numbers."""
-        return a * b
-```
-
-### Overriding Default Behavior
-Tool name, description, and schema can be overridden by passing them as arguments to the `@ToolBuilder.tool` decorator.
-
-```python
-@Add.tool(name="add_numbers", description="Add two numbers together", schema={"type": "object", "properties": {"a": {"type": "integer"}, "b": {"type": "integer"}}, "required": ["a", "b"]})
-async def _fn(a, b):
-  return a + b
+@Calculator.dynamic_contract(spec: Calculator)
+def math_tools(spec: Calculator):
+  if "add" in spec.operations:
+    @Calculator.tool()
+    async def add(a: int, b: int):
+      """Add two numbers together."""
+      return a + b
+  
+  if "subtract" in spec.operations:
+    @Calculator.tool()
+    async def subtract(a: int, b: int):
+      """Subtract two numbers."""
+      return a - b
+  
+  if "multiply" in spec.operations:
+    @Calculator.tool()
+    def multiply(a: int, b: int):
+      """Multiply two numbers."""
+      return a * b
 ```

@@ -12,7 +12,7 @@ from eidolon_ai_sdk.system.fn_handler import FnHandler
 from eidolon_ai_sdk.util.partial import partial, return_value
 
 _ToolBuilderState = namedtuple("_ToolBuilderState", ["dynamic_contracts", "tools"])
-_ToolDefinition = namedtuple("_ToolDefinition", ["name", "description", "input_schema", "fn"])
+_ToolDefinition = namedtuple("_ToolDefinition", ["name", "description", "parameter", "fn"])
 
 
 T = TypeVar("T", bound="ToolBuilder")
@@ -24,14 +24,14 @@ class ToolBuilder(BaseModel):
         """
         A decorator to dynamically build a ToolBuilder.
         Decorated function may be synchronous or asynchronous.
+        Decorator function may take a spec and/or call_context argument.
 
-        ```python
-        @MyToolBuilder.dynamic_contract
-        def fn(spec: MyToolBuilder, call_context: CallContext):
-            @MyToolBuilder.tool(description = spec.description)
-            async def add(a: int, b: int):
-                return a + b
-        ```
+        .. code-block:: python
+            @MyToolBuilder.dynamic_contract
+            def fn(spec: MyToolBuilder, call_context: CallContext):
+                @MyToolBuilder.tool(description = spec.description)
+                async def add(a: int, b: int):
+                    return a + b
         """
         cls._state().dynamic_contracts.append(fn)
         return fn
@@ -41,30 +41,31 @@ class ToolBuilder(BaseModel):
             cls: Type[T],
             name: str = None,
             description: Optional[str] = None,
-            input_schema: dict = None
+            parameters: dict = None
     ) -> Callable[[Callable[..., Awaitable[Any] | AsyncIterable[StreamEvent]]], Callable]:
         """
         A decorator to define a tool.
         Decorated function must be asynchronous and may return a value or yield StreamEvent(s).
 
-        ```python
-        @tool_unit.tool(description = "add two numbers")
-        async def add(a: int, b: int):
-            return a + b
-        ```
+        .. code-block:: python
+            @tool_unit.tool()
+            async def add(a: int, b: int):
+                \"\"\"Add two numbers together\"\"\"
+                return a + b
 
-        :param name: The name of the tool presented to the llm
-        :param description: The description of the tool presented to the llm
-        :param input_schema: Optional input schema to present to the llm. Dynamically built from the function signature if not provided.
+
+        :param name: The name of the tool presented to the llm. Defaults to the function name.
+        :param description: The description of the tool presented to the llm. Defaults to the function docstring.
+        :param parameters: Json schema object to present to the llm. Default built from function signature using Pydantic.
         :return: A decorator
         """
 
         def decorator(fn: Callable[..., Awaitable[Any] | AsyncIterable[StreamEvent]]):
             name_ = name or fn.__name__
             if cls._is_locked():
-                cls._state().tools[1].append(_ToolDefinition(name_, description, input_schema, fn))
+                cls._state().tools[1].append(_ToolDefinition(name_, description, parameters, fn))
             else:
-                cls._state().tools[0].append(_ToolDefinition(name_, description, input_schema, fn))
+                cls._state().tools[0].append(_ToolDefinition(name_, description, parameters, fn))
             return fn
 
         return decorator
@@ -141,7 +142,7 @@ class ToolBuilder(BaseModel):
                     FnHandler(
                         name=tool.name,
                         description=return_value(tool.description or tool.fn.__doc__ or f"Execute function {tool.name}"),
-                        input_model_fn=return_value(tool.input_schema or _model_from_sig(tool_fn)),
+                        input_model_fn=return_value(tool.parameter or _model_from_sig(tool_fn)),
                         output_model_fn=_output_model_fn,
                         fn=lambda self, **kwargs: tool_fn(**kwargs),
                         extra=dict(title=tool.name),
