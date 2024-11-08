@@ -1,6 +1,6 @@
 ---
-title: ConversationalAPU
-description: Description of the ConversationalAPU component
+title: GPT4o
+description: Description of the GPT4o component
 ---
 
 | Property                                             | Pattern | Type                          | Deprecated | Definition | Title/Description      |

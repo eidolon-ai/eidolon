@@ -1,6 +1,6 @@
 ---
-title: ConversationalAPU
-description: Description of the ConversationalAPU component
+title: Llamma3-8b
+description: Description of the Llamma3-8b component
 ---
 
 | Property                                             | Pattern | Type                          | Deprecated | Definition | Title/Description      |

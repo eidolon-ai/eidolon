@@ -1,6 +1,6 @@
 ---
-title: ConversationalAPU
-description: Description of the ConversationalAPU component
+title: ClaudeHaiku
+description: Description of the ClaudeHaiku component
 ---
 
 | Property                                             | Pattern | Type                          | Deprecated | Definition | Title/Description      |
