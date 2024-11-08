@@ -1,6 +1,6 @@
 ---
-title: OpenAiSpeech
-description: Description of the OpenAiSpeech component
+title: AudioUnit
+description: Description of the AudioUnit component
 ---
 
 | Property                                                     | Pattern | Type             | Deprecated | Definition | Title/Description          |

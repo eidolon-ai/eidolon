@@ -1,6 +1,6 @@
 ---
-title: ConversationalAPU
-description: Description of the ConversationalAPU component
+title: MistralMedium
+description: Description of the MistralMedium component
 ---
 
 | Property                                             | Pattern | Type                          | Deprecated | Definition | Title/Description      |
