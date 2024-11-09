@@ -98,7 +98,7 @@ def build_actions(spec: PlanningAgent):
 ```
 
 ### 4. Use Your Custom Agent Template
-Reference your agent template in an Agent Resource file using its [Fully Qualified Name (FQN)](#fqn):
+Reference your agent template in an Agent Resource file using its [Fully Qualified Name (FQN)](https://peps.python.org/pep-3155/):
 
 ```yaml
 apiVersion: server.eidolonai.com/v1alpha1
