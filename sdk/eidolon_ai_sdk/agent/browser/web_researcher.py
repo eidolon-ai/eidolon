@@ -82,7 +82,7 @@ class WebResearcher(Specable[WebResearcherSpec]):
         :return:
         """
         text_message = UserTextAPUMessage(prompt=question)
-        thread = await self.apu.main_thread(process_id)
+        thread = self.apu.main_thread(process_id)
         system_messages = [SystemAPUMessage(prompt=self.spec.system_prompt)]
         if self.spec.system_prompt_postamble:
             system_messages.append(SystemAPUMessage(prompt=self.spec.system_prompt_postamble))
@@ -111,7 +111,7 @@ class WebResearcher(Specable[WebResearcherSpec]):
         :return:
         """
         text_message = UserTextAPUMessage(prompt=question)
-        thread = await self.apu.main_thread(process_id)
+        thread = self.apu.main_thread(process_id)
 
         async for event in thread.stream_request(prompts=[text_message]):
             yield event

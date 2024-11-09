@@ -87,7 +87,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         """
         Called to start the conversation. Will return a new state dictating what the agent wants to do next.
         """
-        t = await self.apu.main_thread(process_id)
+        t = self.apu.main_thread(process_id)
         await t.set_boot_messages(
             prompts=[
                 SystemAPUMessage(prompt=self.system_prompt),
@@ -105,7 +105,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         """
         Called to record a thought either from another agent or from the coordinator.
         """
-        t = await self.apu.main_thread(process_id)
+        t = self.apu.main_thread(process_id)
         messages = []
         for thought in thoughts:
             if thought.is_inner_voice:
@@ -131,7 +131,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         """
 
         prompt = UserTextAPUMessage(prompt=self.env.from_string(self.think_prompt).render())
-        t = await self.apu.main_thread(process_id)
+        t = self.apu.main_thread(process_id)
         async for event in t.stream_request(prompts=[prompt], output_format=AgentThought):
             yield event
         yield AgentStateEvent(state="idle")
@@ -142,7 +142,7 @@ class ConversationAgent(Specable[ConversationAgentSpec]):
         Called to allow the agent to speak
         """
         prompt = UserTextAPUMessage(prompt=self.speak_prompt)
-        t = await self.apu.main_thread(process_id)
+        t = self.apu.main_thread(process_id)
         async for event in t.stream_request(prompts=[prompt], output_format=str):
             yield event
         yield AgentStateEvent(state="idle")

@@ -52,7 +52,7 @@ class ToTChecker(Specable[TotCheckerConfig]):
             )
         )
 
-        thread = await self.apu.new_thread(process_id)
+        thread = self.apu.new_thread(process_id)
         resp = await thread.run_request(
             prompts=[UserTextAPUMessage(prompt=checker_prompt)],
             output_format=ThoughtValidity.model_json_schema(),

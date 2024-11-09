@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod, ABC
-from typing import Any, List, Dict, Literal, Union, TypeVar, Type, cast, AsyncIterator
+from typing import Any, List, Dict, Literal, Union, TypeVar, Type, cast, AsyncIterator, Optional
 
 from pydantic import BaseModel, Field, TypeAdapter
 
@@ -88,10 +88,10 @@ class APU(Specable[APUSpec], ABC):
         else:
             return json.dumps(obj)
 
-    async def main_thread(self, process_id: str) -> Thread:
+    def main_thread(self, process_id: str) -> Thread:
         return Thread(CallContext(process_id=process_id), self)
 
-    async def new_thread(self, process_id) -> Thread:
+    def new_thread(self, process_id) -> Thread:
         return Thread(CallContext(process_id=process_id).derive_call_context(), self)
 
     @abstractmethod

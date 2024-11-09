@@ -3,7 +3,7 @@ import inspect
 from collections import namedtuple
 from contextlib import contextmanager
 from textwrap import dedent
-from typing import TypeVar, Optional, Callable, Type, AsyncIterable, List, Awaitable, Dict, Any, Literal
+from typing import TypeVar, Optional, Callable, Type, AsyncIterable, List, Awaitable, Any
 
 from pydantic import BaseModel, Field
 
@@ -190,21 +190,20 @@ class AgentBuilderBase(BaseModel):
 
 class AgentBuilder(AgentBuilderBase):
     apu: AnnotatedReference[APU]
-    references: List[Dict[Literal["agent"], str] | Dict[Literal["tool"], Reference[LogicUnit]]] = Field(
-        default_factory=list,
-        description="A list of references available to the agent. References can be another agent's name, or the definition of a [logic unit](https://www.eidolonai.com/docs/components/logicunit/overview).")
+    agent_refs: List[str] = Field(
+        default=[],
+        description="A list of agents this agent can communicate with. Agents are referenced by name (metadata.name)."
+    )
+    tools: List[Reference[LogicUnit]] = Field(
+        default=[],
+        description="A list of [tools](https://www.eidolonai.com/docs/components/logicunit/overview) available to the agent.")
 
     def apu_instance(self) -> APU:
-        logic_units, agent_refs = [], []
-        for ref in self.references:
-            if "agent" in ref:
-                agent_refs.append(ref["agent"])
-            elif "tool" in ref:
-                logic_units.append(ref["tool"])
-        if agent_refs:
+        logic_units = copy.copy(self.tools) if self.tools else []
+        if self.agent_refs:
             logic_units.append(Reference(
                 implementation=fqn(AgentsLogicUnit),
-                agents=agent_refs,
+                agents=self.agent_refs,
             ))
         apu = copy.deepcopy(self.apu)
         apu.logic_units.extend(logic_units)
