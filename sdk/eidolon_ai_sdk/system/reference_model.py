@@ -104,7 +104,6 @@ class Reference(BaseModel):
                     group_component_ref = ref
                 ref_schema = handler.resolve_ref_schema(ref)
                 if 'reference_details' not in ref_schema:
-                    ref_schema['title'] = r.metadata.name
                     ref_schema['reference_details'] = reference_details
                     if hasattr(clz, "__pydantic_core_schema__"):
                         obj_ref = clz.__get_pydantic_json_schema__(clz.__pydantic_core_schema__, handler)
@@ -123,6 +122,7 @@ class Reference(BaseModel):
                     desired_ref_schema.pop("$defs", None)
                     desired_ref_schema.setdefault("required", []).append("implementation")
                     ref_schema.update(desired_ref_schema)
+                    ref_schema['title'] = r.metadata.name
                     for key, value in overrides.items():
                         ref_schema['properties'].setdefault(key, {})['default'] = value
                 json_schema["anyOf"].append(ref)
