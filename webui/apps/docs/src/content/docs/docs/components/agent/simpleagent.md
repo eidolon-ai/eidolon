@@ -6,16 +6,17 @@ description: Description of the SimpleAgent component
 **Description:** agent is designed to be a flexible, modular component that can interact with various processing units and perform a
 range of actions based on its configuration.
 
-| Property                                           | Pattern | Type             | Deprecated | Definition | Title/Description     |
-| -------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | --------------------- |
-| + [implementation](#implementation )               | No      | const            | No         | -          | Implementation        |
-| - [description](#description )                     | No      | string           | No         | -          | Description           |
-| - [system_prompt](#system_prompt )                 | No      | string           | No         | -          | System Prompt         |
-| - [agent_refs](#agent_refs )                       | No      | array of string  | No         | -          | Agent Refs            |
-| - [actions](#actions )                             | No      | array            | No         | -          | Actions               |
-| - [apu](#apu )                                     | No      | [Reference[APU]](/docs/components/apu/overview)   | No         | -          | -                     |
-| - [apus](#apus )                                   | No      | array            | No         | -          | Apus                  |
-| - [title_generation_mode](#title_generation_mode ) | No      | enum (of string) | No         | -          | Title Generation Mode |
+| Property                                           | Pattern | Type                          | Deprecated | Definition | Title/Description     |
+| -------------------------------------------------- | ------- | ----------------------------- | ---------- | ---------- | --------------------- |
+| + [implementation](#implementation )               | No      | const                         | No         | -          | Implementation        |
+| - [apu](#apu )                                     | No      | [Reference[APU]](/docs/components/apu/overview)                | No         | -          | -                     |
+| - [agent_refs](#agent_refs )                       | No      | array of string               | No         | -          | Agent Refs            |
+| - [tools](#tools )                                 | No      | array of [Reference[LogicUnit]](/docs/components/logicunit/overview) | No         | -          | Tools                 |
+| - [description](#description )                     | No      | string                        | No         | -          | Description           |
+| - [system_prompt](#system_prompt )                 | No      | string                        | No         | -          | System Prompt         |
+| - [actions](#actions )                             | No      | array                         | No         | -          | Actions               |
+| - [apus](#apus )                                   | No      | array                         | No         | -          | Apus                  |
+| - [title_generation_mode](#title_generation_mode ) | No      | enum (of string)              | No         | -          | Title Generation Mode |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -28,27 +29,15 @@ range of actions based on its configuration.
 
 Specific value: `"SimpleAgent"`
 
-## <a name="description"></a>2. Property `description`
+## <a name="apu"></a>2. Property `apu`
 
-**Title:** Description
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | [`Reference[APU]`](/docs/components/apu/overview)            |
+| **Required** | No                          |
+| **Default**  | `{"implementation": "APU"}` |
 
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-| **Default**  | `null`   |
-
-## <a name="system_prompt"></a>3. Property `system_prompt`
-
-**Title:** System Prompt
-
-|              |                                                                                                       |
-| ------------ | ----------------------------------------------------------------------------------------------------- |
-| **Type**     | `string`                                                                                              |
-| **Required** | No                                                                                                    |
-| **Default**  | `"You are a helpful assistant. Always use the provided tools, if appropriate, to complete the task."` |
-
-## <a name="agent_refs"></a>4. Property `agent_refs`
+## <a name="agent_refs"></a>3. Property `agent_refs`
 
 **Title:** Agent Refs
 
@@ -70,14 +59,66 @@ Specific value: `"SimpleAgent"`
 | ------------------------------------- | ----------- |
 | [agent_refs items](#agent_refs_items) | -           |
 
-### <a name="autogenerated_heading_1"></a>4.1. agent_refs items
+### <a name="autogenerated_heading_1"></a>3.1. agent_refs items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="actions"></a>5. Property `actions`
+## <a name="tools"></a>4. Property `tools`
+
+**Title:** Tools
+
+|              |                                 |
+| ------------ | ------------------------------- |
+| **Type**     | `array of [Reference[LogicUnit]](/docs/components/logicunit/overview)` |
+| **Required** | No                              |
+| **Default**  | `[]`                            |
+
+**Description:** A list of [tools](https://www.eidolonai.com/docs/components/logicunit/overview) available to the agent.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be | Description |
+| ------------------------------- | ----------- |
+| [tools items](#tools_items)     | -           |
+
+### <a name="autogenerated_heading_2"></a>4.1. tools items
+
+|              |                                                                 |
+| ------------ | --------------------------------------------------------------- |
+| **Type**     | [`Reference[LogicUnit]`](/docs/components/logicunit/overview)                                          |
+| **Required** | No                                                              |
+| **Default**  | `{"implementation": "eidolon_ai_sdk.apu.logic_unit.LogicUnit"}` |
+
+## <a name="description"></a>5. Property `description`
+
+**Title:** Description
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+| **Default**  | `null`   |
+
+## <a name="system_prompt"></a>6. Property `system_prompt`
+
+**Title:** System Prompt
+
+|              |                                                                                                       |
+| ------------ | ----------------------------------------------------------------------------------------------------- |
+| **Type**     | `string`                                                                                              |
+| **Required** | No                                                                                                    |
+| **Default**  | `"You are a helpful assistant. Always use the provided tools, if appropriate, to complete the task."` |
+
+## <a name="actions"></a>7. Property `actions`
 
 **Title:** Actions
 
@@ -99,7 +140,7 @@ Specific value: `"SimpleAgent"`
 | ---------------------------------- | ----------- |
 | [ActionDefinition](#actions_items) | -           |
 
-### <a name="autogenerated_heading_2"></a>5.1. ActionDefinition
+### <a name="autogenerated_heading_3"></a>7.1. ActionDefinition
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -122,7 +163,7 @@ Specific value: `"SimpleAgent"`
 | - [allowed_states](#actions_items_allowed_states )             | No      | array of string | No         | -          | Allowed States       |
 | - [output_state](#actions_items_output_state )                 | No      | string          | No         | -          | Output State         |
 
-#### <a name="actions_items_name"></a>5.1.1. Property `name`
+#### <a name="actions_items_name"></a>7.1.1. Property `name`
 
 **Title:** Name
 
@@ -132,7 +173,7 @@ Specific value: `"SimpleAgent"`
 | **Required** | No           |
 | **Default**  | `"converse"` |
 
-#### <a name="actions_items_title"></a>5.1.2. Property `title`
+#### <a name="actions_items_title"></a>7.1.2. Property `title`
 
 **Title:** Title
 
@@ -142,7 +183,7 @@ Specific value: `"SimpleAgent"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-#### <a name="actions_items_sub_title"></a>5.1.3. Property `sub_title`
+#### <a name="actions_items_sub_title"></a>7.1.3. Property `sub_title`
 
 **Title:** Sub Title
 
@@ -152,7 +193,7 @@ Specific value: `"SimpleAgent"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-#### <a name="actions_items_description"></a>5.1.4. Property `description`
+#### <a name="actions_items_description"></a>7.1.4. Property `description`
 
 **Title:** Description
 
@@ -162,7 +203,7 @@ Specific value: `"SimpleAgent"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-#### <a name="actions_items_user_prompt"></a>5.1.5. Property `user_prompt`
+#### <a name="actions_items_user_prompt"></a>7.1.5. Property `user_prompt`
 
 **Title:** User Prompt
 
@@ -172,7 +213,7 @@ Specific value: `"SimpleAgent"`
 | **Required** | No             |
 | **Default**  | `"{{ body }}"` |
 
-#### <a name="actions_items_input_schema"></a>5.1.6. Property `input_schema`
+#### <a name="actions_items_input_schema"></a>7.1.6. Property `input_schema`
 
 **Title:** Input Schema
 
@@ -187,7 +228,7 @@ Specific value: `"SimpleAgent"`
 | ------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#actions_items_input_schema_additionalProperties ) | No      | object | No         | -          | -                 |
 
-##### <a name="actions_items_input_schema_additionalProperties"></a>5.1.6.1. Property `additionalProperties`
+##### <a name="actions_items_input_schema_additionalProperties"></a>7.1.6.1. Property `additionalProperties`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -195,7 +236,7 @@ Specific value: `"SimpleAgent"`
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-#### <a name="actions_items_output_schema"></a>5.1.7. Property `output_schema`
+#### <a name="actions_items_output_schema"></a>7.1.7. Property `output_schema`
 
 **Title:** Output Schema
 
@@ -211,7 +252,7 @@ Specific value: `"SimpleAgent"`
 | [item 0](#actions_items_output_schema_anyOf_i0) |
 | [item 1](#actions_items_output_schema_anyOf_i1) |
 
-##### <a name="actions_items_output_schema_anyOf_i0"></a>5.1.7.1. Property `item 0`
+##### <a name="actions_items_output_schema_anyOf_i0"></a>7.1.7.1. Property `item 0`
 
 |              |         |
 | ------------ | ------- |
@@ -222,7 +263,7 @@ Must be one of:
 * "str"
 Specific value: `"str"`
 
-##### <a name="actions_items_output_schema_anyOf_i1"></a>5.1.7.2. Property `item 1`
+##### <a name="actions_items_output_schema_anyOf_i1"></a>7.1.7.2. Property `item 1`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -230,7 +271,7 @@ Specific value: `"str"`
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-#### <a name="actions_items_allow_file_upload"></a>5.1.8. Property `allow_file_upload`
+#### <a name="actions_items_allow_file_upload"></a>7.1.8. Property `allow_file_upload`
 
 **Title:** Allow File Upload
 
@@ -240,7 +281,7 @@ Specific value: `"str"`
 | **Required** | No        |
 | **Default**  | `false`   |
 
-#### <a name="actions_items_supported_mime_types"></a>5.1.9. Property `supported_mime_types`
+#### <a name="actions_items_supported_mime_types"></a>7.1.9. Property `supported_mime_types`
 
 **Title:** Supported Mime Types
 
@@ -262,14 +303,14 @@ Specific value: `"str"`
 | ----------------------------------------------------------------------- | ----------- |
 | [supported_mime_types items](#actions_items_supported_mime_types_items) | -           |
 
-##### <a name="autogenerated_heading_3"></a>5.1.9.1. supported_mime_types items
+##### <a name="autogenerated_heading_4"></a>7.1.9.1. supported_mime_types items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="actions_items_allowed_states"></a>5.1.10. Property `allowed_states`
+#### <a name="actions_items_allowed_states"></a>7.1.10. Property `allowed_states`
 
 **Title:** Allowed States
 
@@ -291,14 +332,14 @@ Specific value: `"str"`
 | ----------------------------------------------------------- | ----------- |
 | [allowed_states items](#actions_items_allowed_states_items) | -           |
 
-##### <a name="autogenerated_heading_4"></a>5.1.10.1. allowed_states items
+##### <a name="autogenerated_heading_5"></a>7.1.10.1. allowed_states items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="actions_items_output_state"></a>5.1.11. Property `output_state`
+#### <a name="actions_items_output_state"></a>7.1.11. Property `output_state`
 
 **Title:** Output State
 
@@ -308,15 +349,7 @@ Specific value: `"str"`
 | **Required** | No       |
 | **Default**  | `"idle"` |
 
-## <a name="apu"></a>6. Property `apu`
-
-|              |                             |
-| ------------ | --------------------------- |
-| **Type**     | [`Reference[APU]`](/docs/components/apu/overview)            |
-| **Required** | No                          |
-| **Default**  | `{"implementation": "APU"}` |
-
-## <a name="apus"></a>7. Property `apus`
+## <a name="apus"></a>8. Property `apus`
 
 **Title:** Apus
 
@@ -338,7 +371,7 @@ Specific value: `"str"`
 | ------------------------------- | ----------- |
 | [NamedAPU](#apus_items)         | -           |
 
-### <a name="autogenerated_heading_5"></a>7.1. NamedAPU
+### <a name="autogenerated_heading_6"></a>8.1. NamedAPU
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -353,7 +386,7 @@ Specific value: `"str"`
 | - [apu](#apus_items_apu )         | No      | [Reference[APU]](/docs/components/apu/overview) | No         | -          | -                 |
 | - [default](#apus_items_default ) | No      | boolean        | No         | -          | Default           |
 
-#### <a name="apus_items_title"></a>7.1.1. Property `title`
+#### <a name="apus_items_title"></a>8.1.1. Property `title`
 
 **Title:** Title
 
@@ -363,7 +396,7 @@ Specific value: `"str"`
 | **Required** | No       |
 | **Default**  | `null`   |
 
-#### <a name="apus_items_apu"></a>7.1.2. Property `apu`
+#### <a name="apus_items_apu"></a>8.1.2. Property `apu`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -371,7 +404,7 @@ Specific value: `"str"`
 | **Required** | No                          |
 | **Default**  | `{"implementation": "APU"}` |
 
-#### <a name="apus_items_default"></a>7.1.3. Property `default`
+#### <a name="apus_items_default"></a>8.1.3. Property `default`
 
 **Title:** Default
 
@@ -381,7 +414,7 @@ Specific value: `"str"`
 | **Required** | No        |
 | **Default**  | `false`   |
 
-## <a name="title_generation_mode"></a>8. Property `title_generation_mode`
+## <a name="title_generation_mode"></a>9. Property `title_generation_mode`
 
 **Title:** Title Generation Mode
 

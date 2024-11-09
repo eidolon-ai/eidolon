@@ -5,6 +5,26 @@
       "const": "SimpleAgent",
       "title": "Implementation"
     },
+    "apu": {
+      "$ref": "../APU/overview.json"
+    },
+    "agent_refs": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Agent Refs",
+      "type": "array"
+    },
+    "tools": {
+      "default": [],
+      "description": "A list of [tools](https://www.eidolonai.com/docs/components/logicunit/overview) available to the agent.",
+      "items": {
+        "$ref": "../LogicUnit/overview.json"
+      },
+      "title": "Tools",
+      "type": "array"
+    },
     "description": {
       "anyOf": [
         {
@@ -21,14 +41,6 @@
       "default": "You are a helpful assistant. Always use the provided tools, if appropriate, to complete the task.",
       "title": "System Prompt",
       "type": "string"
-    },
-    "agent_refs": {
-      "default": [],
-      "items": {
-        "type": "string"
-      },
-      "title": "Agent Refs",
-      "type": "array"
     },
     "actions": {
       "default": [
@@ -55,9 +67,6 @@
       },
       "title": "Actions",
       "type": "array"
-    },
-    "apu": {
-      "$ref": "../APU/overview.json"
     },
     "apus": {
       "default": [],

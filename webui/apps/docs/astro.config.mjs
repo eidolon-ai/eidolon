@@ -305,6 +305,10 @@ export default defineConfig({
                     "link": "/docs/components/logicunit/browser"
                   },
                   {
+                    "label": "OpenAIImageUnit",
+                    "link": "/docs/components/logicunit/openaiimageunit"
+                  },
+                  {
                     "label": "Search",
                     "link": "/docs/components/logicunit/search"
                   },
