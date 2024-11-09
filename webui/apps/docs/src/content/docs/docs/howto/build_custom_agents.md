@@ -1,5 +1,5 @@
 ---
-title: How to Build Custom Agents
+title: How to Build Custom Agent Templates
 description: A guide to creating custom agent templates in Eidolon
 ---
 A guide to creating custom agent templates in Eidolon
