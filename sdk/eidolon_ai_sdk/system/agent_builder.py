@@ -206,5 +206,6 @@ class AgentBuilder(AgentBuilderBase):
                 agents=self.agent_refs,
             ))
         apu = copy.deepcopy(self.apu)
-        apu.logic_units.extend(logic_units)
+        if logic_units:
+            apu.setdefault('logic_units', []).extend(logic_units)
         return apu.instantiate()

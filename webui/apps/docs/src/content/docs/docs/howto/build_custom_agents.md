@@ -14,8 +14,20 @@ While Eidolon provides several built-in [AgentTemplates](/docs/components/agents
 ## Building a Custom Agent Template
 Let's create an example agent template that plans responses before executing them.
 
+This guide will assume you already have an `agent-machine` that you are building with. If you don't, you create a new 
+repository using the [agent-machine template](https://github.com/new?template_name=agent-machine&template_owner=eidolon-ai). 
+Once you have created a new repository, clone it to your local machine and follow the steps below.
+
+🚨 All commands will assume you are in the root directory of your agent-machine repository.
+
 ### 1. Define the Configuration
-First, create your agent template configuration by extending the `AgentBuilder` class:
+First, let's create a new file `components/planning_agent.py` to implement our Agent template.
+
+```bash
+touch components/planning_agent.py
+```
+
+Next, create your agent template configuration by extending the `AgentBuilder` class:
 
 ```python
 from eidolon_ai_sdk.system.agent_builder import AgentBuilder
@@ -31,21 +43,21 @@ class PlanningAgent(AgentBuilder):
     user_prompt_template: str = "{user_message}\n\nFollow the execution plan below:\n{steps}"
 ```
 
-The `AgentBuilder` provides:
+The `AgentBuilder` provides some default configuration as well that is not shown:
 - `apu`: Make LLM calls without managing state or model-specific behavior
 - `agent_refs`: Communicate with other agents
 - `tools`: Add additional capabilities
 
-### 2. Create Agent Actions
+### 2. Add Agent Action(s)
 Define actions for your agent as separate functions decorated with your agent template:
 
 ```python
+# ...
 from typing import List, Annotated
 from fastapi import Body
 from eidolon_ai_sdk.apu.apu import APU, Thread
 from eidolon_ai_sdk.apu.agent_io import UserTextAPUMessage, SystemAPUMessage
 from eidolon_ai_client.events import AgentStateEvent
-
 
 @PlanningAgent.action(allowed_states=["initialized", "idle"])
 async def converse(process_id: str, user_message: Annotated[str, Body()], spec: PlanningAgent):
@@ -97,8 +109,13 @@ def build_actions(spec: PlanningAgent):
         ...
 ```
 
-### 4. Use Your Custom Agent Template
-Reference your agent template in an Agent Resource file using its [Fully Qualified Name (FQN)](https://peps.python.org/pep-3155/):
+### 4. Using Your Custom Agent Template
+Now, to use your custom agent template, create a new agent resource and reference the PlanningAgent 
+implementation by its using its [Fully Qualified Name (FQN)](https://peps.python.org/pep-3155/):
+
+```bash
+touch resources/planning_agent.eidolon.yaml
+```
 
 ```yaml
 apiVersion: server.eidolonai.com/v1alpha1
@@ -107,7 +124,7 @@ metadata:
   name: planning-agent
 spec:
   # Implementation is the FQN of your agent template class.
-  implementation: components.PlanningAgent
+  implementation: components.planning_agent.PlanningAgent
   description: "Custom agent that plans before responding"  # Optional: Override default configuration
 ```
 

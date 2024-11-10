@@ -236,7 +236,7 @@ def fn(spec: SimpleAgent, metadata: Metadata):
 
 
 def _register_refs_logic_unit(apu, agent_refs, extra_tools=None):
-    if hasattr(hasattr(apu, "logic_units")):
+    if hasattr(apu, "logic_units"):
         if agent_refs:
             apu.logic_units.append(
                 AgentsLogicUnit(
