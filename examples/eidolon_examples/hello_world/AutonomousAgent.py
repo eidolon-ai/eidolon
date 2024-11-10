@@ -18,7 +18,7 @@ class AutonomousAgent(Agent):
     async def converse(
         self, process_id, question: Annotated[str, Body(description="A question", embed=True)]
     ) -> AgentState[IdleStateRepresentation]:
-        thread = await self.apu.main_thread(process_id)
+        thread = self.apu.main_thread(process_id)
         response = await thread.run_request(
             prompts=[UserTextAPUMessage(prompt=question)], output_format=IdleStateRepresentation.model_json_schema()
         )
@@ -27,7 +27,7 @@ class AutonomousAgent(Agent):
     @register_program()
     @register_action("idle")
     async def stream_response(self, process_id, question: Annotated[str, Body(description="A question", embed=True)]):
-        thread = await self.apu.main_thread(process_id)
+        thread = self.apu.main_thread(process_id)
         stream = thread.stream_request(prompts=[UserTextAPUMessage(prompt=question)], output_format=str)
         async for event in stream:
             yield event

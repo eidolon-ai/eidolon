@@ -1,108 +1,131 @@
 ---
 title: How to Build Custom Agent Templates
-description: Reference - Building Custom Agent Templates
+description: A guide to creating custom agent templates in Eidolon
 ---
-Eidolon defines several useful built-in [AgentTemplates](/docs/components/agents/overview) out of the box, but for domain 
-specific problems, you may need to create your own.
+A guide to creating custom agent templates in Eidolon
 
-## Why
-Most projects will end up needing custom agents with domain specific logic. It is crucial for an agentic framework to be 
-flexible enough to "hand over the keys" when developers just need to write their own code. Trying to incorporate this 
-into an agentic framework just means creating another programing language. Nothing gained, but a lot lost. 
+## Overview
+While Eidolon provides several built-in [AgentTemplates](/docs/components/agents/overview), you may need to create custom agents for domain-specific problems.
 
-## How
-You can create new agent templates by creating a class and decorating the methods you would like to expose
-as actions. You also specify the states these actions are allowed on, and return the state the agent should transition to
-after the action is complete.
+## When to Create a Custom Agent Template
+- If you only need enhanced capabilities, consider creating a [custom tool](/docs/howto/build_custom_tools/) instead
+- Create a custom agent template when you need to define a new agent architecture for a specific problem
 
-```python
-class CodeAgent:
-    @register_action("initialized", "idle")
-    async def execute(self, name: Annotated[str, Body(description="Your name", embed=True)]) -> AgentState[str]:
-        """
-        I greet people with a smile!
-        """
-        return AgentState(name="idle", data=f"Hello {name}!👋😀")
-# 🚨 If you do not return an AgentState object, the agent will move to the 'terminated' state.
-# ie: `return "Foo"` => `return AgentState(name="terminated", data="Foo")`
+## Building a Custom Agent Template
+Let's create an example agent template that plans responses before executing them.
+
+This guide will assume you already have an `agent-machine` that you are building with. If you don't, you create a new 
+repository using the [agent-machine template](https://github.com/new?template_name=agent-machine&template_owner=eidolon-ai). 
+Once you have created a new repository, clone it to your local machine and follow the steps below.
+
+🚨 All commands will assume you are in the root directory of your agent-machine repository.
+
+### 1. Define the Configuration
+First, let's create a new file `components/planning_agent.py` to implement our Agent template.
+
+```bash
+touch components/planning_agent.py
 ```
 
-To use this agent template, you simply refer to it in your agent's yaml file by its fully qualified name.
+Next, create your agent template configuration by extending the `AgentBuilder` class:
+
+```python
+from eidolon_ai_sdk.system.agent_builder import AgentBuilder
+
+class PlanningAgent(AgentBuilder):
+    planning_system_prompt: str = (
+        "You are a helpful assistant. Users will come to you with questions. "
+        "You will respond with a list of steps to follow when answering the question. "
+        "Consider available tools when creating a plan, but do not execute them. "
+        "Think carefully."
+    )
+    agent_system_prompt: str = "You are a helpful assistant"
+    user_prompt_template: str = "{user_message}\n\nFollow the execution plan below:\n{steps}"
+```
+
+The `AgentBuilder` provides some default configuration as well that is not shown:
+- `apu`: Make LLM calls without managing state or model-specific behavior
+- `agent_refs`: Communicate with other agents
+- `tools`: Add additional capabilities
+
+### 2. Add Agent Action(s)
+Define actions for your agent as separate functions decorated with your agent template:
+
+```python
+# ...
+from typing import List, Annotated
+from fastapi import Body
+from eidolon_ai_sdk.apu.apu import APU, Thread
+from eidolon_ai_sdk.apu.agent_io import UserTextAPUMessage, SystemAPUMessage
+from eidolon_ai_client.events import AgentStateEvent
+
+@PlanningAgent.action(allowed_states=["initialized", "idle"])
+async def converse(process_id: str, user_message: Annotated[str, Body()], spec: PlanningAgent):
+  """Respond to user messages after creating an execution plan."""
+  # Create a response plan
+  apu: APU = spec.apu_instance()
+  planning_thread: Thread = apu.new_thread(process_id)
+  steps: List[str] = await planning_thread.run_request(
+    prompts=[
+      SystemAPUMessage(prompt=spec.planning_system_prompt),
+      UserTextAPUMessage(prompt=user_message)
+    ],
+    output_format=List[str]
+  )
+
+  # Execute the plan
+  steps_formatted = "\n".join([f"<step>{step}</step>" for step in steps])
+  user_prompt = spec.user_prompt_template.format(user_message=user_message, steps=steps_formatted)
+  async for event in apu.main_thread(process_id).stream_request(
+    boot_messages=[SystemAPUMessage(prompt=spec.agent_system_prompt)],
+    prompts=[UserTextAPUMessage(prompt=user_prompt)]
+  ):
+    yield event
+  yield AgentStateEvent(state="idle")
+```
+#### Notes:
+> The action `name`, `description`, and `body` are automatically built using the function 
+signature. The first two come from the function name and docstrings respectively (but can be overridden by parameter), 
+while the third is determined by how [FastAPI](https://fastapi.tiangolo.com/) interprets the function signature.
+
+> The `APU` is at the center of the Eidolon AI SDK. It allows you to make LLM calls without needing to keep
+track of state or model capabilities. It is a multi-modal, model-agnostic interface.
+
+> `Threads` are used to manage the state of a conversation. Each thread has its own memory, so llm requests can be 
+siloed. You can create new threads (with no memory), or clone an existing thread to reuse it's previous memories without 
+adding to them.
+
+### 3. Add Dynamic Actions
+To create actions that depend on template configuration:
+
+```python
+class PlanningAgent(AgentBuilder):
+    description: str = "Custom agent that plans before responding"
+
+@PlanningAgent.dynamic_contract
+def build_actions(spec: PlanningAgent):
+    @PlanningAgent.action(description=spec.description, allowed_states=["initialized", "idle"])
+    async def converse(process_id: str, user_message: Annotated[str, Body()], spec: PlanningAgent):
+        ...
+```
+
+### 4. Using Your Custom Agent Template
+Now, to use your custom agent template, create a new agent resource and reference the PlanningAgent 
+implementation by its using its [Fully Qualified Name (FQN)](https://peps.python.org/pep-3155/):
+
+```bash
+touch resources/planning_agent.eidolon.yaml
+```
 
 ```yaml
 apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
-  name: hello_world
-
-spec: "components.getting_started.CodeAgent"
-# 🚨 components must be available in your pythonpath
+  name: planning-agent
+spec:
+  # Implementation is the FQN of your agent template class.
+  implementation: components.planning_agent.PlanningAgent
+  description: "Custom agent that plans before responding"  # Optional: Override default configuration
 ```
 
-But wait 💭, that didn't use an LLM at all... what gives?! This is because there are no fixed patterns in Eidolon that 
-you are forced to use. This also enables you to use Eidolon in tandem with any other LLM frameworks and libraries.
-
-What is the point of this then? By defining an agent in this way, you get deployment, and more importantly inter-agent 
-communication for free. So even though this "agent" is not using an LLM, other agents (and external services) can still 
-communicate with it.
-
-### LLM Based Agent Template
-
-Ok, so now let's actually create an agent that uses an LLM. You could use langchain or even raw calls out 
-to OpenAI if you want, but to fully leverage Eidolon's capabilities, you should use an [**Agent Processing Unit**](/docs/components/apu/overview/)
-(APU).
-
-The APU is Eidolon's abstraction around LLM interactions. It provides an LLM-agnostic, multi-media interface. The APU 
-gives developers built-in tooling to manage memory, inter-agent-communication, logic units, metrics, and prompt engineering. 
-
-
-Everything you love about Eidolon is baked into the **APU**.
-
-```python
-class QASpec(BaseModel):
-  apu: AnnotatedReference[AgentProcessingUnit]
-
-
-class QA(Specable[QASpec]):
-  @register_program()
-  async def run_tests(self, process_id) -> str:
-    apu = self.spec.apu.initialize()
-    thread = await apu.main_thread(process_id)
-    return await thread.run_request(prompts=[
-      SystemAPUMessage(prompt="You are a QA assistant responsible for validating agents and tools"),
-      UserTextAPUMessage(prompt=f"Exhaustively test all of your tools and agents and report any issues"),
-    ])
-```
-
-🔎 What is this `Specable` thing? Eidolon uses <a href="https://docs.pydantic.dev/latest/concepts/models/" target=_blank>Pydantic models</a> to define the spec of different resources. [Learn more about 
-how references work.](/docs/howto/using_references)
-
-### Streaming Response
-LLMs can be slow, and sometimes you want to stream responses back to the user. Eidolon supports this by allowing you to 
-yield events from your action. The APU can be called with stream_request to yield these events.
-
-```python
-class QASpec(BaseModel):
-  apu: AnnotatedReference[AgentProcessingUnit]
-
-
-class QA(Specable[QASpec]):
-  def __init__(self, **kwargs):
-    Specable.__init__(self, **kwargs)
-    self.apu = self.spec.apu.initialize()
-
-  @register_program()
-  async def run_tests(self, process_id) -> str:
-    thread = await self.apu.main_thread(process_id)
-    yield StringOutputEvent(content="Beginning tests...\n")
-    async for event in thread.stream_request(prompts=[
-      SystemAPUMessage(prompt="You are a QA assistant responsible for validating agents and tools"),
-      UserTextAPUMessage(prompt=f"Exhaustively test all of your tools and agents and report any issues"),
-    ]):
-      yield event
-    yield StringOutputEvent(content="\nDone!")
-    # While streaming yield a state event to indicate the next state.
-    # Similarly to the return value, if you do not yield a state event, the agent will move to the 'terminated' state.
-    yield AgentState(name="idle", data="Tests complete")
-```
-
+> The FQN is the complete import path to your agent template class, which must be on the server's `PYTHONPATH`

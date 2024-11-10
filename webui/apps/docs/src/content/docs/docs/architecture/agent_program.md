@@ -73,7 +73,7 @@ class AutonomousAgent(Agent):
     async def converse(
         self, process_id, question: Annotated[str, Body(description="A question", embed=True)]
     ) -> AgentState[IdleStateRepresentation]:
-        thread = await self.apu.main_thread(process_id)
+        thread = self.apu.main_thread(process_id)
         response = await thread.schedule_request(
             [UserTextAPUMessage(prompt=question)], IdleStateRepresentation.model_json_schema()
         )

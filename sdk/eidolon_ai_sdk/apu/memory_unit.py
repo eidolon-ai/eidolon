@@ -69,7 +69,7 @@ class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
         raise NotImplementedError("writeMessages not implemented")
 
     @abstractmethod
-    async def getConversationHistory(self, call_context: CallContext) -> List[LLMMessage]:
+    async def getConversationHistory(self, call_context: CallContext, include_boot: bool = True) -> List[LLMMessage]:
         """
         Get the full conversation history for the given call context
         :param call_context: The call context for the current conversation

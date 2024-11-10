@@ -53,7 +53,7 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
         """
         Called to start the game. Initializes the remote agents and starts the first turn.
         """
-        t = await self.apu.main_thread(process_id)
+        t = self.apu.main_thread(process_id)
         system_prompt = f"{self.spec.system_prompt}\n\nYou are playing the game {game}\n You must always remember the rules of the game and follow them"
         await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=system_prompt)])
         message = f"Find the rules of {game} and summarize them. Make sure to include all the rules in detail.\n"
@@ -90,7 +90,7 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
         Called to allow the agent to speak
         """
         message = "Play the next turn of the game.\n"
-        t = await self.apu.main_thread(process_id)
+        t = self.apu.main_thread(process_id)
         async for event in t.stream_request(prompts=[UserTextAPUMessage(prompt=message)], output_format=str):
             yield event
         yield AgentStateEvent(state="take_turn")
@@ -102,7 +102,7 @@ class GameMaster(BaseConversationCoordinator, Specable[GameMasterSpec]):
         """
         Called to allow the agent to speak
         """
-        t = await self.apu.main_thread(process_id)
+        t = self.apu.main_thread(process_id)
         async for event in t.stream_request(prompts=[UserTextAPUMessage(prompt=message)], output_format=str):
             yield event
         yield AgentStateEvent(state="take_turn")

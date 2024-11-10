@@ -21,7 +21,7 @@ class HydeQuestionTransformer(QuestionTransformer, Specable[HydeQuestionTransfor
         super().__init__(**kwargs)
 
     async def transform(self, apu: APU, process_id: str, question: str) -> List[str]:
-        thread = await apu.new_thread(process_id)
+        thread = apu.new_thread(process_id)
         env = Environment(undefined=StrictUndefined)
         userPrompt = env.from_string(self.spec.prompt).render(question=question)
         response = await thread.run_request(prompts=[UserTextAPUMessage(prompt=userPrompt)], output_format="str")
