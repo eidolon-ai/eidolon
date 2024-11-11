@@ -137,7 +137,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         boot_messages: List[APUMessageTypes] = None,
     ) -> AsyncIterator[StreamEvent]:
         try:
-            conversation = copy.copy(boot_messages) if boot_messages else []
+            conversation = copy.copy(await self.io_unit.process_request(call_context, boot_messages)) if boot_messages else []
             conversation.extend(await self.memory_unit.getConversationHistory(call_context, include_boot=boot_messages is None))
             conversation_messages = await self.io_unit.process_request(call_context, prompts)
             if self.record_memory:

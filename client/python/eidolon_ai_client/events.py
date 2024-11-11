@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from enum import Enum
 from pydantic import BaseModel, TypeAdapter, Field
-from typing import List, TypeVar, Generic, Any, AsyncIterator, Type, Literal, Dict, Optional
+from typing import List, TypeVar, Generic, Any, AsyncIterator, Type, Literal, Dict, Optional, get_origin
 
 
 class FileHandle(BaseModel):
@@ -174,6 +174,8 @@ async def convert_output_object(it: AsyncIterator[StreamEvent], output_format: T
     model = TypeAdapter(output_format)
     async for event in it:
         if event.is_root_and_type(ObjectOutputEvent):
+            if output_format is list or get_origin(output_format) is list and isinstance(event.content, dict) and 'items' in event.content:
+                event.content = event.content['items']
             event.content = model.validate_python(event.content)
         yield event
 
