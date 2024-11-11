@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod, ABC
-from typing import Any, List, Dict, Literal, Union, TypeVar, Type, cast, AsyncIterator
+from typing import Any, List, Dict, Literal, Union, TypeVar, Type, cast, AsyncIterator, Optional
 
 from pydantic import BaseModel, Field, TypeAdapter
 
@@ -67,6 +67,7 @@ class APU(Specable[APUSpec], ABC):
         call_context: CallContext,
         prompts: List[APUMessageTypes],
         output_format: Union[Literal["str"], Dict[str, Any]],
+        boot_messages: Optional[List[APUMessageTypes]] = None,
     ) -> AsyncIterator[StreamEvent]:
         """
         Schedules the given prompts with the APU. The default implementation saves the new prompts into memory, executes the prompts, including intermediate tool calls, and returns the output in the specified format.
@@ -74,6 +75,7 @@ class APU(Specable[APUSpec], ABC):
         :param call_context: The current call context including process id and thread id.
         :param prompts: The new prompts to schedule.
         :param output_format: The output format to return the response in.
+        :param boot_messages: Override the stored boot messages for this request only.
         :return: Yields a stream of events including the output response.
         """
         yield None
@@ -120,14 +122,12 @@ class Thread:
         self,
         prompts: List[APUMessageTypes],
         output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str",
+        boot_messages: Optional[List[APUMessageTypes]] = None,
     ) -> T:
-        stream = self.stream_request(prompts, output_format)
+        stream = self.stream_request(prompts, output_format, boot_messages)
         result = None
         error = None
 
-        is_string_call = not isinstance(output_format, type) and (
-            output_format == "str" or output_format["type"] == "string"
-        )
         string_output = ""
         async for event in stream:
             if event.is_root_and_type(ObjectOutputEvent):
@@ -137,7 +137,7 @@ class Thread:
             elif event.is_root_and_type(ErrorEvent):
                 error = event.reason
 
-        if is_string_call:
+        if output_format == "str" or output_format == str or (isinstance(output_format, dict) and output_format.get("type") == "string"):
             result = string_output
 
         if error is not None:
@@ -149,17 +149,17 @@ class Thread:
         return result
 
     def stream_request(
-        self, prompts: List[APUMessageTypes], output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str"
+        self, prompts: List[APUMessageTypes], output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str", boot_messages: Optional[List[APUMessageTypes]] = None
     ) -> AsyncIterator[StreamEvent]:
         if isinstance(output_format, str) and output_format != "str":
             raise ValueError(f"Unknown output format {output_format}")
         if isinstance(output_format, (dict, str)):
-            s = self._apu.schedule_request(self._call_context, prompts, output_format)
+            s = self._apu.schedule_request(self._call_context, prompts, output_format, boot_messages)
         else:
             model = TypeAdapter(output_format)
             schema = model.json_schema()
             s = convert_output_object(
-                self._apu.schedule_request(self._call_context, prompts, schema), cast(Type[T], output_format)
+                self._apu.schedule_request(self._call_context, prompts, schema, boot_messages), cast(Type[T], output_format)
             )
 
         return s
