@@ -129,3 +129,13 @@ spec:
 ```
 
 > The FQN is the complete import path to your agent template class, which must be on the server's `PYTHONPATH`
+
+### 5. Build and Deploy
+Finally, build and deploy your agent to the Eidolon server and your agent will now start planning responses before executing them.
+
+```bash
+make docker-deploy
+```
+
+If you want to see this in action, but don't want to build it yourself, you can find the example available on 
+[github](https://github.com/eidolon-ai/howto-custom-agent).
