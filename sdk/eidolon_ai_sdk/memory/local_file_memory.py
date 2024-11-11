@@ -44,8 +44,8 @@ class LocalFileMemoryConfig(BaseModel):
         return inValue
 
 
-class LocalFileMemory(FileMemoryBase, Specable[AsyncLocalFileMemoryConfig]):
-    def __init__(self, spec: AsyncLocalFileMemoryConfig):
+class LocalFileMemory(FileMemoryBase, Specable[LocalFileMemoryConfig]):
+    def __init__(self, spec: LocalFileMemoryConfig):
         super().__init__(spec)
         self.root_dir = Path(replace_env_var_in_string(spec.root_dir)).resolve()
 
