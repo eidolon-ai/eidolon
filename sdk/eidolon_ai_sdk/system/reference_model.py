@@ -8,7 +8,7 @@ from typing import TypeVar, Type, Annotated, Optional, ClassVar
 
 from pydantic import BaseModel, model_validator, Field, ConfigDict, GetJsonSchemaHandler
 from pydantic.json_schema import JsonSchemaValue
-from pydantic_core import core_schema as cs, ValidationError, PydanticCustomError
+from pydantic_core import core_schema as cs, PydanticCustomError
 
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.specable import Specable
