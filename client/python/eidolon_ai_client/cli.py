@@ -10,7 +10,7 @@ from httpx import ConnectError
 
 from eidolon_ai_client.client import Agent, Process, Machine, ProcessStatus
 from eidolon_ai_client.events import StringOutputEvent, ObjectOutputEvent, LLMToolCallRequestEvent, \
-    AgentStateEvent
+    AgentStateEvent, ErrorEvent
 from eidolon_ai_client.util.aiohttp import AgentError
 
 try:
@@ -176,6 +176,11 @@ async def run(
                 if not has_newline:
                     console.print("")
                 dim_console.print(event.tool_call)
+                has_newline = True
+            elif event.is_root_and_type(ErrorEvent):
+                if not has_newline:
+                    console.print("")
+                err_console.print(event.reason)
                 has_newline = True
             elif event.is_root_and_type(AgentStateEvent):
                 if not has_newline:
