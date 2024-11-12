@@ -6,6 +6,7 @@ from typing import Optional, TypeVar, Type, Iterable, Literal
 
 import yaml
 from pydantic import BaseModel
+from yaml.scanner import ScannerError
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.system.resource_load_error_handler import register_load_error

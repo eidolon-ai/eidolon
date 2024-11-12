@@ -41,11 +41,15 @@ def get_from_fqn(implementation_fqn: str):
     try:
         module_name, class_name = implementation_fqn.rsplit(".", 1)
     except ValueError:
-        raise ValueError(f"'{implementation_fqn}' is not a valid fully qualified class name.")
+        raise InvalidFQN(implementation_fqn)
     try:
         module = importlib.import_module(module_name)
         return getattr(module, class_name)
-    except (ImportError, AttributeError):
+    except ModuleNotFoundError:
+        raise ValueError(f"Module '{module_name}' not found")
+    except AttributeError:
+        raise ValueError(f"Attribute '{class_name}' not found in module '{module_name}'")
+    except ImportError:
         logger.exception(f"Unable to import {implementation_fqn}")
         raise ValueError(f"Unable to import {implementation_fqn}")
 
@@ -68,3 +72,9 @@ def get_function_details(func):
             owning_class = qualname_parts[-2]
 
     return function_name, owning_class
+
+
+class InvalidFQN(ValueError):
+    def __init__(self, fqn: str):
+        super().__init__(f"'{fqn}' is not a valid fully qualified class name.")
+        self.fqn = fqn
