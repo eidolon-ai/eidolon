@@ -5,7 +5,7 @@ import os.path
 
 import dotenv
 import uvicorn
-from dotenv import find_dotenv
+from dotenv import find_dotenv, load_dotenv
 
 from eidolon_ai_sdk.bin.server import start_os, start_app
 from eidolon_ai_sdk.system.resources.resources_base import load_resources
@@ -63,6 +63,11 @@ def parse_args():
         action="append",
         help="specify a .env file to load environment variables from.",
     )
+    parser.add_argument(
+        "--dotenv-override",
+        action='store_true',
+        help="Override existing environment variables with those in the .env file.",
+    )
     return parser.parse_args()
 
 
@@ -74,8 +79,9 @@ log_level_str = "debug" if args.debug else "info"
 log_level = logging.DEBUG if args.debug else logging.INFO
 loop = asyncio.get_event_loop()
 loop.set_debug(True)
+load_dotenv(find_dotenv(usecwd=True), override=args.dotenv_override)
 for dotenv_file in args.dotenv or []:
-    dotenv.load_dotenv(dotenv_file)
+    dotenv.load_dotenv(dotenv_file, override=args.dotenv_override)
 
 app = start_app(
     lambda app: start_os(

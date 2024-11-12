@@ -156,7 +156,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         except APUException as e:
             raise e
         except Exception as e:
-            logger.exception(e)
+            logger.debug(f"Error processing request", exc_info=True)
             raise APUException(f"{e.__class__.__name__} while processing request") from e
 
     async def _llm_execution_cycle(
