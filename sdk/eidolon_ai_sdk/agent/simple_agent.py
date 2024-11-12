@@ -162,18 +162,28 @@ def fn(spec: SimpleAgent, metadata: Metadata):
             yield EndStreamContextEvent(context_id="title_generation")
             yield AgentStateEvent(state=last_state)
 
-    for action in spec.actions:
-        if not action.output_schema:
+    for a in spec.actions:
+        if not a.output_schema:
             raise ValueError("output_schema must be specified")
-        model_name = f"{metadata.name.capitalize()}{action.name.capitalize()}OutputModel"
+        model_name = f"{metadata.name.capitalize()}{a.name.capitalize()}OutputModel"
         try:
-            output_schema = str if action.output_schema == "str" else schema_to_model(action.output_schema, model_name)
+            output_schema = str if a.output_schema == "str" else schema_to_model(a.output_schema, model_name)
         except SchemaError as e:
-            raise ValueError(f"Invalid output_schema for action '{action.name}'") from e
-        input_schema = _make_input_schema(spec, action, metadata)
+            raise ValueError(f"Invalid output_schema for action '{a.name}'") from e
+        input_schema = _make_input_schema(spec, a, metadata)
 
-        @SimpleAgent.action(action.name, action.title, action.sub_title, action.description, action.allowed_states, input_schema, output_schema, custom_user_input_event=True)
-        async def action_fn(process_id, action=action, **kwargs):
+        @SimpleAgent.action(
+            a.name,
+            a.title,
+            a.sub_title,
+            a.description,
+            a.allowed_states,
+            input_schema,
+            output_schema,
+            custom_user_input_event=True,
+            partials=dict(action=a)
+        )
+        async def action_fn(process_id, action, **kwargs):
             execute_on_apu = None
             request_body = to_jsonable_python(kwargs.get("body") or {})
             if isinstance(request_body, dict) and "execute_on_apu" in request_body:

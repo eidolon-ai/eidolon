@@ -3,7 +3,7 @@ import inspect
 from collections import namedtuple
 from contextlib import contextmanager
 from textwrap import dedent
-from typing import TypeVar, Optional, Callable, Type, AsyncIterable, List, Awaitable, Any
+from typing import TypeVar, Optional, Callable, Type, AsyncIterable, List, Awaitable, Any, Dict
 
 from pydantic import BaseModel, Field
 
@@ -61,6 +61,7 @@ class AgentBuilderBase(BaseModel):
             input_model: Optional[Type[BaseModel]] = None,
             output_model: Type = Any,
             custom_user_input_event: bool = False,
+            partials: Dict[str, Any] = None
     ) -> Callable[[Callable[..., Awaitable[Any] | AsyncIterable[StreamEvent]]], Callable]:
         """
         A decorator to registers an action with the agent.
@@ -82,9 +83,11 @@ class AgentBuilderBase(BaseModel):
         :param input_model: Override the input model for the action. If not provided, the input model will be generated from the function signature.
         :param output_model: Override the output model for the action. If not provided, the output model will be Any.
         :param custom_user_input_event: Does the action return a custom user input event? Default is False.
+        :param partials: A dictionary of partials to pass to the action. Helpful to keep arguments out of API definition.
         """
 
         def decorator(fn: Callable[..., AsyncIterable[StreamEvent]]):
+            fn = partial(fn, **(partials or {}))
             name_ = name or fn.__name__
             description_ = description or dedent(fn.__doc__ or "").strip() or None
             allowed_states_ = allowed_states or ["initialized"]
