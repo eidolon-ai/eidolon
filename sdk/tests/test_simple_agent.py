@@ -6,7 +6,7 @@ from anthropic import BaseModel
 from fastapi import Body
 from pydantic import Field
 
-from eidolon_ai_client.client import Agent
+from eidolon_ai_client.client import Agent, Machine
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_sdk.agent.agent import register_program
 from eidolon_ai_sdk.apu.logic_unit import llm_function, LogicUnit
@@ -117,6 +117,12 @@ class TestBadAuthToken:
             r("minstral", apu="MistralLarge"),
         ) as ra:
             yield ra
+
+    async def test_action_does_not_have_query_params(self):
+        response = await Machine().openapi()
+        parameters = response['paths']['/processes/{process_id}/agent/openai/actions/converse']['post']['parameters']
+        query_params = [p for p in parameters if p['in'] != 'path']
+        assert not query_params
 
     async def test_openai_bad_auth(self):
         process = await Agent.get("openai").create_process()
