@@ -79,6 +79,4 @@ class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
 
     async def clone_thread(self, old_context: CallContext, new_context: CallContext):
         messages = await self.getConversationHistory(old_context)
-        for m in messages:
-            m["thread_id"] = new_context.thread_id
         await self.storeMessages(new_context, messages)

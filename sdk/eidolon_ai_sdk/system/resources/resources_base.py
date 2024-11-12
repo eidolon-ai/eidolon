@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Optional, TypeVar, Type, Iterable
+from typing import Optional, TypeVar, Type, Iterable, Literal
 
 import yaml
 from pydantic import BaseModel
@@ -20,7 +20,7 @@ T = TypeVar("T", bound=BaseModel)
 
 class Resource(BaseModel):
     apiVersion: str
-    kind: str
+    kind: Literal["Agent", "Machine", "Reference"]
     metadata: Metadata = Metadata()
     spec: dict | str = {}
 

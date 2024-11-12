@@ -21,7 +21,7 @@ def _add_start_error(name: str, error: str):
 
 
 def register_load_error(file_loc: str, e: Exception):
-    logger.exception(f"Error loading resource {file_loc}", e)
+    logger.exception(f"Error loading resource {file_loc}", exc_info=e)
     if fail_on_agent_start_error:
         raise e
 
@@ -35,21 +35,21 @@ def register_instantiate_error(name: str, resourceKind: str, e: Exception, trace
 
 
 def register_agent_start_error(agentName: str, e: Exception):
-    logger.exception(f"Error starting agent {agentName}", e)
+    logger.exception(f"Error starting agent {agentName}", exc_info=e)
     _add_start_error(agentName, f"Error starting agent {agentName}: {e}")
     if fail_on_agent_start_error:
         raise e
 
 
 def register_resource_error(resourceName: str, resourceKind: str, e: Exception):
-    logger.exception(f"Error registering resource {resourceKind}.{resourceName}", e)
+    logger.exception(f"Error registering resource {resourceKind}.{resourceName}", exc_info=e)
     _add_load_error(resourceName, f"Error registering resource {resourceName} of kind {resourceKind}: {e}")
     if fail_on_agent_start_error:
         raise e
 
 
-def register_resource_promote_error(name: str, resourceKind: str, kind, e: Exception):
-    logger.exception(f"Error promoting resource {name} of kind {resourceKind} to {kind}", e)
-    _add_load_error(name, f"Error promoting resource {name} of kind {resourceKind}: {e}")
+def register_resource_promote_error(name: str, kind, e: Exception, load_file: str):
+    logger.exception(f"Error promoting resource {name} loaded from {load_file} to {kind}", exc_info=e)
+    _add_load_error(name, f"Error promoting resource {name} loaded from {load_file} to {kind}: {e}")
     if fail_on_agent_start_error:
         raise e
