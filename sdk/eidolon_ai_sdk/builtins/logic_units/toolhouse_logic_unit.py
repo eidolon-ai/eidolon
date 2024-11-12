@@ -1,13 +1,9 @@
 import os
 from typing import Optional
-from urllib.parse import urljoin
 from toolhouse import Toolhouse as TH
 
-from httpx import AsyncClient
-from pydantic import BaseModel, Field
+from pydantic import Field
 
-from eidolon_ai_sdk.apu.logic_unit import LogicUnit, llm_function
-from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.system.tool_builder import ToolBuilder
 
 class Toolhouse(ToolBuilder):
