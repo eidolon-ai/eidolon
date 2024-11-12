@@ -1,7 +1,7 @@
 from typing import Literal, Optional, cast
 
 from jinja2 import Environment, StrictUndefined, Template
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import (
     StartStreamContextEvent,
@@ -25,7 +25,7 @@ from eidolon_ai_sdk.util.stream_collector import stream_manager
 
 class SqlRequestBody(BaseModel):
     message: str
-    allow_conversation: bool = True
+    allow_conversation: bool = Field(True, description="Can the agent can ask follow up questions before responding to the request? Similarly, can the user ask follow up questions? after they have received a response?")
 
 
 class SqlAgentSpec(BaseModel):
