@@ -78,9 +78,9 @@ export default defineConfig({
             {label: 'Swap out LLMs', link: '/docs/howto/swap_llm'},
             {label: 'Configure Agent-Agent Communication', link: '/docs/howto/communication'},
             {label: 'Configure Built-in Components', link: '/docs/howto/configure_builtins'},
-            {label: 'Use References', link: '/docs/howto/using_references'},
-            {label: 'Build Custom Tools', link: '/docs/howto/build_costom_tools'},
+            {label: 'Build Custom Tools', link: '/docs/howto/build_custom_tools'},
             {label: 'Build Custom Agent Templates', link: '/docs/howto/build_custom_agents'},
+            {label: 'Use References', link: '/docs/howto/using_references'},
           ],
         },
         {
@@ -303,6 +303,10 @@ export default defineConfig({
                   {
                     "label": "Browser",
                     "link": "/docs/components/logicunit/browser"
+                  },
+                  {
+                    "label": "OpenAIImageUnit",
+                    "link": "/docs/components/logicunit/openaiimageunit"
                   },
                   {
                     "label": "Search",

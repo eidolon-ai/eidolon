@@ -42,7 +42,7 @@ class QualityAssurance(Agent, Specable[QASpec]):
                 f"NOTE: the input should be a bare json string. Do not wrap it in quotes.",
             )
 
-        thread = await self.apu.main_thread(process_id)
+        thread = self.apu.main_thread(process_id)
         await thread.set_boot_messages([SystemAPUMessage(prompt=system_message)])
         await thread.run_request(prompts=[UserTextAPUMessage(prompt=f"Please test all tools related to {agent}")])
         logger.info(f"Tests Complete for {agent}")

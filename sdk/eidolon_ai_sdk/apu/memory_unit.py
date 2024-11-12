@@ -69,7 +69,7 @@ class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
         raise NotImplementedError("writeMessages not implemented")
 
     @abstractmethod
-    async def getConversationHistory(self, call_context: CallContext) -> List[LLMMessage]:
+    async def getConversationHistory(self, call_context: CallContext, include_boot: bool = True) -> List[LLMMessage]:
         """
         Get the full conversation history for the given call context
         :param call_context: The call context for the current conversation
@@ -79,6 +79,4 @@ class MemoryUnit(ProcessingUnit, Specable[MemoryUnitConfig], ABC):
 
     async def clone_thread(self, old_context: CallContext, new_context: CallContext):
         messages = await self.getConversationHistory(old_context)
-        for m in messages:
-            m["thread_id"] = new_context.thread_id
         await self.storeMessages(new_context, messages)

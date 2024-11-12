@@ -81,7 +81,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
     async def query(self, process_id, agent_state, body: SqlRequestBody):
         schema = await self._client.get_schema()
         kwargs = dict(**body.model_dump(), metadata=schema, protocol=self._client.protocol)
-        t = await self._apu.main_thread(process_id)
+        t = self._apu.main_thread(process_id)
         if agent_state == "initialized":
             await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=self._system_prompt.render(**kwargs))])
         message = UserTextAPUMessage(prompt=self._user_prompt.render(**kwargs))

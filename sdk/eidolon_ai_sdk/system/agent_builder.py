@@ -3,7 +3,7 @@ import inspect
 from collections import namedtuple
 from contextlib import contextmanager
 from textwrap import dedent
-from typing import TypeVar, Optional, Callable, Type, AsyncIterable, List, Awaitable, Dict, Any, Literal
+from typing import TypeVar, Optional, Callable, Type, AsyncIterable, List, Awaitable, Any, Dict
 
 from pydantic import BaseModel, Field
 
@@ -61,6 +61,7 @@ class AgentBuilderBase(BaseModel):
             input_model: Optional[Type[BaseModel]] = None,
             output_model: Type = Any,
             custom_user_input_event: bool = False,
+            partials: Dict[str, Any] = None
     ) -> Callable[[Callable[..., Awaitable[Any] | AsyncIterable[StreamEvent]]], Callable]:
         """
         A decorator to registers an action with the agent.
@@ -82,9 +83,11 @@ class AgentBuilderBase(BaseModel):
         :param input_model: Override the input model for the action. If not provided, the input model will be generated from the function signature.
         :param output_model: Override the output model for the action. If not provided, the output model will be Any.
         :param custom_user_input_event: Does the action return a custom user input event? Default is False.
+        :param partials: A dictionary of partials to pass to the action. Helpful to keep arguments out of API definition.
         """
 
         def decorator(fn: Callable[..., AsyncIterable[StreamEvent]]):
+            fn = partial(fn, **(partials or {}))
             name_ = name or fn.__name__
             description_ = description or dedent(fn.__doc__ or "").strip() or None
             allowed_states_ = allowed_states or ["initialized"]
@@ -190,22 +193,22 @@ class AgentBuilderBase(BaseModel):
 
 class AgentBuilder(AgentBuilderBase):
     apu: AnnotatedReference[APU]
-    references: List[Dict[Literal["agent"], str] | Dict[Literal["tool"], Reference[LogicUnit]]] = Field(
-        default_factory=list,
-        description="A list of references available to the agent. References can be another agent's name, or the definition of a [logic unit](https://www.eidolonai.com/docs/components/logicunit/overview).")
+    agent_refs: List[str] = Field(
+        default=[],
+        description="A list of agents this agent can communicate with. Agents are referenced by name (metadata.name)."
+    )
+    tools: List[Reference[LogicUnit]] = Field(
+        default=[],
+        description="A list of [tools](https://www.eidolonai.com/docs/components/logicunit/overview) available to the agent.")
 
     def apu_instance(self) -> APU:
-        logic_units, agent_refs = [], []
-        for ref in self.references:
-            if "agent" in ref:
-                agent_refs.append(ref["agent"])
-            elif "tool" in ref:
-                logic_units.append(ref["tool"])
-        if agent_refs:
+        logic_units = copy.copy(self.tools) if self.tools else []
+        if self.agent_refs:
             logic_units.append(Reference(
                 implementation=fqn(AgentsLogicUnit),
-                agents=agent_refs,
+                agents=self.agent_refs,
             ))
         apu = copy.deepcopy(self.apu)
-        apu.logic_units.extend(logic_units)
+        if logic_units:
+            apu.setdefault('logic_units', []).extend(logic_units)
         return apu.instantiate()

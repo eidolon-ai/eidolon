@@ -42,18 +42,19 @@ class RawMemoryUnit(MemoryUnit, Specable[MemoryUnitConfig]):
 
         await AgentOS.symbolic_memory.insert("conversation_memory", conversationItems)
 
-    async def getConversationHistory(self, call_context: CallContext) -> List[LLMMessage]:
+    async def getConversationHistory(self, call_context: CallContext, include_boot: bool = True) -> List[LLMMessage]:
         existingMessages = []
-        async for message in AgentOS.symbolic_memory.find(
-            "conversation_memory",
-            {
-                "process_id": call_context.process_id,
-                "thread_id": call_context.thread_id,
-                "is_boot_message": True,
-            },
-            {"is_boot_message": 0},
-        ):
-            existingMessages.append(LLMMessage.from_dict(message["message"]))
+        if include_boot:
+            async for message in AgentOS.symbolic_memory.find(
+                "conversation_memory",
+                {
+                    "process_id": call_context.process_id,
+                    "thread_id": call_context.thread_id,
+                    "is_boot_message": True,
+                },
+                {"is_boot_message": 0},
+            ):
+                existingMessages.append(LLMMessage.from_dict(message["message"]))
         async for message in AgentOS.symbolic_memory.find(
             "conversation_memory",
             {

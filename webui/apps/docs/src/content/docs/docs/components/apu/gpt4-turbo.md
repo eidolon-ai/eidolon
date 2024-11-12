@@ -1,6 +1,6 @@
 ---
-title: ConversationalAPU
-description: Description of the ConversationalAPU component
+title: GPT4-turbo
+description: Description of the GPT4-turbo component
 ---
 
 | Property                                             | Pattern | Type                          | Deprecated | Definition | Title/Description      |

@@ -128,7 +128,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
             _messages: List[LLMMessage],
             _output_format: Dict[str, Any],
         ) -> Dict[str, Any]:
-            t2 = await self.apu.new_thread(process_id)
+            t2 = self.apu.new_thread(process_id)
             await t2.set_boot_messages(prompts=_boot_messages)
             return await t2.run_request(_messages, _output_format)
 
@@ -143,7 +143,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
             self.tot_memory.store(thought)
             self.log_thought(thought, level)
             if thought.validity == "VALID":
-                mainThread = await self.apu.main_thread(process_id)
+                mainThread = self.apu.main_thread(process_id)
                 # go back to llm now with the tree of thoughts and the requested output format
                 conversation = [
                     UserTextAPUMessage(prompt=question),
@@ -170,7 +170,7 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
                     + str(synopsis)
                 ),
             ]
-            thread = await self.apu.new_thread(process_id)
+            thread = self.apu.new_thread(process_id)
             resp = await thread.run_request(conversation, self.spec.output_schema)
             return TotResponse(answer=resp, thoughts=thoughts_path)
         else:

@@ -245,5 +245,5 @@ def start_app(lifespan):
         FastAPIInstrumentor.instrument_app(_app)
         return _app
     except Exception as e:
-        logger.exception("Failed to start FastAPI", e)
+        logger.exception("Failed to start FastAPI", exc_info=e)
         raise

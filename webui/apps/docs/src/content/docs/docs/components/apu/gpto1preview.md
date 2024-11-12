@@ -1,6 +1,6 @@
 ---
-title: ConversationalAPU
-description: Description of the ConversationalAPU component
+title: GPTo1Preview
+description: Description of the GPTo1Preview component
 ---
 
 | Property                                             | Pattern | Type                          | Deprecated | Definition | Title/Description      |

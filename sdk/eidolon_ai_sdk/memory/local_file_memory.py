@@ -1,17 +1,26 @@
+import asyncio
 import glob
 from pathlib import Path
 
-from pydantic import Field, field_validator, BaseModel
-
+import aiofiles
+from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent_os_interfaces import FileMetadata
 from eidolon_ai_sdk.memory.file_memory import FileMemoryBase
-from eidolon_ai_sdk.system.specable import Specable
-from eidolon_ai_sdk.util.async_wrapper import make_async
-from eidolon_ai_client.util.logger import logger
+from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.util.str_utils import replace_env_var_in_string
+from pydantic import Field, field_validator, BaseModel
 
 
 class LocalFileMemoryConfig(BaseModel):
+    """
+    Retrieve documents from a local file system. Note that this is the file system where the Eidolon application is
+    running. This means building the files onto the runtime image, or mounting a volume to the container.
+
+    [Docker volume](https://docs.docker.com/engine/storage/volumes/#use-a-volume-with-docker-compose)
+    [Build the files into the runtime image](https://docs.docker.com/reference/dockerfile/#copy)
+    [Kubernetes volumes](https://kubernetes.io/docs/concepts/storage/volumes/)
+    """
+
     root_dir: str = Field("/tmp/eidolon/file_memory", description="The root directory to store files in.")
 
     @field_validator("root_dir", mode="before")
@@ -41,7 +50,7 @@ class LocalFileMemory(FileMemoryBase, Specable[LocalFileMemoryConfig]):
         self.root_dir = Path(replace_env_var_in_string(spec.root_dir)).resolve()
 
     """
-    A FileMemory implementation that stores files on the local filesystem.
+    A FileMemory implementation that stores files on the local filesystem using asyncio.
     """
     root_dir: Path = Field(..., description="The root directory to store files in.")
 
@@ -67,8 +76,7 @@ class LocalFileMemory(FileMemoryBase, Specable[LocalFileMemoryConfig]):
 
         return resolved_path
 
-    @make_async
-    def read_file(self, file_path: str) -> bytes:
+    async def read_file(self, file_path: str) -> bytes:
         """
         Reads and returns the contents of the file specified by the file_path within the root directory.
 
@@ -82,11 +90,10 @@ class LocalFileMemory(FileMemoryBase, Specable[LocalFileMemoryConfig]):
         safe_file_path = self.resolve(file_path)
 
         # Read the file and return its contents
-        with open(safe_file_path, "rb") as file:
-            return file.read()
+        async with aiofiles.open(safe_file_path, mode='rb') as file:
+            return await file.read()
 
-    @make_async
-    def write_file(self, file_path: str, file_contents: bytes) -> None:
+    async def write_file(self, file_path: str, file_contents: bytes) -> None:
         """
         Writes the given file_contents to the file specified by the file_path within the root directory.
 
@@ -101,8 +108,8 @@ class LocalFileMemory(FileMemoryBase, Specable[LocalFileMemoryConfig]):
         safe_file_path = self.resolve(file_path)
 
         # Write the contents to the file
-        with open(safe_file_path, "wb") as file:
-            file.write(file_contents)
+        async with aiofiles.open(safe_file_path, mode='wb') as file:
+            await file.write(file_contents)
 
     async def delete_file(self, file_path: str) -> None:
         # Resolve the safe path
@@ -110,7 +117,7 @@ class LocalFileMemory(FileMemoryBase, Specable[LocalFileMemoryConfig]):
 
         # Delete the file
         try:
-            safe_file_path.unlink()
+            await asyncio.to_thread(safe_file_path.unlink)
         except FileNotFoundError:
             logger.debug("Attempted to delete non-existent file")
             pass
@@ -146,16 +153,17 @@ class LocalFileMemory(FileMemoryBase, Specable[LocalFileMemoryConfig]):
         safe_file_path = self.resolve(file_name)
 
         # Check if the file exists
-        return safe_file_path.exists()
+        return await asyncio.to_thread(safe_file_path.exists)
 
     async def glob(self, pattern):
         safe_file_path = self.resolve(pattern)
-        for s in glob.glob(str(safe_file_path), root_dir=self.root_dir):
+        glob_results = await asyncio.to_thread(glob.glob, str(safe_file_path), root_dir=self.root_dir)
+        for s in glob_results:
             yield FileMetadata(file_path=s.removeprefix(str(self.root_dir)).removeprefix("/"))
 
     async def start(self):
         """
-        Starts the memory implementation. Noop for this implementation.
+        Starts the memory implementation. Creates the root directory if it doesn't exist.
         """
         if not self.root_dir.exists():
             self.root_dir.mkdir(parents=True)

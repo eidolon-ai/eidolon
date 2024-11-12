@@ -1,3 +1,4 @@
+import copy
 from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, Optional
 
 from fastapi import HTTPException
@@ -133,9 +134,11 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         call_context: CallContext,
         prompts: List[APUMessageTypes],
         output_format: Union[Literal["str"], Dict[str, Any]] = "str",
+        boot_messages: List[APUMessageTypes] = None,
     ) -> AsyncIterator[StreamEvent]:
         try:
-            conversation = await self.memory_unit.getConversationHistory(call_context)
+            conversation = copy.copy(await self.io_unit.process_request(call_context, boot_messages)) if boot_messages else []
+            conversation.extend(await self.memory_unit.getConversationHistory(call_context, include_boot=boot_messages is None))
             conversation_messages = await self.io_unit.process_request(call_context, prompts)
             if self.record_memory:
                 await self.memory_unit.storeMessages(call_context, conversation_messages)
@@ -153,7 +156,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         except APUException as e:
             raise e
         except Exception as e:
-            logger.exception(e)
+            logger.debug("Error processing request", exc_info=True)
             raise APUException(f"{e.__class__.__name__} while processing request") from e
 
     async def _llm_execution_cycle(

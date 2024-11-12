@@ -16,7 +16,7 @@ from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.apu.agent_io import SystemAPUMessage, UserTextAPUMessage, AttachedFileMessage, FileHandleWithInclude
 from eidolon_ai_sdk.apu.agents_logic_unit import AgentsLogicUnitSpec, AgentsLogicUnit
 from eidolon_ai_sdk.apu.apu import APU
-from eidolon_ai_sdk.system.agent_builder import AgentBuilderBase
+from eidolon_ai_sdk.system.agent_builder import AgentBuilder
 from eidolon_ai_sdk.system.processes import ProcessDoc
 from eidolon_ai_sdk.system.reference_model import AnnotatedReference
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
@@ -83,7 +83,7 @@ class NamedAPU(BaseModel):
     default: bool = False
 
 
-class SimpleAgent(AgentBuilderBase):
+class SimpleAgent(AgentBuilder):
     """
     agent is designed to be a flexible, modular component that can interact with various processing units and perform a
     range of actions based on its configuration.
@@ -123,7 +123,7 @@ class SimpleAgent(AgentBuilderBase):
         else:
             default_apu_ref = ([apu.apu for apu in self.apus if apu.default] or [self.apus[0].apu])[0]
         default_apu = default_apu_ref.instantiate()
-        t = await default_apu.main_thread(process_id)
+        t = default_apu.main_thread(process_id)
         await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=self.system_prompt)])
 
 
@@ -143,7 +143,7 @@ def fn(spec: SimpleAgent, metadata: Metadata):
     for apu_spec in spec.apus or [NamedAPU(apu=spec.apu, default=True)]:
         apu = apu_spec.apu.instantiate()
         apu.title = apu_spec.title or apu.__class__.__name__
-        _register_refs_logic_unit(apu, spec.agent_refs)
+        _register_refs_logic_unit(apu, spec.agent_refs, spec.tools)
         apus[apu_spec.title] = apu
     default_apu: APU = apus[(list(filter(lambda apu: apu.default, spec.apus)) or [NamedAPU(apu=spec.apu, default=True)])[0].title]
 
@@ -162,18 +162,28 @@ def fn(spec: SimpleAgent, metadata: Metadata):
             yield EndStreamContextEvent(context_id="title_generation")
             yield AgentStateEvent(state=last_state)
 
-    for action in spec.actions:
-        if not action.output_schema:
+    for a in spec.actions:
+        if not a.output_schema:
             raise ValueError("output_schema must be specified")
-        model_name = f"{metadata.name.capitalize()}{action.name.capitalize()}OutputModel"
+        model_name = f"{metadata.name.capitalize()}{a.name.capitalize()}OutputModel"
         try:
-            output_schema = str if action.output_schema == "str" else schema_to_model(action.output_schema, model_name)
+            output_schema = str if a.output_schema == "str" else schema_to_model(a.output_schema, model_name)
         except SchemaError as e:
-            raise ValueError(f"Invalid output_schema for action '{action.name}'") from e
-        input_schema = _make_input_schema(spec, action, metadata)
+            raise ValueError(f"Invalid output_schema for action '{a.name}'") from e
+        input_schema = _make_input_schema(spec, a, metadata)
 
-        @SimpleAgent.action(action.name, action.title, action.sub_title, action.description, action.allowed_states, input_schema, output_schema, custom_user_input_event=True)
-        async def action_fn(process_id, action=action, **kwargs):
+        @SimpleAgent.action(
+            a.name,
+            a.title,
+            a.sub_title,
+            a.description,
+            a.allowed_states,
+            input_schema,
+            output_schema,
+            custom_user_input_event=True,
+            partials=dict(action=a)
+        )
+        async def action_fn(process_id, action, **kwargs):
             execute_on_apu = None
             request_body = to_jsonable_python(kwargs.get("body") or {})
             if isinstance(request_body, dict) and "execute_on_apu" in request_body:
@@ -214,13 +224,13 @@ def fn(spec: SimpleAgent, metadata: Metadata):
             if spec.title_generation_mode == "auto" and not process_obj.title:
                 async def genTitle():
                     title_message = UserTextAPUMessage(prompt=generate_title_message)
-                    new_thread = await (await apu.main_thread(process_id)).clone()
+                    new_thread = await apu.main_thread(process_id).clone()
                     title_response = await new_thread.run_request(prompts=[title_message])
                     await process_obj.update(title=title_response)
 
                 gen_title_task = asyncio.create_task(genTitle())
 
-            thread = await apu.main_thread(process_id)
+            thread = apu.main_thread(process_id)
             response = thread.stream_request(
                 output_format=action.output_schema, prompts=[*attached_files_messages, text_message]
             )
@@ -235,14 +245,17 @@ def fn(spec: SimpleAgent, metadata: Metadata):
                     logger.exception("Error generating title")
 
 
-def _register_refs_logic_unit(apu, agent_refs):
-    if agent_refs and hasattr(apu, "logic_units"):
-        apu.logic_units.append(
-            AgentsLogicUnit(
-                processing_unit_locator=apu,
-                spec=AgentsLogicUnitSpec(agents=agent_refs),
+def _register_refs_logic_unit(apu, agent_refs, extra_tools=None):
+    if hasattr(apu, "logic_units"):
+        if agent_refs:
+            apu.logic_units.append(
+                AgentsLogicUnit(
+                    processing_unit_locator=apu,
+                    spec=AgentsLogicUnitSpec(agents=agent_refs),
+                )
             )
-        )
+        if extra_tools:
+            apu.logic_units.extend([t.instantiate() for t in extra_tools])
 
 
 def _make_input_schema(spec: SimpleAgent, action: ActionDefinition, metadata: Metadata):
