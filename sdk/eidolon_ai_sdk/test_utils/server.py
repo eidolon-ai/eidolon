@@ -1,6 +1,7 @@
 import os
 import threading
 from contextlib import asynccontextmanager, contextmanager
+from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI
@@ -8,15 +9,23 @@ from sse_starlette.sse import AppStatus
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.bin.server import start_os, start_app
+from eidolon_ai_sdk.system.resources.resources_base import load_resources
 
 
 @contextmanager
 def serve_thread(resources, machine_name="test_machine", port=5346):
+    def resource_generator():
+        for resource in resources:
+            if isinstance(resource, (str, Path)):
+                yield from load_resources([resource])
+            else:
+                yield resource
+
     @asynccontextmanager
     async def manage_lifecycle(_app: FastAPI):
         async with start_os(
                 app=_app,
-                resource_generator=[*resources],
+                resource_generator=resource_generator(),
                 machine_name=machine_name,
                 fail_on_agent_start_error=True,
         ):

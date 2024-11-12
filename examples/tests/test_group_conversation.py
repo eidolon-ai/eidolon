@@ -1,14 +1,12 @@
 from pytest_asyncio import fixture
 
 from eidolon_ai_client.client import Machine
-from eidolon_ai_sdk.system.resources.resources_base import load_resources
 from eidolon_ai_sdk.test_utils.server import serve_thread
 
 
 @fixture(scope="module", autouse=True)
 def server(machine, eidolon_examples):
-    resources = load_resources([eidolon_examples / "group_conversation" / "resources"])
-    with serve_thread([machine, *resources]):
+    with serve_thread([machine, eidolon_examples / "group_conversation" / "resources"]):
         yield
 
 
