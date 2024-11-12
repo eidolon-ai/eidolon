@@ -1,6 +1,8 @@
 import pytest
 
 from eidolon_ai_client.client import Machine
+from eidolon_ai_sdk.system.resources.resources_base import load_resources
+from eidolon_ai_sdk.test_utils.server import serve_thread
 
 
 class TestAgentCommunication:
@@ -13,6 +15,12 @@ class TestAgentCommunication:
             log_file="1_agent_communication.txt",
         ) as server:
             yield server
+
+    @pytest.fixture(scope="class", autouse=True)
+    def server(self, machine, eidolon_examples):
+        resources = load_resources([eidolon_examples / "getting_started" / "1_agent_communication"])
+        with serve_thread([machine, *resources]):
+            yield
 
     async def test_can_hit_simple_agent(self, server_loc):
         process = await Machine(machine=server_loc).agent("hello_world").create_process()
@@ -27,14 +35,10 @@ class TestAgentCommunication:
 
 class TestCustomAgents:
     @pytest.fixture(scope="class", autouse=True)
-    def http_server(self, eidolon_server, eidolon_examples):
-        with eidolon_server(
-            eidolon_examples / "getting_started/2_custom_agents/resources",
-            "-m",
-            "local_dev",
-            log_file="2_custom_agents.txt",
-        ) as server:
-            yield server
+    def server(self, machine, eidolon_examples):
+        resources = load_resources([eidolon_examples / "getting_started" / "2_custom_agents" / "resources"])
+        with serve_thread([machine, *resources]):
+            yield
 
     async def test_can_hit_simple_agent(self, server_loc):
         process = await Machine(machine=server_loc).agent("hello_world").create_process()

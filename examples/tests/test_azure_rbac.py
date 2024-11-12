@@ -6,6 +6,8 @@ import requests
 from eidolon_ai_client.client import Agent
 from eidolon_ai_client.util.aiohttp import AgentError
 from eidolon_ai_client.util.request_context import RequestContext
+from eidolon_ai_sdk.system.resources.resources_base import load_resources
+from eidolon_ai_sdk.test_utils.server import serve_thread
 
 
 @pytest.fixture()
@@ -29,9 +31,10 @@ def azure_jwt():
 
 
 @pytest.fixture(scope="module", autouse=True)
-def http_server(eidolon_server, eidolon_examples):
-    with eidolon_server(eidolon_examples / "azure_auth_rbac", log_file="azure_auth_rbac.txt") as server:
-        yield server
+def server(machine, eidolon_examples):
+    resources = load_resources([eidolon_examples / "azure_auth_rbac"])
+    with serve_thread([machine, *resources]):
+        yield
 
 
 @pytest.fixture

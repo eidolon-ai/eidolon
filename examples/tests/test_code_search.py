@@ -1,11 +1,15 @@
 from jsonref import requests
 from pytest_asyncio import fixture
 
+from eidolon_ai_sdk.system.resources.resources_base import load_resources
+from eidolon_ai_sdk.test_utils.server import serve_thread
+
 
 @fixture(scope="module", autouse=True)
-def http_server(eidolon_server, eidolon_examples):
-    with eidolon_server(eidolon_examples / "code_search" / "resources", log_file="code_search_log.txt") as server:
-        yield server
+def server(machine, eidolon_examples):
+    resources = load_resources([eidolon_examples / "code_search" / "resources"])
+    with serve_thread([machine, *resources]):
+        yield
 
 
 def test_server_is_running(server_loc):
