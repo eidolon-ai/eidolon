@@ -375,6 +375,10 @@ class AgentController:
                 yield SuccessEvent()
         except HTTPException as e:
             logger.warning(f"HTTP Error {e}", exc_info=logger.isEnabledFor(logging.DEBUG))
+            yield ObjectOutputEvent(content=dict(
+                type="error",
+                message=e.detail,
+            ))
             if not seen_end:
                 await process.update(state="http_error", error_info=dict(detail=e.detail, status_code=e.status_code))
                 yield AgentStateEvent(state="http_error", available_actions=self.get_available_actions("http_error"))
@@ -383,6 +387,11 @@ class AgentController:
             logger.exception(f"Unhandled Error {e}")
             if not seen_end:
                 await process.update(state="unhandled_error", error_info=dict(detail=str(e), status_code=500))
+                yield ObjectOutputEvent(content=dict(
+                    type="error",
+                    message="Unhandled Error: check your Eidolon logs for more information.",
+                    error=str(e),
+                ))
                 yield AgentStateEvent(
                     state="unhandled_error", available_actions=self.get_available_actions("unhandled_error")
                 )
