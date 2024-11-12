@@ -70,7 +70,7 @@ class AgentOSKernel:
             try:
                 ret[k] = tu[0].promote(kind)
             except Exception as e:
-                register_resource_promote_error(k, tu[0].kind, kind, e)
+                register_resource_promote_error(k, kind.__name__, e, tu[1])
         return ret
 
     @classmethod
