@@ -34,8 +34,9 @@ def tool_build(spec: Toolhouse):
 
     for tool in tools:
         @Toolhouse.tool(description=tool['function']['description'], name=tool['function']['name'], input_schema=tool['function']['parameters'])
-        async def tool_register(**kwargs):
-            print(kwargs) ## Need to execute toolhouse request and return the response (Run the tool), set up another test that sets up agent that uses tool, look @ test_tool_builder to see how to define agent to run server with, talking to agent and having it use one of the tools
+        async def tool_register(**kwargs): ## What is the args going in here
+            return th.run_tools()
+            #print(kwargs) ## Need to execute toolhouse request and return the response (Run the tool), set up another test that sets up agent that uses tool, look @ test_tool_builder to see how to define agent to run server with, talking to agent and having it use one of the tools
         ## Might have agent set up first to debug 
 
 
