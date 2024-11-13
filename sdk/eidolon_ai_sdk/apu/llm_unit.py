@@ -71,21 +71,6 @@ class LLMUnit(ProcessingUnit, Specable[LLMUnitSpec], ABC):
             supports_audio_input=self.model.supports_audio_input,
         )
 
-    def create_assistant_message(self, call_context: CallContext, contents: str, tool_call_events) -> LLMMessage:
-        return AssistantMessage(
-            type="assistant",
-            content=contents,
-            tool_calls=[tce.tool_call for tce in tool_call_events],
-        )
-
-    def create_tool_response_message(self, logic_unit_name: str, tc: ToolCall, content: str) -> LLMMessage:
-        return ToolResponseMessage(
-            logic_unit_name=logic_unit_name,
-            tool_call_id=tc.tool_call_id,
-            result=content,
-            name=tc.name,
-        )
-
     @abstractmethod
     def execute_llm(
         self,

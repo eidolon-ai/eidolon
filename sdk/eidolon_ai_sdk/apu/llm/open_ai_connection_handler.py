@@ -1,8 +1,9 @@
 import os
+from http import HTTPStatus
 from typing import Optional, cast, List
 
 from azure.identity import get_bearer_token_provider, EnvironmentCredential
-from openai import AsyncOpenAI, AsyncStream, NotFoundError, OpenAIError
+from openai import AsyncOpenAI, AsyncStream, NotFoundError, OpenAIError, APIStatusError
 from openai.lib.azure import AsyncAzureOpenAI
 from openai.types import ImagesResponse
 from openai.types.chat import ChatCompletionChunk, ChatCompletion
@@ -41,21 +42,11 @@ class OpenAIConnectionHandler(Specable[OpenAIConnectionHandlerSpec]):
             raise HTTPException(500, str(e)) from e
         try:
             return await client.chat.completions.create(**kwargs)
-        except NotFoundError as e:
-            # The user likely does not have access to the requested named model or the model name is invalid.
-            # A typical response looks like this:
-            # {
-            #   "error": {
-            #     "message": "The model `gpt-4-turbo` does not exist or you do not have access to it.",
-            #     "type": "invalid_request_error",
-            #     "code": "model_not_found"
-            #   }
-            # }
-            message = (
-                f"{e.message}\n"
-                "OpenAI accounts that do not have sufficient credits may not have access to some models."
-            )
-            raise APUException(description=message)
+        except APIStatusError as e:
+            msg = f"Received {e.status_code} {HTTPStatus(e.status_code).name} from OpenAI - {e.code}"
+            if e.status_code == 404:
+                msg += "\n(OpenAI accounts that do not have sufficient credits may not have access to some models)"
+            raise OpenAIError(msg) from e
 
 
 def get_default_token_provider():
