@@ -33,7 +33,7 @@ def deterministic_ids(id_prefix):
     with (
         patch.object(agent_controller, "ObjectId", new=patched_pid),  # process_id
         patch.object(process_file_system, "ObjectId", new=patched_fid),  # file_id
-        patch.object(document_transformer, "ObjectId", new=patched_fid)  # document_id
+        patch.object(document_transformer, "ObjectId", new=patched_fid),  # document_id
     ):
         yield
 
@@ -47,6 +47,7 @@ def patched_vcr_aiohttp_url_encoded():
 
     from vcr.stubs import aiohttp_stubs
     import urllib.parse
+
     if patch is None:
         raise ImportError("unittest.mock.patch is required for this helper")
 
@@ -78,6 +79,7 @@ def patched_vcr_object_handling():
     """
 
     from vcr.request import Request as VcrRequest
+
     if patch is None:
         raise ImportError("unittest.mock.patch is required for this helper")
 
@@ -87,6 +89,7 @@ def patched_vcr_object_handling():
         return VcrRequest(httpx_request.method, uri, httpx_request, headers)
 
     from vcr.stubs import httpx_stubs
+
     with patch.object(httpx_stubs, "_make_vcr_request", new=my_custom_function):
         yield
 

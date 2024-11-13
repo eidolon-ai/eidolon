@@ -52,9 +52,9 @@ async def ya_action():
 @pytest.fixture(scope="module", autouse=True)
 async def server(run_app):
     async with run_app(
-            r(BasicAgent, foo="bar"),
-            r(DynamicAgent, foo="bar"),
-            r(YieldingAgent),
+        r(BasicAgent, foo="bar"),
+        r(DynamicAgent, foo="bar"),
+        r(YieldingAgent),
     ) as ra:
         yield ra
 

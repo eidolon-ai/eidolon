@@ -65,7 +65,7 @@ def parse_args():
     )
     parser.add_argument(
         "--dotenv-override",
-        action='store_true',
+        action="store_true",
         help="Override existing environment variables with those in the .env file.",
     )
     return parser.parse_args()
@@ -111,7 +111,9 @@ def main():
 
         for f in potential_watch_locs:
             if os.path.relpath(f).startswith(".."):
-                kwargs["reload_dirs"].append(os.path.abspath(f) if os.path.isdir(f) else os.path.abspath(os.path.dirname(f)))
+                kwargs["reload_dirs"].append(
+                    os.path.abspath(f) if os.path.isdir(f) else os.path.abspath(os.path.dirname(f))
+                )
 
     uvicorn.run(
         "eidolon_ai_sdk.bin.agent_http_server:app", host="0.0.0.0", port=args.port, log_level=log_level_str, **kwargs

@@ -12,7 +12,8 @@ from anthropic import (
     RateLimitError,
     APIStatusError,
     TextEvent,
-    ContentBlockStopEvent, AuthenticationError,
+    ContentBlockStopEvent,
+    AuthenticationError,
 )
 from anthropic.types import MessageStreamEvent, ToolUseBlock, TextBlockParam, ImageBlockParam, ToolUseBlockParam
 from anthropic.types.image_block_param import Source
@@ -129,7 +130,14 @@ async def convert_to_llm(message: LLMMessage):
         # dlb - order tool_call_events by tool_call_id to ensure deterministic behavior for tests
         message.tool_responses.sort(key=lambda e: e.tool_call_id)
         # tool_call_id, content
-        content = [dict(type="tool_result", tool_use_id=m.tool_call_id, content=[TextBlockParam(type="text", text=json.dumps(m.result))]) for m in message.tool_responses]
+        content = [
+            dict(
+                type="tool_result",
+                tool_use_id=m.tool_call_id,
+                content=[TextBlockParam(type="text", text=json.dumps(m.result))],
+            )
+            for m in message.tool_responses
+        ]
         return {
             "role": "user",
             "content": content,

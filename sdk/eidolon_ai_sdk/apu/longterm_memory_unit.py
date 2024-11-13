@@ -15,7 +15,6 @@ class LongTermMemoryUnitConfig(BaseModel):
 
 
 class LongTermMemoryUnit(ProcessingUnit, Specable[LongTermMemoryUnitConfig]):
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         pass

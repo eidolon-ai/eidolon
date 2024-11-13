@@ -3,10 +3,14 @@ from typing import List, Union, Literal, Dict, Any, Callable, AsyncIterator, Opt
 
 from pydantic import BaseModel, Field
 
-from eidolon_ai_client.events import ToolCall, StreamEvent, ObjectOutputEvent, StringOutputEvent, \
-    LLMToolCallRequestEvent
-from eidolon_ai_sdk.apu.llm_message import UserMessage, UserMessageText, LLMMessage, AssistantMessage, \
-    ToolResponseMessage
+from eidolon_ai_client.events import ToolCall, StreamEvent, ObjectOutputEvent, StringOutputEvent, LLMToolCallRequestEvent
+from eidolon_ai_sdk.apu.llm_message import (
+    UserMessage,
+    UserMessageText,
+    LLMMessage,
+    AssistantMessage,
+    ToolResponseMessage,
+)
 from eidolon_ai_sdk.apu.llm_unit import LLMCallFunction, LLMUnit, LLMModel
 from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference
 from eidolon_ai_sdk.system.specable import Specable
@@ -117,16 +121,18 @@ class ToolCallLLMWrapper(LLMUnit, Specable[ToolCallLLMWrapperSpec]):
         messages: List[LLMMessage],
         output_format: Union[Literal["str"], Dict[str, Any]] = "str",
     ) -> AsyncIterator[StreamEvent]:
-        output_is_string = output_format == "str" or output_format.get('type') == "string"
+        output_is_string = output_format == "str" or output_format.get("type") == "string"
         if tools:
-            ret_type = dict(anyOf=[
-                ToolCallResponse.model_json_schema(),
-                dict(
-                    type="object",
-                    properties=dict(response=dict(type="string") if output_format == "str" else output_format),
-                    required=["response"],
-                )
-            ])
+            ret_type = dict(
+                anyOf=[
+                    ToolCallResponse.model_json_schema(),
+                    dict(
+                        type="object",
+                        properties=dict(response=dict(type="string") if output_format == "str" else output_format),
+                        required=["response"],
+                    ),
+                ]
+            )
         else:
             ret_type = output_format
         stream: AsyncIterator[StreamEvent] = exec_llm_call(messages, [], ret_type)

@@ -41,9 +41,4 @@ async def agent(processes_resource, run_app) -> Agent:
 async def test_get_authors(agent):
     process = await agent.create_process()
     found = await process.action("get_authors", dict(body={}))
-    assert found.data[0] == {
-        "id": 1,
-        "idBook": 1,
-        "firstName": "First Name 1",
-        "lastName": "Last Name 1"
-    }
+    assert found.data[0] == {"id": 1, "idBook": 1, "firstName": "First Name 1", "lastName": "Last Name 1"}

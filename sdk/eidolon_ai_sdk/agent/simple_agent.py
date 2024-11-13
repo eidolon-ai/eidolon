@@ -9,8 +9,14 @@ from jinja2 import Environment, meta, StrictUndefined
 from pydantic import field_validator, model_validator, BaseModel
 from pydantic_core import to_jsonable_python, SchemaError
 
-from eidolon_ai_client.events import AgentStateEvent, StringOutputEvent, UserInputEvent, FileHandle, \
-    StartStreamContextEvent, EndStreamContextEvent
+from eidolon_ai_client.events import (
+    AgentStateEvent,
+    StringOutputEvent,
+    UserInputEvent,
+    FileHandle,
+    StartStreamContextEvent,
+    EndStreamContextEvent,
+)
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_client.util.request_context import RequestContext
 from eidolon_ai_sdk.apu.agent_io import SystemAPUMessage, UserTextAPUMessage, AttachedFileMessage, FileHandleWithInclude
@@ -145,9 +151,12 @@ def fn(spec: SimpleAgent, metadata: Metadata):
         apu.title = apu_spec.title or apu.__class__.__name__
         _register_refs_logic_unit(apu, spec.agent_refs, spec.tools)
         apus[apu_spec.title] = apu
-    default_apu: APU = apus[(list(filter(lambda apu: apu.default, spec.apus)) or [NamedAPU(apu=spec.apu, default=True)])[0].title]
+    default_apu: APU = apus[
+        (list(filter(lambda apu: apu.default, spec.apus)) or [NamedAPU(apu=spec.apu, default=True)])[0].title
+    ]
 
     if spec.title_generation_mode == "on_request":
+
         @SimpleAgent.action(description="Generate a title for the conversation", allowed_states=["initialized", "idle"])
         async def generate_title(process_id: str):
             last_state = RequestContext.get("__last_state__")
@@ -181,7 +190,7 @@ def fn(spec: SimpleAgent, metadata: Metadata):
             input_schema,
             output_schema,
             custom_user_input_event=True,
-            partials=dict(action=a)
+            partials=dict(action=a),
         )
         async def action_fn(process_id, action, **kwargs):
             execute_on_apu = None
@@ -222,6 +231,7 @@ def fn(spec: SimpleAgent, metadata: Metadata):
             process_obj = await ProcessDoc.find_one(query={"_id": process_id})
 
             if spec.title_generation_mode == "auto" and not process_obj.title:
+
                 async def genTitle():
                     title_message = UserTextAPUMessage(prompt=generate_title_message)
                     new_thread = await apu.main_thread(process_id).clone()
@@ -274,7 +284,9 @@ def _make_input_schema(spec: SimpleAgent, action: ActionDefinition, metadata: Me
         required.append("body")
 
     if action.allow_file_upload:
-        properties["body"]["properties"]["attached_files"] = dict(type="array", items=FileHandleWithInclude.model_json_schema())
+        properties["body"]["properties"]["attached_files"] = dict(
+            type="array", items=FileHandleWithInclude.model_json_schema()
+        )
 
     if spec.apus:
         apu_names = [apu.title for apu in spec.apus]

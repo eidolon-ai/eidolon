@@ -137,7 +137,11 @@ class Thread:
             elif event.is_root_and_type(ErrorEvent):
                 error = event.reason
 
-        if output_format == "str" or output_format == str or (isinstance(output_format, dict) and output_format.get("type") == "string"):
+        if (
+            output_format == "str"
+            or output_format == str
+            or (isinstance(output_format, dict) and output_format.get("type") == "string")
+        ):
             result = string_output
 
         if error is not None:
@@ -149,7 +153,10 @@ class Thread:
         return result
 
     def stream_request(
-        self, prompts: List[APUMessageTypes], output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str", boot_messages: Optional[List[APUMessageTypes]] = None
+        self,
+        prompts: List[APUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str",
+        boot_messages: Optional[List[APUMessageTypes]] = None,
     ) -> AsyncIterator[StreamEvent]:
         if isinstance(output_format, str) and output_format != "str":
             raise ValueError(f"Unknown output format {output_format}")
@@ -159,7 +166,8 @@ class Thread:
             model = TypeAdapter(output_format)
             schema = model.json_schema()
             s = convert_output_object(
-                self._apu.schedule_request(self._call_context, prompts, schema, boot_messages), cast(Type[T], output_format)
+                self._apu.schedule_request(self._call_context, prompts, schema, boot_messages),
+                cast(Type[T], output_format),
             )
 
         return s

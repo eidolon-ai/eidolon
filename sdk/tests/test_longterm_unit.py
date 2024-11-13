@@ -38,17 +38,27 @@ def constantScore(scores: List[ScoredPoint]) -> List[ScoredPoint]:
 
 @fixture
 async def user_unit(machine, test_name):
-    yield Mem0LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), spec=Mem0LongTermMemoryUnitConfig(user_scoped=True, collection_name=test_name))
+    yield Mem0LongTermMemoryUnit(
+        Reference[LLMUnit, LLMUnit.__name__]().instantiate(),
+        spec=Mem0LongTermMemoryUnitConfig(user_scoped=True, collection_name=test_name),
+    )
 
 
 @fixture
 async def user_unit_const_score(machine, test_name):
-    yield Mem0LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), memory_converter=constantScore, spec=Mem0LongTermMemoryUnitConfig(user_scoped=True, collection_name=test_name))
+    yield Mem0LongTermMemoryUnit(
+        Reference[LLMUnit, LLMUnit.__name__]().instantiate(),
+        memory_converter=constantScore,
+        spec=Mem0LongTermMemoryUnitConfig(user_scoped=True, collection_name=test_name),
+    )
 
 
 @fixture
 async def agent_unit(machine, test_name):
-    yield Mem0LongTermMemoryUnit(Reference[LLMUnit, LLMUnit.__name__]().instantiate(), spec=Mem0LongTermMemoryUnitConfig(user_scoped=False, collection_name=test_name))
+    yield Mem0LongTermMemoryUnit(
+        Reference[LLMUnit, LLMUnit.__name__]().instantiate(),
+        spec=Mem0LongTermMemoryUnitConfig(user_scoped=False, collection_name=test_name),
+    )
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -63,7 +73,7 @@ def set_agent_user_context():
 def test_create_memory(user_unit: Mem0LongTermMemoryUnit):
     queryText = "Name is John Doe"
     data = UserMessage(content=[UserMessageText(text=queryText)])
-    call_context = CallContext(process_id='test_proc')
+    call_context = CallContext(process_id="test_proc")
     mem_list = user_unit.store_message(call_context, data)
     assert len(mem_list) > 0
     mem_id = mem_list[-1]["id"]
@@ -76,7 +86,7 @@ def test_create_memory(user_unit: Mem0LongTermMemoryUnit):
 def test_memory_update(user_unit: Mem0LongTermMemoryUnit):
     query1Text = "My name is John Doe"
     data = UserMessage(content=[UserMessageText(text=query1Text)])
-    call_context = CallContext(process_id='test_proc')
+    call_context = CallContext(process_id="test_proc")
     mem_list = user_unit.store_message(call_context, data)
     mem_id = mem_list[-1]["id"]
 
@@ -90,7 +100,7 @@ def test_memory_update(user_unit: Mem0LongTermMemoryUnit):
 # test memory deletion
 @pytest.mark.vcr()
 def test_memory_delete(user_unit_const_score: Mem0LongTermMemoryUnit):
-    call_context = CallContext(process_id='test_proc')
+    call_context = CallContext(process_id="test_proc")
     query1Text = "bicycles have wheels"
     data = UserMessage(content=[UserMessageText(text=query1Text)])
     mem_id_1 = user_unit_const_score.store_message(call_context, data)[-1]["id"]
@@ -106,7 +116,7 @@ def test_memory_delete(user_unit_const_score: Mem0LongTermMemoryUnit):
 def test_memory_search(user_unit: Mem0LongTermMemoryUnit):
     queryText = "My name is John Doe"
     data = UserMessage(content=[UserMessageText(text=queryText)])
-    call_context = CallContext(process_id='test_proc')
+    call_context = CallContext(process_id="test_proc")
     user_unit.store_message(call_context, data)
     res = user_unit.search_memories("what is my name")
     assert "John Doe" in res[-1]["text"]
@@ -118,7 +128,7 @@ def test_memory_search(user_unit: Mem0LongTermMemoryUnit):
 def test_user_agent_scoping(user_unit: Mem0LongTermMemoryUnit, agent_unit: Mem0LongTermMemoryUnit):
     queryText = "My name is John Doe"
     data = UserMessage(content=[UserMessageText(text=queryText)])
-    call_context = CallContext(process_id='test_proc')
+    call_context = CallContext(process_id="test_proc")
     user_unit.store_message(call_context, data)
     searchRes = user_unit.search_memories("what is my name?")
     assert len(searchRes) > 0
@@ -128,7 +138,7 @@ def test_user_agent_scoping(user_unit: Mem0LongTermMemoryUnit, agent_unit: Mem0L
 
     queryText = "My name is John Doe"
     data = UserMessage(content=[UserMessageText(text=queryText)])
-    call_context = CallContext(process_id='test_proc')
+    call_context = CallContext(process_id="test_proc")
     agent_unit.store_message(call_context, data)
     searchRes = agent_unit.search_memories("what is my name?")
     assert len(searchRes) > 0
