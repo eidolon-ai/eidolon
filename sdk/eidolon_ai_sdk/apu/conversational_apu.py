@@ -77,7 +77,9 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         self.memory_unit = self.spec.memory_unit.instantiate(**kwargs)
         self.llm_unit = self.spec.llm_unit.instantiate(**kwargs)
         # my best guess for how to initialize
-        self.longterm_memory_unit = self.spec.longterm_memory_unit.instantiate(**kwargs) if self.spec.longterm_memory_unit else None
+        self.longterm_memory_unit = (
+            self.spec.longterm_memory_unit.instantiate(**kwargs) if self.spec.longterm_memory_unit else None
+        )
 
         self.logic_units = [logic_unit.instantiate(**kwargs) for logic_unit in self.spec.logic_units]
         self.audio_unit = self.spec.audio_unit.instantiate(**kwargs) if self.spec.audio_unit else None
@@ -139,13 +141,17 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
     ) -> AsyncIterator[StreamEvent]:
         try:
             try:
-                conversation = copy.copy(await self.io_unit.process_request(call_context, boot_messages)) if boot_messages else []
+                conversation = (
+                copy.copy(await self.io_unit.process_request(call_context, boot_messages)) if boot_messages else []
+            )
                 conversation_messages = await self.io_unit.process_request(call_context, prompts)
             except Exception as e:
                 raise IOUnitError(type(self.io_unit), e) from e
 
             try:
-                conversation.extend(await self.memory_unit.getConversationHistory(call_context, include_boot=boot_messages is None))
+                conversation.extend(
+                await self.memory_unit.getConversationHistory(call_context, include_boot=boot_messages is None)
+            )
                 if self.record_memory:
                     await self.memory_unit.storeMessages(call_context, conversation_messages)
                 conversation.extend(conversation_messages)

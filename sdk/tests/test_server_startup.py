@@ -29,4 +29,3 @@ async def test_server_logs_startup_errors():
         ):
             pass
     assert exception_logger.called
-

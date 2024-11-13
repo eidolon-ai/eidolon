@@ -15,14 +15,13 @@ os.environ.setdefault("VECTARA_API_KEY", "test")
 
 @pytest.fixture(scope="module")
 async def server(run_app):
-    async with run_app(AgentResource(
+    async with run_app(
+        AgentResource(
             apiVersion="eidolon/v1",
             metadata=Metadata(name="VectaraAgent"),
-            spec=Reference(
-                implementation=fqn(VectaraAgent),
-                corpus_key="black-holes-sample-data"
-            ),
-    )) as ra:
+            spec=Reference(implementation=fqn(VectaraAgent), corpus_key="black-holes-sample-data"),
+        )
+    ) as ra:
         yield ra
 
 
@@ -40,8 +39,7 @@ async def test_can_create_conversation(agent: Agent):
 
 async def test_can_continue_conversation(agent: Agent):
     process = await agent.create_process()
-    process= await process.action("converse", body="what is a black hole?")
+    process = await process.action("converse", body="what is a black hole?")
     response: ProcessStatus = await process.action("converse", body="Who first proposed the concept?")
     assert response.state == "idle"
     assert "Karl Schwarzschild" in response.data
-

@@ -46,4 +46,3 @@ async def test_can_create_process():
 async def test_state_does_not_leach_between_tests():
     found = await Machine().processes()
     assert not found.processes
-

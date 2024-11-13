@@ -24,8 +24,19 @@ from eidolon_ai_sdk.agent.doc_manager.parsers.auto_parser import AutoParser
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser
 from eidolon_ai_sdk.agent.doc_manager.transformer.auto_transformer import AutoTransformer
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
-from eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters import CharacterTextSplitter, LatexTextSplitter, MarkdownTextSplitter, PythonCodeTextSplitter, SpacyTextSplitter, \
-    NLTKTextSplitter, RecursiveCharacterTextSplitter, SentenceTransformersTokenTextSplitter, TokenTextSplitter, HTMLHeaderTextSplitter, MarkdownHeaderTextSplitter
+from eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters import (
+    CharacterTextSplitter,
+    LatexTextSplitter,
+    MarkdownTextSplitter,
+    PythonCodeTextSplitter,
+    SpacyTextSplitter,
+    NLTKTextSplitter,
+    RecursiveCharacterTextSplitter,
+    SentenceTransformersTokenTextSplitter,
+    TokenTextSplitter,
+    HTMLHeaderTextSplitter,
+    MarkdownHeaderTextSplitter,
+)
 from eidolon_ai_sdk.agent.retriever_agent.document_reranker import RAGFusionReranker, DocumentReranker
 from eidolon_ai_sdk.agent.retriever_agent.document_retriever import SimilarityMemoryRetriever, DocumentRetriever
 from eidolon_ai_sdk.agent.retriever_agent.multi_question_transformer import MultiQuestionTransformer
@@ -105,7 +116,7 @@ def _to_resource(maybe_tuple: type | Tuple[type | str, type]) -> ReferenceResour
         return ReferenceResource(
             apiVersion="eidolon/v1",
             metadata=Metadata(name=name),
-            spec=maybe_tuple[1] if isinstance(maybe_tuple[1], str) else fqn(maybe_tuple[1])
+            spec=maybe_tuple[1] if isinstance(maybe_tuple[1], str) else fqn(maybe_tuple[1]),
         )
     else:
         return ReferenceResource(

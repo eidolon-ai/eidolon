@@ -81,8 +81,13 @@ async def test_stream_action(server):
         return [
             UserInputEvent(stream_context=name, input={"name": "Dave"}),
             StartAgentCallEvent(
-                stream_context=name, machine=Machine().machine, agent_name=name, call_name="idle", process_id=process_id,
-                title='', sub_title=''
+                stream_context=name,
+                machine=Machine().machine,
+                agent_name=name,
+                call_name="idle",
+                process_id=process_id,
+                title="",
+                sub_title="",
             ),
             StringOutputEvent(stream_context=name, content=f"{name} says: hello, Dave!"),
             AgentStateEvent(stream_context=name, state="idle", available_actions=["idle", "reply"]),

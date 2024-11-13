@@ -78,7 +78,11 @@ class Mem0Embedding(EmbeddingBase):
 class Mem0VectorDB(VectorStoreBase):
     similarity_memory: SimilarityMemory
 
-    def __init__(self, similarity_memory: SimilarityMemory = None, memory_converter: Optional[Callable[[List[ScoredPoint]], List[ScoredPoint]]] = None):
+    def __init__(
+        self,
+        similarity_memory: SimilarityMemory = None,
+        memory_converter: Optional[Callable[[List[ScoredPoint]], List[ScoredPoint]]] = None,
+    ):
         self.similarity_memory = similarity_memory or AgentOS.similarity_memory
         self.memory_converter = memory_converter
 
@@ -262,8 +266,14 @@ class Mem0DB:
 
 
 class EidolonMem0(Memory):
-    def __init__(self, llm: LLMUnit, db_collection: str, similarity_memory: SimilarityMemory = None, symbolic_memory: SymbolicMemory = None,
-                 memory_converter: Optional[Callable[[List[ScoredPoint]], List[ScoredPoint]]] = None):
+    def __init__(
+        self,
+        llm: LLMUnit,
+        db_collection: str,
+        similarity_memory: SimilarityMemory = None,
+        symbolic_memory: SymbolicMemory = None,
+        memory_converter: Optional[Callable[[List[ScoredPoint]], List[ScoredPoint]]] = None,
+    ):
         self.embedding_model = Mem0Embedding(similarity_memory)
         self.vector_store = Mem0VectorDB(similarity_memory, memory_converter)
         self.llm = Mem0LLM(llm)
@@ -284,5 +294,6 @@ class NoTelemetry:
 
     def close(self):
         pass
+
 
 mem0.memory.telemetry.telemetry = NoTelemetry()

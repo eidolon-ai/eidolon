@@ -68,7 +68,9 @@ class AgentController:
         if hasattr(self.agent, "start"):
             await self.agent.start()
 
-        handlers = await self.agent.get_handlers() if isinstance(self.agent, AgentBuilderBase) else get_handlers(self.agent)
+        handlers = (
+            await self.agent.get_handlers() if isinstance(self.agent, AgentBuilderBase) else get_handlers(self.agent)
+        )
         for handler in handlers:
             if handler.name in self.actions:
                 self.actions[handler.name].extra["allowed_states"] = (
@@ -434,7 +436,7 @@ class AgentController:
         params_values = [v for v in params.values() if v.kind != Parameter.VAR_KEYWORD]
 
         async def _run_program(**_kwargs):
-            RequestContext.set(key='agent_type', value=type(self.agent).__name__, propagate=False)
+            RequestContext.set(key="agent_type", value=type(self.agent).__name__, propagate=False)
             return await self.run_program(handler, **_kwargs)
 
         _run_program.__signature__ = sig.replace(parameters=params_values, return_annotation=typing.Any)

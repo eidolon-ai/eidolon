@@ -87,7 +87,7 @@ class LLMToolWrapper:
                             jsonschema=True,
                         )
                     )
-                    del schema['title']
+                    del schema["title"]
                 elif isinstance(input_model, dict):
                     schema = input_model
                 else:

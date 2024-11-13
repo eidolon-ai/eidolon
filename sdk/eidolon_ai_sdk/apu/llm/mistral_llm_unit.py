@@ -133,10 +133,10 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
         Specable.__init__(self, **kwargs)
 
     async def execute_llm(
-            self,
-            messages: List[LLMMessage],
-            tools: List[LLMCallFunction],
-            output_format: Union[Literal["str"], Dict[str, Any]],
+        self,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
         can_stream_message, request = await self._build_request(messages, tools, output_format)
 
@@ -185,7 +185,7 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
                 logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
                 if not self.spec.force_json or tools:
                     # message format looks like json```{...}```, parse content and pull out the json
-                    complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
+                    complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
                 try:
                     content = json.loads(complete_message) if complete_message else {}
                 except json.JSONDecodeError as e:
@@ -232,11 +232,16 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
             is_string = True
         elif tools:
             is_string = False
-            tools.append(dict(type="function", function=Function(
-                name="RespondDirectly",
-                description="respond directly to the user without calling any other tools",
-                parameters=dict(type="object", properties=dict(response=output_format))
-            ).model_dump()))
+            tools.append(
+                dict(
+                    type="function",
+                    function=Function(
+                        name="RespondDirectly",
+                        description="respond directly to the user without calling any other tools",
+                        parameters=dict(type="object", properties=dict(response=output_format)),
+                    ).model_dump(),
+                )
+            )
         else:
             is_string = False
             force_json_msg = (

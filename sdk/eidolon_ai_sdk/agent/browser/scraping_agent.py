@@ -3,6 +3,7 @@ from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup
 from fastapi import Body
+
 try:
     from playwright.async_api import async_playwright
 except ImportError:

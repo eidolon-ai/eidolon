@@ -50,17 +50,19 @@ async def test_query_params(pet_store):
     assert action.action_schema == {
         "type": "object",
         "properties": {
-            'fields__': {'description': 'The fields to include in the '
-                                        'response or omit for all fields. '
-                                        'This is necessary to limit the '
-                                        'response size. This should be a '
-                                        "list of paths separated by '.'",
-                         'items': {'description': 'The path of a response '
-                                                  'field as it appears in '
-                                                  'the json schema',
-                                   'type': 'string'},
-                         'required': False,
-                         'type': 'array'},
+            "fields__": {
+                "description": "The fields to include in the "
+                "response or omit for all fields. "
+                "This is necessary to limit the "
+                "response size. This should be a "
+                "list of paths separated by '.'",
+                "items": {
+                    "description": "The path of a response " "field as it appears in " "the json schema",
+                    "type": "string",
+                },
+                "required": False,
+                "type": "array",
+            },
             "limit": {"format": "int32", "type": "integer"},
             "tags": {"items": {"type": "string"}, "type": "array"},
             "categories": {"items": {"type": "string"}, "type": "array"},
@@ -100,18 +102,20 @@ async def test_path_params(pet_store):
     assert action.action_schema == {
         "type": "object",
         "properties": {
-            'fields__': {'description': 'The fields to include in the '
-                                        'response or omit for all fields. '
-                                        'This is necessary to limit the '
-                                        'response size. This should be a '
-                                        "list of paths separated by '.'",
-                         'items': {'description': 'The path of a response '
-                                                  'field as it appears in '
-                                                  'the json schema',
-                                   'type': 'string'},
-                         'required': False,
-                         'type': 'array'},
-            "id": {"format": "int64", "type": "integer"}
+            "fields__": {
+                "description": "The fields to include in the "
+                "response or omit for all fields. "
+                "This is necessary to limit the "
+                "response size. This should be a "
+                "list of paths separated by '.'",
+                "items": {
+                    "description": "The path of a response " "field as it appears in " "the json schema",
+                    "type": "string",
+                },
+                "required": False,
+                "type": "array",
+            },
+            "id": {"format": "int64", "type": "integer"},
         },
         "required": ["id"],
     }
@@ -152,18 +156,20 @@ async def test_header_params(pet_store):
     assert action.action_schema == {
         "type": "object",
         "properties": {
-            'fields__': {'description': 'The fields to include in the '
-                                        'response or omit for all fields. '
-                                        'This is necessary to limit the '
-                                        'response size. This should be a '
-                                        "list of paths separated by '.'",
-                         'items': {'description': 'The path of a response '
-                                                  'field as it appears in '
-                                                  'the json schema',
-                                   'type': 'string'},
-                         'required': False,
-                         'type': 'array'},
-            "id": {"format": "int64", "type": "integer"}
+            "fields__": {
+                "description": "The fields to include in the "
+                "response or omit for all fields. "
+                "This is necessary to limit the "
+                "response size. This should be a "
+                "list of paths separated by '.'",
+                "items": {
+                    "description": "The path of a response " "field as it appears in " "the json schema",
+                    "type": "string",
+                },
+                "required": False,
+                "type": "array",
+            },
+            "id": {"format": "int64", "type": "integer"},
         },
         "required": ["id"],
     }
@@ -201,24 +207,24 @@ async def test_body_params(pet_store):
         "type": "object",
         "required": ["__body__"],
         "properties": {
-            'fields__': {'description': 'The fields to include in the '
-                                        'response or omit for all fields. '
-                                        'This is necessary to limit the '
-                                        'response size. This should be a '
-                                        "list of paths separated by '.'",
-                         'items': {'description': 'The path of a response '
-                                                  'field as it appears in '
-                                                  'the json schema',
-                                   'type': 'string'},
-                         'required': False,
-                         'type': 'array'},
+            "fields__": {
+                "description": "The fields to include in the "
+                "response or omit for all fields. "
+                "This is necessary to limit the "
+                "response size. This should be a "
+                "list of paths separated by '.'",
+                "items": {
+                    "description": "The path of a response " "field as it appears in " "the json schema",
+                    "type": "string",
+                },
+                "required": False,
+                "type": "array",
+            },
             "__body__": {
                 "type": "object",
                 "required": ["name"],
-                "properties": {
-                    "name": {"type": "string"}, "tag": {"type": "string"}
-                },
-            }
+                "properties": {"name": {"type": "string"}, "tag": {"type": "string"}},
+            },
         },
     }
     await action.tool_call(None, **{"__body__": {"name": "dog", "tag": "pet"}})

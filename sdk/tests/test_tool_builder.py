@@ -16,7 +16,7 @@ def r(tool: ToolBuilder, agent_name: str = None):
         metadata=Metadata(name=agent_name or type(tool).__name__),
         spec=dict(
             implementation="SimpleAgent",
-            apu=dict(logic_units=[dict(implementation=fqn(type(tool)), **tool.model_dump())])
+            apu=dict(logic_units=[dict(implementation=fqn(type(tool)), **tool.model_dump())]),
         ),
     )
 
@@ -37,6 +37,7 @@ class DynamicTool(ToolBuilder):
 @DynamicTool.dynamic_contract
 def fn(spec: DynamicTool):
     for tool in spec.tools:
+
         @DynamicTool.tool(name=tool)
         async def tool_call():
             return tool
@@ -72,7 +73,10 @@ class PhilosopherDescription(BaseModel):
 
 @PydanticSigTool.tool()
 def meaning_of_life(philosopher: PhilosopherDescription):
-    if philosopher.philosopher_name == "Douglas Adams" and philosopher.school_of_thought == "Hitchhiker's Guide to the Galaxy":
+    if (
+        philosopher.philosopher_name == "Douglas Adams"
+        and philosopher.school_of_thought == "Hitchhiker's Guide to the Galaxy"
+    ):
         return "Isn't it obvious: 42!"
     else:
         return "Unknown for the provided philosopher, school of thought"
@@ -111,13 +115,19 @@ async def test_custom_description():
 
 async def test_simple_signature():
     process = await client.Agent.get(SimpleSigTool.__name__).create_process()
-    resp = await process.action("converse", body="What is 2 + 3? Use your tools give me the answer, and also the description of the tool you are given, including anything odd about it.")
+    resp = await process.action(
+        "converse",
+        body="What is 2 + 3? Use your tools give me the answer, and also the description of the tool you are given, including anything odd about it.",
+    )
     assert "5" in resp.data
     assert "giggity" in resp.data.lower()
 
 
 async def test_complex_signature():
     process = await client.Agent.get(PydanticSigTool.__name__).create_process()
-    resp = await process.action("converse", body="What is the meaning of life according to \"Douglas Adams\" within \"Hitchhiker's Guide to the Galaxy\"? Use the tool provided and return the exact response given to you")
+    resp = await process.action(
+        "converse",
+        body='What is the meaning of life according to "Douglas Adams" within "Hitchhiker\'s Guide to the Galaxy"? Use the tool provided and return the exact response given to you',
+    )
     assert "42" in resp.data
     assert "obvious" in resp.data

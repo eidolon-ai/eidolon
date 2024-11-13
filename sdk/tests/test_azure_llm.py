@@ -11,6 +11,7 @@ from eidolon_ai_sdk.test_utils.server import serve_thread
 
 os.environ.setdefault("AZURE_OPENAI_API_KEY", "testkey")
 
+
 @pytest.fixture(scope="module")
 def machine(tmp_path_factory):
     return TestMachine(tmp_path_factory.mktemp("test_utils_storage"))
@@ -18,19 +19,26 @@ def machine(tmp_path_factory):
 
 @pytest.fixture(scope="module", autouse=True)
 def server(machine):
-    with serve_thread([machine, AgentResource(
-        apiVersion="server.eidolonai.com/v1alpha1",
-        metadata=Metadata(name="hello-world"),
-        spec=dict(
-            description="test agent",
-            system_prompt="you are a helpful assistant who love emojis",
-            apu=dict(llm_unit=dict(
-                    implementation="AzureLLMUnit",
-                    azure_endpoint="https://testinstancename.openai.azure.com/",
-                    model=dict(implementation="gpt-3.5-turbo", name="gpt-35-turbo-16k"),
-            ))
-        )
-    )]):
+    with serve_thread(
+        [
+            machine,
+            AgentResource(
+                apiVersion="server.eidolonai.com/v1alpha1",
+                metadata=Metadata(name="hello-world"),
+                spec=dict(
+                    description="test agent",
+                    system_prompt="you are a helpful assistant who love emojis",
+                    apu=dict(
+                        llm_unit=dict(
+                            implementation="AzureLLMUnit",
+                            azure_endpoint="https://testinstancename.openai.azure.com/",
+                            model=dict(implementation="gpt-3.5-turbo", name="gpt-35-turbo-16k"),
+                        )
+                    ),
+                ),
+            ),
+        ]
+    ):
         yield
 
 

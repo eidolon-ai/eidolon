@@ -39,9 +39,7 @@ from starlette.routing import Match, Mount, Route
 from starlette.types import Scope
 
 
-def _get_route_name(
-        scope: Scope, routes: List[Route], route_name: Optional[str] = None
-) -> Optional[str]:
+def _get_route_name(scope: Scope, routes: List[Route], route_name: Optional[str] = None) -> Optional[str]:
     """Gets route name for given scope taking mounts into account."""
 
     for route in routes:

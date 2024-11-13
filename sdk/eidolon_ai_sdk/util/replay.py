@@ -32,8 +32,8 @@ def str_presenter(dumper, data):
         for line in data.split("\n"):
             lines.extend(textwrap.wrap(line, width=80, break_long_words=False, replace_whitespace=False))
         data = "\n".join(lines)
-        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
-    return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+        return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
+    return dumper.represent_scalar("tag:yaml.org,2002:str", data)
 
 
 yaml.add_representer(str, str_presenter)
@@ -56,7 +56,7 @@ async def default_parser(resp):
 
 
 def replayable(
-        fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None
+    fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None
 ):
     config = AgentOSKernel.get_instance(ReplayConfig)
 

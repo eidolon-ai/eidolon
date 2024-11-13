@@ -24,10 +24,10 @@ def serve_thread(resources, machine_name="test_machine", port=5346):
     @asynccontextmanager
     async def manage_lifecycle(_app: FastAPI):
         async with start_os(
-                app=_app,
-                resource_generator=resource_generator(),
-                machine_name=machine_name,
-                fail_on_agent_start_error=True,
+            app=_app,
+            resource_generator=resource_generator(),
+            machine_name=machine_name,
+            fail_on_agent_start_error=True,
         ):
             yield
 
@@ -55,7 +55,7 @@ def serve_thread(resources, machine_name="test_machine", port=5346):
     try:
         # Wait for the server to start
         while len(server_wrapper) == 0 or not (
-                server_wrapper[-1] in {"aborted", "stopped"} or server_wrapper[0].started
+            server_wrapper[-1] in {"aborted", "stopped"} or server_wrapper[0].started
         ):
             pass
         if server_wrapper[-1] in {"aborted", "stopped"}:
