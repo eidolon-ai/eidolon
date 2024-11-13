@@ -1,5 +1,8 @@
 from typing import Dict, List
 
+from pydantic import ValidationError
+from yaml.scanner import ScannerError
+
 from eidolon_ai_client.util.logger import logger
 
 fail_on_agent_start_error: bool = ...  # noqa: F821
@@ -21,9 +24,13 @@ def _add_start_error(name: str, error: str):
 
 
 def register_load_error(file_loc: str, e: Exception):
-    logger.exception(f"Error loading resource {file_loc}", exc_info=e)
     if fail_on_agent_start_error:
         raise e
+    elif isinstance(e, ScannerError):
+        e.__traceback__ = None
+        logger.error(f"Invalid YAML syntax in resource file {file_loc}\n{e}")
+    else:
+        logger.exception(f"Error loading resource {file_loc}", exc_info=e)
 
 
 def register_instantiate_error(name: str, resourceKind: str, e: Exception, traceback):
@@ -49,7 +56,10 @@ def register_resource_error(resourceName: str, resourceKind: str, e: Exception):
 
 
 def register_resource_promote_error(name: str, kind, e: Exception, load_file: str):
-    logger.exception(f"Error promoting resource {name} loaded from {load_file} to {kind}", exc_info=e)
     _add_load_error(name, f"Error promoting resource {name} loaded from {load_file} to {kind}: {e}")
     if fail_on_agent_start_error:
         raise e
+    elif isinstance(e, ValidationError):
+        logger.error(f"Error promoting resource {name} loaded from {load_file}\n{e}")
+    else:
+        logger.exception(f"Error promoting resource {name} loaded from {load_file} to {kind}", exc_info=e)

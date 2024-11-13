@@ -8,11 +8,11 @@ from typing import TypeVar, Type, Annotated, Optional, ClassVar
 
 from pydantic import BaseModel, model_validator, Field, ConfigDict, GetJsonSchemaHandler
 from pydantic.json_schema import JsonSchemaValue
-from pydantic_core import core_schema as cs
+from pydantic_core import core_schema as cs, PydanticCustomError
 
 from eidolon_ai_sdk.system.resources.reference_resource import ReferenceResource
 from eidolon_ai_sdk.system.specable import Specable
-from eidolon_ai_sdk.util.class_utils import fqn, get_from_fqn
+from eidolon_ai_sdk.util.class_utils import fqn, get_from_fqn, InvalidFQN
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
 
 B = TypeVar("B")
@@ -206,7 +206,12 @@ class Reference(BaseModel):
 
     @model_validator(mode="after")
     def _validate(self):
-        reference_class = self._get_reference_class()
+        try:
+            reference_class = self._get_reference_class()
+        except InvalidFQN as e:
+            raise PydanticCustomError("reference_error", "{e}", dict(e=f"'{e.fqn}' is not a valid reference or fully qualified name"))
+        except Exception as e:
+            raise PydanticCustomError("reference_error", "{e}", dict(e=e))
         spec = Reference.get_spec_type(reference_class)
         if spec:
             spec.model_validate(self.model_extra or {})

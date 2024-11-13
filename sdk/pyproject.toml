@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "eidolon-ai-sdk"
-version = "0.1.161"
+version = "0.1.164"
 description = "An open source sgent service SDK"
 authors = [ "Luke Lalor <lukehlalor@gmail.com>",]
 readme = "README.md"
@@ -15,7 +15,7 @@ line-length = 121
 
 [tool.eidolon]
 update-tag = "sdk"
-last-update-hash = "46689ecdcd60f0bbb64f1d72328f29f1b332bb80"
+last-update-hash = "419029609a485efba08482d6694854c69757e38d"
 
 [tool.poetry.urls]
 Github = "https://github.com/eidolon-ai/eidolon"
@@ -56,7 +56,7 @@ opentelemetry-instrumentation-fastapi = ">=0.44b0"
 opentelemetry-instrumentation-logging = ">=0.44b0"
 opentelemetry-sdk = ">=1.23.0"
 eidolon-ai-mistralai = "^0.1.6a"
-eidolon-ai-client = "^0.1.39"
+eidolon-ai-client = "^0.1.40"
 eidolon-ai-usage-client = "^0.1.10"
 boto3 = "^1.34.74"
 azure-identity = "^1.16.0"

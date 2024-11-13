@@ -43,7 +43,7 @@ class TestForName:
         """Test error when the fully qualified name is incorrect."""
         with pytest.raises(ValueError) as exc_info:
             for_name(f"{self.temp_module_name}.NonExistentClass", self.base_class)
-        assert "Unable to import" in str(exc_info.value)
+        assert str(exc_info.value) == "Attribute 'NonExistentClass' not found in module 'temp_test_module'"
 
     def test_implementation_class_not_subclass(self):
         """Test error when the class is not a subclass of the specified type."""
