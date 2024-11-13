@@ -157,7 +157,7 @@ def mongo_symbolic_memory(module_identifier):
 
 
 def pytest_addoption(parser):
-    parser.addoption("--symbolic_memory", action="store", default="mongo", help="Symbolic memory implementation to use")
+    parser.addoption("--symbolic_memory", action="store", default="local", help="Symbolic memory implementation to use")
 
 
 @pytest.fixture(scope="module")
@@ -165,9 +165,11 @@ def symbolic_memory(mongo_symbolic_memory, local_symbolic_memory, pytestconfig):
     if pytestconfig.getoption("symbolic_memory").lower() == "local":
         print("Using local symbolic memory")
         return local_symbolic_memory
-    else:
+    elif pytestconfig.getoption("symbolic_memory").lower() == "mongo":
         print("Using mongo symbolic memory")
         return mongo_symbolic_memory
+    else:
+        raise ValueError("Unexpected symbolic memory implementation")
 
 
 @pytest.fixture(scope="module")
