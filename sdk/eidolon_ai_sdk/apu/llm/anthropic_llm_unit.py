@@ -1,6 +1,7 @@
 import base64
 import json
 import logging
+from http import HTTPStatus
 from io import BytesIO
 from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
 
@@ -9,11 +10,10 @@ from PIL import Image
 from anthropic import (
     AsyncAnthropic,
     APIConnectionError,
-    RateLimitError,
     APIStatusError,
     TextEvent,
     ContentBlockStopEvent,
-    AuthenticationError,
+    AnthropicError,
 )
 from anthropic.types import MessageStreamEvent, ToolUseBlock, TextBlockParam, ImageBlockParam, ToolUseBlockParam
 from anthropic.types.image_block_param import Source
@@ -212,13 +212,9 @@ class AnthropicLLMUnit(LLMUnit, Specable[AnthropicLLMUnitSpec]):
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)
         except APIConnectionError as e:
-            raise HTTPException(502, f"Anthropic Error: {e.message}") from e
-        except RateLimitError as e:
-            raise HTTPException(429, "Anthropic Rate Limit Exceeded") from e
-        except AuthenticationError as e:
-            raise HTTPException(500, "Anthropic Authentication Error") from e
+            raise AnthropicError("Unable to connect to Anthropic") from e
         except APIStatusError as e:
-            raise HTTPException(502, f"Anthropic Status Error: {e.message}") from e
+            raise AnthropicError(f"Received {e.status_code} {HTTPStatus(e.status_code).name} from Anthropic") from e
 
     async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)

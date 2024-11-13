@@ -3,14 +3,13 @@ from http import HTTPStatus
 from typing import Optional, cast, List
 
 from azure.identity import get_bearer_token_provider, EnvironmentCredential
-from openai import AsyncOpenAI, AsyncStream, NotFoundError, OpenAIError, APIStatusError
+from fastapi import HTTPException
+from openai import AsyncOpenAI, AsyncStream, OpenAIError, APIStatusError
 from openai.lib.azure import AsyncAzureOpenAI
 from openai.types import ImagesResponse
 from openai.types.chat import ChatCompletionChunk, ChatCompletion
 from pydantic import BaseModel, Field
-from fastapi import HTTPException
 
-from eidolon_ai_sdk.apu.apu import APUException
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.util.replay import replayable
