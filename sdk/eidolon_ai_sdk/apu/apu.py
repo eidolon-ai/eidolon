@@ -187,7 +187,7 @@ class UnitException(APUException):
     error: Exception
 
     def __init__(self, unit_type: Type, error: Exception):
-        super().__init__(f"{type(error).__name__} ({unit_type.__name__})\n{error}")
+        super().__init__(f"{unit_type.__name__} {type(error).__name__}\n{error}")
         self.unit_type = unit_type
         self.error = error
 
