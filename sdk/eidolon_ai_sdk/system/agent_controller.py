@@ -388,7 +388,9 @@ class AgentController:
                 yield AgentStateEvent(
                     state="unhandled_error", available_actions=self.get_available_actions("unhandled_error")
                 )
-                yield ErrorEvent(reason=f"{type(e).__name__}: {e}\nSee server logs for more details", details=dict(status_code=500))
+                yield ErrorEvent(
+                    reason=f"{type(e).__name__}: {e}\nSee server logs for more details", details=dict(status_code=500)
+                )
 
     async def stream_agent_fn(self, handler, **kwargs) -> AsyncIterator[StreamEvent]:
         if isinstance(self.agent, AgentBuilderBase):

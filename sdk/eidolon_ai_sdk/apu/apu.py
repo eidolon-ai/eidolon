@@ -6,8 +6,7 @@ from typing import Any, List, Dict, Literal, Union, TypeVar, Type, cast, AsyncIt
 
 from pydantic import BaseModel, Field, TypeAdapter
 
-from eidolon_ai_client.events import StreamEvent, convert_output_object, ObjectOutputEvent, ErrorEvent, \
-    StringOutputEvent
+from eidolon_ai_client.events import StreamEvent, convert_output_object, ObjectOutputEvent, ErrorEvent, StringOutputEvent
 from eidolon_ai_sdk.apu.agent_io import APUMessageTypes
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.system.specable import Specable
@@ -64,11 +63,11 @@ class APU(Specable[APUSpec], ABC):
 
     @abstractmethod
     async def schedule_request(
-            self,
-            call_context: CallContext,
-            prompts: List[APUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any]],
-            boot_messages: Optional[List[APUMessageTypes]] = None,
+        self,
+        call_context: CallContext,
+        prompts: List[APUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any]],
+        boot_messages: Optional[List[APUMessageTypes]] = None,
     ) -> AsyncIterator[StreamEvent]:
         """
         Schedules the given prompts with the APU. The default implementation saves the new prompts into memory, executes the prompts, including intermediate tool calls, and returns the output in the specified format.
@@ -114,16 +113,16 @@ class Thread:
         self._apu = apu
 
     async def set_boot_messages(
-            self,
-            prompts: List[APUMessageTypes],
+        self,
+        prompts: List[APUMessageTypes],
     ):
         return await self._apu.set_boot_messages(self._call_context, list(prompts))
 
     async def run_request(
-            self,
-            prompts: List[APUMessageTypes],
-            output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str",
-            boot_messages: Optional[List[APUMessageTypes]] = None,
+        self,
+        prompts: List[APUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str",
+        boot_messages: Optional[List[APUMessageTypes]] = None,
     ) -> T:
         stream = self.stream_request(prompts, output_format, boot_messages)
         result = None
@@ -141,8 +140,7 @@ class Thread:
         if (
             output_format == "str"
             or output_format == str
-            or (
-                isinstance(output_format, dict) and output_format.get("type") == "string")
+            or (isinstance(output_format, dict) and output_format.get("type") == "string")
         ):
             result = string_output
 
@@ -155,8 +153,10 @@ class Thread:
         return result
 
     def stream_request(
-            self, prompts: List[APUMessageTypes], output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str",
-            boot_messages: Optional[List[APUMessageTypes]] = None,
+        self,
+        prompts: List[APUMessageTypes],
+        output_format: Union[Literal["str"], Dict[str, Any], Type[T]] = "str",
+        boot_messages: Optional[List[APUMessageTypes]] = None,
     ) -> AsyncIterator[StreamEvent]:
         if isinstance(output_format, str) and output_format != "str":
             raise ValueError(f"Unknown output format {output_format}")

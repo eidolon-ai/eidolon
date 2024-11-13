@@ -19,8 +19,19 @@ from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import DocSummary
 from eidolon_ai_sdk.agent.retriever_agent.retriever import Retriever
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.apu.agent_io import IOUnit, APUMessageTypes
-from eidolon_ai_sdk.apu.apu import APU, APUSpec, Thread, APUException, APUCapabilities, UnitException, \
-    ToolCallError, LongtermMemoryError, MemoryUnitError, LLMError, IOUnitError
+from eidolon_ai_sdk.apu.apu import (
+    APU,
+    APUSpec,
+    Thread,
+    APUException,
+    APUCapabilities,
+    UnitException,
+    ToolCallError,
+    LongtermMemoryError,
+    MemoryUnitError,
+    LLMError,
+    IOUnitError,
+)
 from eidolon_ai_sdk.apu.audio_unit import AudioUnit
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.image_unit import ImageUnit
@@ -30,7 +41,9 @@ from eidolon_ai_sdk.apu.llm_message import (
     UserMessageAudio,
     UserMessageImage,
     UserMessageText,
-    UserMessage, ToolResponseMessage, AssistantMessage,
+    UserMessage,
+    ToolResponseMessage,
+    AssistantMessage,
 )
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit, LLMToolWrapper, llm_function
@@ -142,16 +155,16 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         try:
             try:
                 conversation = (
-                copy.copy(await self.io_unit.process_request(call_context, boot_messages)) if boot_messages else []
-            )
+                    copy.copy(await self.io_unit.process_request(call_context, boot_messages)) if boot_messages else []
+                )
                 conversation_messages = await self.io_unit.process_request(call_context, prompts)
             except Exception as e:
                 raise IOUnitError(type(self.io_unit), e) from e
 
             try:
                 conversation.extend(
-                await self.memory_unit.getConversationHistory(call_context, include_boot=boot_messages is None)
-            )
+                    await self.memory_unit.getConversationHistory(call_context, include_boot=boot_messages is None)
+                )
                 if self.record_memory:
                     await self.memory_unit.storeMessages(call_context, conversation_messages)
                 conversation.extend(conversation_messages)
