@@ -1,3 +1,4 @@
+import json
 import os
 from typing import Optional
 from urllib.parse import urljoin
@@ -9,6 +10,8 @@ from pydantic import BaseModel, Field
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit, llm_function
 from eidolon_ai_sdk.system.reference_model import Specable
 from eidolon_ai_sdk.system.tool_builder import ToolBuilder
+
+from toolhouse.models.RunToolsRequest import RunToolsRequest
 
 class Toolhouse(ToolBuilder):
     """A configurable tool backed by Toolhouse.ai that can be added to Eidolon Agents"""
@@ -35,7 +38,11 @@ def tool_build(spec: Toolhouse):
     for tool in tools:
         @Toolhouse.tool(description=tool['function']['description'], name=tool['function']['name'], input_schema=tool['function']['parameters'])
         async def tool_register(**kwargs): ## What is the args going in here
-            return th.run_tools()
+            ## tool will be kwarg
+            run_tool_request = RunToolsRequest(dict(type="function", function=dict(name=tool['function']['name'], arguments=json.dumps(kwargs)), id="foo"), th.provider, th.metadata, th.bundle)
+            run_response = th.tools.run_tools(run_tool_request)
+            return run_response.content.content
+            
             #print(kwargs) ## Need to execute toolhouse request and return the response (Run the tool), set up another test that sets up agent that uses tool, look @ test_tool_builder to see how to define agent to run server with, talking to agent and having it use one of the tools
         ## Might have agent set up first to debug 
 
