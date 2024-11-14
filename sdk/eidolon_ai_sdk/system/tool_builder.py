@@ -14,7 +14,6 @@ from eidolon_ai_sdk.util.partial import partial, return_value
 _ToolBuilderState = namedtuple("_ToolBuilderState", ["dynamic_contracts", "tools"])
 _ToolDefinition = namedtuple("_ToolDefinition", ["name", "description", "parameter", "fn"])
 
-
 T = TypeVar("T", bound="ToolBuilder")
 
 
@@ -67,7 +66,7 @@ class ToolBuilder(BaseModel):
 
         return decorator
 
-    def clone_thread(self, old_context: CallContext, new_context: CallContext):
+    async def clone_thread(self, old_context: CallContext, new_context: CallContext):
         """
         Custom logic to execute when cloning a thread.
 

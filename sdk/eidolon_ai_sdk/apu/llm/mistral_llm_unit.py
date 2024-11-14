@@ -6,10 +6,11 @@ from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cas
 
 import yaml
 from PIL import Image
-from fastapi import HTTPException
 from mistralai.async_client import MistralAsyncClient
-from mistralai.exceptions import MistralConnectionException, MistralAPIStatusException, MistralAPIException, \
-    MistralException
+from mistralai.exceptions import (
+    MistralAPIException,
+    MistralException,
+)
 from mistralai.models.chat_completion import ChatCompletionStreamResponse, ResponseFormat, ResponseFormats, Function
 
 from eidolon_ai_client.events import (
@@ -325,5 +326,3 @@ async def _raw_parser(resp):
         if message.content:
             yield message.content
             prefix = "\n"
-
-

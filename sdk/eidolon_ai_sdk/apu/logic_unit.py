@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import copy
-import logging
 import typing
 from abc import ABC, ABCMeta
 from dataclasses import dataclass
@@ -15,9 +14,7 @@ from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.llm_unit import LLMCallFunction
 from eidolon_ai_sdk.apu.processing_unit import ProcessingUnit
 from eidolon_ai_client.events import (
-    SuccessEvent,
     ObjectOutputEvent,
-    ErrorEvent,
     BaseStreamEvent,
     StringOutputEvent,
     ToolCall,
@@ -37,35 +34,31 @@ class LLMToolWrapper:
     async def execute(self, tool_call: ToolCall) -> AsyncIterator[BaseStreamEvent]:
         logger.info("calling tool " + self.eidolon_handler.name)
         logger.debug("args: " + str(tool_call.arguments) + " | fn: " + str(self.eidolon_handler.fn))
-        try:
-            # if this is a sync tool call just call execute, if it is not we need to store the state of the conversation and call in memory
-            input_model = self.eidolon_handler.input_model_fn(self.logic_unit, self.eidolon_handler)
-            if isinstance(input_model, type) and issubclass(input_model, BaseModel):
-                kwargs = dict(input_model.model_validate(tool_call.arguments))
-            elif isinstance(input_model, dict):
-                validate(tool_call.arguments, input_model)
-                kwargs = copy.deepcopy(tool_call.arguments)
-            else:
-                raise ValueError("input_model must be a BaseModel or a dict")
-            # passing in self is workaround for legacy logic units.
-            result = self.eidolon_handler.fn(self.logic_unit, **kwargs)
-            if isinstance(result, Coroutine):
-                result = await result
 
-            if isinstance(result, typing.AsyncIterable):
-                async for event in result:
-                    yield event
+        # if this is a sync tool call just call execute, if it is not we need to store the state of the conversation and call in memory
+        input_model = self.eidolon_handler.input_model_fn(self.logic_unit, self.eidolon_handler)
+        if isinstance(input_model, type) and issubclass(input_model, BaseModel):
+            kwargs = dict(input_model.model_validate(tool_call.arguments))
+        elif isinstance(input_model, dict):
+            validate(tool_call.arguments, input_model)
+            kwargs = copy.deepcopy(tool_call.arguments)
+        else:
+            raise ValueError("input_model must be a BaseModel or a dict")
+        # passing in self is workaround for legacy logic units.
+        result = self.eidolon_handler.fn(self.logic_unit, **kwargs)
+        if isinstance(result, Coroutine):
+            result = await result
+
+        if isinstance(result, typing.AsyncIterable):
+            async for event in result:
+                yield event
+        else:
+            model = TypeAdapter(type(result))
+            result = model.dump_python(result)
+            if isinstance(result, str):
+                yield StringOutputEvent(content=result)
             else:
-                model = TypeAdapter(type(result))
-                result = model.dump_python(result)
-                if isinstance(result, str):
-                    yield StringOutputEvent(content=result)
-                else:
-                    yield ObjectOutputEvent(content=result)
-                yield SuccessEvent()
-        except Exception as e:
-            logging.exception("error calling tool " + self.eidolon_handler.name)
-            yield ErrorEvent(reason=str(e))
+                yield ObjectOutputEvent(content=result)
 
     @classmethod
     async def from_logic_units(

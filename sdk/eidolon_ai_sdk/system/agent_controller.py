@@ -382,7 +382,7 @@ class AgentController:
                 yield AgentStateEvent(state="http_error", available_actions=self.get_available_actions("http_error"))
                 yield ErrorEvent(reason=e.detail, details=dict(status_code=e.status_code))
         except Exception as e:
-            logger.exception(f"Unhandled Error")
+            logger.exception("Unhandled Error")
             if not seen_end:
                 await process.update(state="unhandled_error", error_info=dict(detail=str(e), status_code=500))
                 yield AgentStateEvent(

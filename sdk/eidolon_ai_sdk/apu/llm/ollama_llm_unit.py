@@ -4,7 +4,6 @@ from http import HTTPStatus
 from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast, Type
 
 import yaml
-from fastapi import HTTPException
 from ollama import AsyncClient, ResponseError, Options
 from pydantic import Field, create_model, BaseModel
 
