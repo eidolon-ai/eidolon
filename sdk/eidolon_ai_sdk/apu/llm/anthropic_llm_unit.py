@@ -17,7 +17,6 @@ from anthropic import (
 )
 from anthropic.types import MessageStreamEvent, ToolUseBlock, TextBlockParam, ImageBlockParam, ToolUseBlockParam
 from anthropic.types.image_block_param import Source
-from fastapi import HTTPException
 
 from eidolon_ai_client.events import (
     StringOutputEvent,
