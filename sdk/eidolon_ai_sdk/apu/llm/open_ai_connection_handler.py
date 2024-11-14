@@ -3,7 +3,6 @@ from http import HTTPStatus
 from typing import Optional, cast, List
 
 from azure.identity import get_bearer_token_provider, EnvironmentCredential
-from fastapi import HTTPException
 from openai import AsyncOpenAI, AsyncStream, OpenAIError, APIStatusError
 from openai.lib.azure import AsyncAzureOpenAI
 from openai.types import ImagesResponse
