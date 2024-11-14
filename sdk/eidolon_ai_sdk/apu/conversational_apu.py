@@ -353,7 +353,7 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             path = metadata.get("path") or metadata.get("filename") or None
             mimetype = metadata.get("mimetype")
             blob = DataBlob.from_bytes(data=data, mimetype=mimetype, path=path)
-            await self.document_processor.addFile(
+            await self.document_processor.add_file(
                 f"pf_pid_{process_id}", FileInfo(data=blob, path="", metadata=metadata)
             )
             message = f"The file {path} is available to search. Use the RagLogicUnit_search search tool to find information contained in the file\n"

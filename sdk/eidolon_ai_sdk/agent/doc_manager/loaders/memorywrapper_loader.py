@@ -11,7 +11,7 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
     FileChange,
     ModifiedFile,
     AddedFile,
-    RemovedFile,
+    RemovedFile, LoaderMetadata,
 )
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.agent_os_interfaces import FileMetadata
@@ -54,7 +54,8 @@ class WrappedMemoryLoader(DocumentLoader, Specable[WrappedMemoryLoaderSpec]):
         async for file in self.memory.glob(self.spec.pattern):
             yield file.file_path
 
-    async def get_changes(self, metadata: Dict[str, Dict[str, Any]]) -> AsyncIterator[FileChange]:
+    async def get_changes(self, metadata: LoaderMetadata) -> AsyncIterator[FileChange]:
+        metadata = {doc.path: doc.metadata async for doc in metadata.doc_metadata()}
         tasks = set()
         async for file in self.memory.glob(self.spec.pattern):
             while len(tasks) >= self.spec.concurrency:

@@ -10,7 +10,7 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
     FileChange,
     ModifiedFile,
     AddedFile,
-    RemovedFile,
+    RemovedFile, LoaderMetadata,
 )
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.system.specable import Specable
@@ -52,7 +52,8 @@ class FilesystemLoader(DocumentLoader, Specable[FilesystemLoaderSpec]):
         for file in self.root_path.glob(self.spec.pattern):
             yield str(file.relative_to(self.root_dir))
 
-    async def get_changes(self, metadata: Dict[str, Dict[str, Any]]) -> AsyncIterator[FileChange]:
+    async def get_changes(self, metadata: LoaderMetadata) -> AsyncIterator[FileChange]:
+        metadata = {doc.path: doc.metadata async for doc in metadata.doc_metadata()}
         # iterate over all python files in the root_dir
         for file in self.root_path.glob(self.spec.pattern):
             if file.is_file():

@@ -14,7 +14,7 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
     AddedFile,
     ModifiedFile,
     RemovedFile,
-    FileChange,
+    FileChange, LoaderMetadata,
 )
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.system.specable import Specable
@@ -49,7 +49,8 @@ class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):
             async for file in self._raw_list_files(client):
                 yield file["path"]
 
-    async def get_changes(self, metadata: Dict[str, Dict[str, Any]]) -> AsyncIterator[FileChange]:
+    async def get_changes(self, metadata: LoaderMetadata) -> AsyncIterator[FileChange]:
+        raise Exception("todo, change to loader metadata")
         async with AsyncClient(**self.spec.client_args) as client:
             tasks: List[Task] = []
             async for file in self._raw_list_files(client):

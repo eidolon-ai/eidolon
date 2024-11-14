@@ -1,11 +1,11 @@
 import logging
-from typing import Iterable
+from typing import Iterable, AsyncGenerator
 
 from opentelemetry import trace
 from pydantic import BaseModel
 
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
-    FileInfo,
+    FileInfo, FileInfoMetadata,
 )
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DocumentParser, DataBlob
 from eidolon_ai_sdk.agent.doc_manager.transformer.document_transformer import DocumentTransformer
@@ -41,7 +41,7 @@ class DocumentProcessor(Specable[DocumentProcessorSpec]):
     def split(self, docs) -> Iterable[Document]:
         return self.splitter.transform_documents(docs)
 
-    async def addFile(self, collection_name: str, file_info: FileInfo):
+    async def add_file(self, collection_name: str, file_info: FileInfo):
         with tracer.start_as_current_span("add file"):
             try:
                 with tracer.start_as_current_span("parsing"):
@@ -69,7 +69,7 @@ class DocumentProcessor(Specable[DocumentProcessorSpec]):
                 else:
                     logger.warning(f"Failed to parse file {file_info.path} ({e})")
 
-    async def removeFile(self, collection_name: str, path: str):
+    async def remove_file(self, collection_name: str, path: str):
         with tracer.start_as_current_span("remove file"):
             file_info = await AgentOS.symbolic_memory.find_one(collection_name, {"file_path": path})
             if file_info is not None:
@@ -77,7 +77,11 @@ class DocumentProcessor(Specable[DocumentProcessorSpec]):
                 await AgentOS.similarity_memory.delete(collection_name, doc_ids)
                 await AgentOS.symbolic_memory.delete(collection_name, {"file_path": path})
 
-    async def replaceFile(self, collection_name: str, file_info: FileInfo):
+    async def replace_file(self, collection_name: str, file_info: FileInfo):
         with tracer.start_as_current_span("replace file"):
-            await self.removeFile(collection_name, file_info.path)
-            await self.addFile(collection_name, file_info)
+            await self.remove_file(collection_name, file_info.path)
+            await self.add_file(collection_name, file_info)
+
+    async def list_files(self, collection_name: str) -> AsyncGenerator[FileInfoMetadata]:
+        async for file in AgentOS.symbolic_memory.find(collection_name, {}):
+            yield FileInfoMetadata(file["file_path"], file["data"])
