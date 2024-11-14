@@ -1,7 +1,5 @@
-import copy
 from typing import List, Type, Dict, Any, Union, Literal, AsyncIterator, Optional
 
-from fastapi import HTTPException
 from opentelemetry import trace
 
 from eidolon_ai_client.events import (
@@ -19,7 +17,18 @@ from eidolon_ai_sdk.agent.retriever_agent.result_summarizer import DocSummary
 from eidolon_ai_sdk.agent.retriever_agent.retriever import Retriever
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.apu.agent_io import IOUnit, APUMessageTypes
-from eidolon_ai_sdk.apu.apu import APU, APUSpec, Thread, APUException, APUCapabilities
+from eidolon_ai_sdk.apu.apu import (
+    APU,
+    APUSpec,
+    Thread,
+    APUException,
+    APUCapabilities,
+    ToolCallError,
+    LongtermMemoryError,
+    MemoryUnitError,
+    LLMError,
+    IOUnitError,
+)
 from eidolon_ai_sdk.apu.audio_unit import AudioUnit
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.apu.image_unit import ImageUnit
@@ -30,15 +39,17 @@ from eidolon_ai_sdk.apu.llm_message import (
     UserMessageImage,
     UserMessageText,
     UserMessage,
+    ToolResponseMessage,
+    AssistantMessage,
 )
 from eidolon_ai_sdk.apu.llm_unit import LLMUnit
 from eidolon_ai_sdk.apu.logic_unit import LogicUnit, LLMToolWrapper, llm_function
+from eidolon_ai_sdk.apu.longterm_memory_unit import LongTermMemoryUnit
 from eidolon_ai_sdk.apu.memory_unit import MemoryUnit
 from eidolon_ai_sdk.apu.processing_unit import ProcessingUnitLocator, PU_T
 from eidolon_ai_sdk.system.reference_model import Reference, AnnotatedReference
 from eidolon_ai_sdk.system.specable import Specable
 from eidolon_ai_sdk.util.stream_collector import StreamCollector, stream_manager, ManagedContextError
-from eidolon_ai_sdk.apu.longterm_memory_unit import LongTermMemoryUnit
 
 tracer = trace.get_tracer("apu")
 
@@ -139,31 +150,32 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
         boot_messages: List[APUMessageTypes] = None,
     ) -> AsyncIterator[StreamEvent]:
         try:
-            conversation = (
-                copy.copy(await self.io_unit.process_request(call_context, boot_messages)) if boot_messages else []
-            )
-            conversation.extend(
-                await self.memory_unit.getConversationHistory(call_context, include_boot=boot_messages is None)
-            )
-            conversation_messages = await self.io_unit.process_request(call_context, prompts)
-            if self.record_memory:
-                await self.memory_unit.storeMessages(call_context, conversation_messages)
-            conversation.extend(conversation_messages)
+            with IOUnitError.translate(type(self.io_unit)):
+                transformed_boot = (
+                    await self.io_unit.process_request(call_context, boot_messages) if boot_messages else []
+                )
+                transformed_prompts = await self.io_unit.process_request(call_context, prompts)
+
+            with MemoryUnitError.translate(type(self.memory_unit)):
+                found_messages = await self.memory_unit.getConversationHistory(
+                    call_context, include_boot=boot_messages is None
+                )
+
+            conversation = [*transformed_boot, *found_messages, *transformed_prompts]
+            await self._maybe_store_messages(call_context, *transformed_prompts)
 
             # EDIT: get relevant mem0 memories and extend the conversation history with them
             if self.longterm_memory_unit:
-                longterm_memories = self.longterm_memory_unit.search_memories(conversation_messages)
+                longterm_memories = self.longterm_memory_unit.search_memories(transformed_prompts)
                 conversation.extend(longterm_memories)
 
             async for event in self._llm_execution_cycle(call_context, output_format, conversation):
                 yield event
-        except HTTPException as e:
-            raise e
-        except APUException as e:
-            raise e
+        except APUException:
+            raise
         except Exception as e:
             logger.debug("Error processing request", exc_info=True)
-            raise APUException(f"{e.__class__.__name__} while processing request") from e
+            raise APUException(f"{type(e).__name__} while processing request") from e
 
     async def _llm_execution_cycle(
         self,
@@ -192,37 +204,46 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                 converted_conversation.append(event)
 
         num_iterations = 0
-        while num_iterations < self.spec.max_num_function_calls:
+        tool_call_events: List[LLMToolCallRequestEvent] = []
+        while num_iterations == 0 or tool_call_events:
+            if num_iterations > self.spec.max_num_function_calls:
+                raise APUException(f"exceeded maximum number of function calls ({self.spec.max_num_function_calls})")
+            num_iterations += 1
+
             with tracer.start_as_current_span("building tools"):
                 lus = self.logic_units
                 if num_files > 0:
                     lus += (RagLogicUnit(self.retriever, apu=self.retriever_apu, processing_unit_locator=self),)
-                tool_defs = await LLMToolWrapper.from_logic_units(call_context, lus)
+                tool_defs: Dict[str, LLMToolWrapper] = await LLMToolWrapper.from_logic_units(call_context, lus)
                 tool_call_events: List[LLMToolCallRequestEvent] = []
                 llm_facing_tools = [w.llm_message for w in tool_defs.values()]
             with tracer.start_as_current_span("llm execution"):
-                logger.info(f"Following tools are available: {list(tool_defs.keys())}")
-                execute_llm_ = self.llm_unit.execute_llm(converted_conversation, llm_facing_tools, output_format)
-                # yield the events but capture the output, so it can be rolled into one event for memory.
-                # noinspection PyTypeChecker
-                stream_collector = StreamCollector(execute_llm_)
-                async for event in stream_collector:
-                    if event.is_root_and_type(LLMToolCallRequestEvent):
-                        tool_call_events.append(event)
-                    yield event
+                with LLMError.translate(type(self.llm_unit)):
+                    logger.info(f"Following tools are available: {list(tool_defs.keys())}")
+                    execute_llm_ = self.llm_unit.execute_llm(converted_conversation, llm_facing_tools, output_format)
+                    # yield the events but capture the output, so it can be rolled into one event for memory.
+                    stream_collector = StreamCollector(execute_llm_)
+                    async for event in stream_collector:
+                        if event.is_root_and_type(LLMToolCallRequestEvent):
+                            tool_call_events.append(event)
+                        yield event
             if stream_collector.get_content():
                 logger.info(f"LLM Response: {stream_collector.get_content()}")
 
             event_content = stream_collector.get_content() or ""
-            assistant_message = self.llm_unit.create_assistant_message(call_context, event_content, tool_call_events)
-
-            if self.record_memory:
-                await self.memory_unit.storeMessages(call_context, [assistant_message])
+            assistant_message = AssistantMessage(
+                type="assistant",
+                content=event_content,
+                tool_calls=[tce.tool_call for tce in tool_call_events],
+            )
             converted_conversation.append(assistant_message)
+            await self._maybe_store_messages(call_context, assistant_message)
 
             if self.longterm_memory_unit:
-                # EDIT: store event content in mem0 (not sure if correct):
-                self.longterm_memory_unit.store_message(call_context, event_content)
+                try:
+                    self.longterm_memory_unit.store_message(call_context, event_content)
+                except Exception as e:
+                    raise LongtermMemoryError(type(self.longterm_memory_unit), e) from e
 
             if tool_call_events:
                 with tracer.start_as_current_span("tool calls"):
@@ -231,16 +252,12 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
                     ]
                     async for e in merge_streams(streams):
                         yield e
-            else:
-                return
-
-        raise APUException(f"exceeded maximum number of function calls ({self.spec.max_num_function_calls})")
 
     async def _call_tool(
         self,
         call_context: CallContext,
         tool_call_event: LLMToolCallRequestEvent,
-        tool_defs,
+        tool_defs: Dict[str, LLMToolWrapper],
         conversation: List[LLMMessage],
     ):
         tc = tool_call_event.tool_call
@@ -248,11 +265,14 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
 
         if tc.name not in tool_defs:
             logger.warning("Invalid tool call " + tc.name)
-            message = self.llm_unit.create_tool_response_message(
+            message = ToolResponseMessage(
                 logic_unit_name=logic_unit_wrapper[0],
-                tc=tc,
-                content=f"Error: {tc.name} is not a valid tool as this time.",
+                tool_call_id=tc.tool_call_id,
+                result=f"Error: {tc.name} is not a valid tool as this time.",
+                name=tc.name,
             )
+            conversation.append(message)
+            await self._maybe_store_messages(call_context, message)
         else:
             tool_def = tool_defs[tc.name]
 
@@ -279,19 +299,28 @@ class ConversationalAPU(APU, Specable[ConversationalAPUSpec], ProcessingUnitLoca
             try:
                 async for event in tool_stream:
                     yield event
-            except ManagedContextError:
+            except ManagedContextError as e:
                 if self.spec.allow_tool_errors:
-                    logger.warning("Error calling tool " + tool_call_event.tool_call.name, exc_info=True)
+                    logger.warning(
+                        f"Error calling tool '{tool_call_event.tool_call.name}' (tool produced by {type(tool_def.logic_unit).__name__})",
+                        exc_info=True,
+                    )
                 else:
-                    raise
+                    raise ToolCallError(type(tool_def.logic_unit), e.error) from e.error
+            finally:
+                message = ToolResponseMessage(
+                    logic_unit_name=logic_unit_wrapper[0],
+                    tool_call_id=tc.tool_call_id,
+                    result=tool_stream.get_content() or "",
+                    name=tc.name,
+                )
+                conversation.append(message)
+                await self._maybe_store_messages(call_context, message)
 
-            message = self.llm_unit.create_tool_response_message(
-                logic_unit_wrapper[0], tc, tool_stream.get_content() or ""
-            )
-
+    async def _maybe_store_messages(self, call_context, *messages):
         if self.record_memory:
-            await self.memory_unit.storeMessages(call_context, [message])
-        conversation.append(message)
+            with MemoryUnitError.translate(type(self.memory_unit)):
+                await self.memory_unit.storeMessages(call_context, [*messages])
 
     async def process_audio_message(self, message: UserMessageAudio):
         if self.audio_unit is None:

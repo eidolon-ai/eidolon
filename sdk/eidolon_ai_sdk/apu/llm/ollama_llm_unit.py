@@ -1,9 +1,9 @@
 import json
 import logging
+from http import HTTPStatus
 from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast, Type
 
 import yaml
-from fastapi import HTTPException
 from ollama import AsyncClient, ResponseError, Options
 from pydantic import Field, create_model, BaseModel
 
@@ -112,7 +112,7 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)
         except ResponseError as e:
-            raise HTTPException(status_code=e.status_code, detail=e.error)
+            raise OllamaError(f"Received {e.status_code} {HTTPStatus(e.status_code).name} from Ollama") from e
 
     async def _build_request(self, messages, output_format):
         messages = [await convert_to_ollama(message) for message in messages]
@@ -167,3 +167,7 @@ async def _raw_parser(resp):
 
         if message["message"]:
             yield message["chunk"]["message"]["content"]
+
+
+class OllamaError(Exception):
+    pass

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from abc import abstractmethod, ABC
+from contextlib import contextmanager
 from typing import Any, List, Dict, Literal, Union, TypeVar, Type, cast, AsyncIterator, Optional
 
 from pydantic import BaseModel, Field, TypeAdapter
@@ -180,5 +181,43 @@ class Thread:
 
 
 class APUException(Exception):
-    def __init__(self, description):
-        super().__init__("APU Error: " + description)
+    pass
+
+
+class UnitException(APUException):
+    error: Exception
+
+    def __init__(self, unit_type: Type, error: Exception):
+        super().__init__(f"{type(error).__name__} raised by {unit_type.__name__}\n{error}")
+        self.unit_type = unit_type
+        self.error = error
+
+    @classmethod
+    @contextmanager
+    def translate(cls, unit_type: Type):
+        try:
+            yield
+        except APUException:
+            raise
+        except Exception as e:
+            raise cls(unit_type, e)
+
+
+class IOUnitError(UnitException):
+    pass
+
+
+class MemoryUnitError(UnitException):
+    pass
+
+
+class LongtermMemoryError(UnitException):
+    pass
+
+
+class ToolCallError(UnitException):
+    pass
+
+
+class LLMError(UnitException):
+    pass

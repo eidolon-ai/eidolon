@@ -81,7 +81,7 @@ def stream_manager(
             # record error on stream context, but will reraise for outer context to handle
             yield ErrorEvent(stream_context=context.get_nested_context(), reason=f"{type(e).__name__}: {e}")
             # no need to log since we are re-raising
-            raise ManagedContextError(f"Error in stream context {context.get_nested_context()}") from e
+            raise ManagedContextError(f"Error in stream context {context.get_nested_context()}", e) from e
         finally:
             yield EndStreamContextEvent(stream_context=context.stream_context, context_id=context.context_id)
 
@@ -89,4 +89,8 @@ def stream_manager(
 
 
 class ManagedContextError(Exception):
-    pass
+    error: Exception
+
+    def __init__(self, message: str, error):
+        super().__init__(message)
+        self.error = error

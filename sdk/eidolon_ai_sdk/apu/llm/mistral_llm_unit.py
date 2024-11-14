@@ -1,13 +1,16 @@
 import json
 import logging
+from http import HTTPStatus
 from io import BytesIO
 from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
 
 import yaml
 from PIL import Image
-from fastapi import HTTPException
 from mistralai.async_client import MistralAsyncClient
-from mistralai.exceptions import MistralConnectionException, MistralAPIStatusException, MistralAPIException
+from mistralai.exceptions import (
+    MistralAPIException,
+    MistralException,
+)
 from mistralai.models.chat_completion import ChatCompletionStreamResponse, ResponseFormat, ResponseFormats, Function
 
 from eidolon_ai_client.events import (
@@ -189,16 +192,10 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
                 try:
                     content = json.loads(complete_message) if complete_message else {}
                 except json.JSONDecodeError as e:
-                    logger.error(f"Error decoding response JSON from Mistral: {complete_message}")
-                    logger.exception(e)
-                    raise HTTPException(502, "Error decoding response JSON from Mistral") from e
+                    raise MistralException("Invalid JSON from Mistral") from e
                 yield ObjectOutputEvent(content=content)
-        except MistralConnectionException as e:
-            raise HTTPException(429, f"Mistral Connection Error: {e.message}") from e
-        except MistralAPIStatusException as e:
-            raise HTTPException(502, f"Mistral Status Error: {e.message}") from e
         except MistralAPIException as e:
-            raise HTTPException(502, f"Mistral Error: {e.message}") from e
+            raise MistralException(f"Received {e.http_status} {HTTPStatus(e.http_status).name} from Mistral") from e
 
     async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)
