@@ -129,21 +129,21 @@ class TestBadAuthToken:
         with pytest.raises(AgentError) as err:
             await process.action("converse", body="What is the capital of France?")
         assert err.value.status_code == 500
-        assert "AuthenticationError" in err.value.response.json()["data"]
+        assert "401 UNAUTHORIZED" in err.value.response.json()["data"]
 
     async def test_anthropic_bad_auth(self):
         process = await Agent.get("anthropic").create_process()
         with pytest.raises(AgentError) as err:
             await process.action("converse", body="What is the capital of France?")
         assert err.value.status_code == 500
-        assert "Anthropic Authentication Error" in err.value.response.json()["data"]
+        assert "401 UNAUTHORIZED" in err.value.response.json()["data"]
 
     async def test_mistral_bad_auth(self):
         process = await Agent.get("minstral").create_process()
         with pytest.raises(AgentError) as err:
             await process.action("converse", body="What is the capital of France?")
-        assert err.value.status_code == 502
-        assert "Unauthorized" in err.value.response.json()["data"]
+        assert err.value.status_code == 500
+        assert "401 UNAUTHORIZED" in err.value.response.json()["data"]
 
 
 class TestNoAuthToken:
@@ -181,14 +181,14 @@ class TestNoAuthToken:
         with pytest.raises(AgentError) as err:
             await process.action("converse", body="What is the capital of France?")
         assert err.value.status_code == 500
-        assert "Authentication Error" in err.value.response.json()["data"]
+        assert "set environment variable `ANTHROPIC_API_KEY`" in err.value.response.json()["data"]
 
     async def test_mistral_bad_auth(self):
         process = await Agent.get("minstral").create_process()
         with pytest.raises(AgentError) as err:
             await process.action("converse", body="What is the capital of France?")
-        assert err.value.status_code == 502
-        assert "Unauthorized" in err.value.response.json()["data"]
+        assert err.value.status_code == 500
+        assert "401 UNAUTHORIZED" in err.value.response.json()["data"]
 
 
 def pytest_generate_tests(metafunc):

@@ -173,7 +173,7 @@ class TestHelloWorld:
         assert json == {
             "agent": "HelloWorld",
             "available_actions": [],
-            "data": "big bad server error",
+            'data': 'Exception: big bad server error\nSee server logs for more details',
             "parent_process_id": None,
             "process_id": f"test_unhandled_error[{program}]_0",
             "state": "unhandled_error",
@@ -185,7 +185,7 @@ class TestHelloWorld:
         stream = (await agent.create_process()).stream_action(program, "error")
         events = {type(e): e async for e in stream}
         assert ErrorEvent in events
-        assert events[ErrorEvent].reason == "big bad server error"
+        assert events[ErrorEvent].reason == 'Exception: big bad server error\nSee server logs for more details'
         assert events[AgentStateEvent].state == "unhandled_error"
 
         found = await Process.get(stream).status()

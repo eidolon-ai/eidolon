@@ -297,7 +297,7 @@ def _llm_request():
                     yield e
         except TypeError as e:
             if "Could not resolve authentication method." in str(e):
-                raise HTTPException(500, "Authentication Error: set envar `ANTHROPIC_API_KEY`")
+                raise AnthropicError("Authentication Error: set environment variable `ANTHROPIC_API_KEY`")
             raise
 
     return fn
