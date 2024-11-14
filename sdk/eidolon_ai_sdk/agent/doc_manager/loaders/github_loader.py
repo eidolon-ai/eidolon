@@ -1,11 +1,18 @@
 import asyncio
 import fnmatch
 import os
+import tempfile
 from asyncio import Task
-from typing import AsyncIterator, List
-from typing import Dict, Any, Optional
+from contextlib import asynccontextmanager
+from typing import AsyncContextManager, Optional
+from typing import AsyncIterator, Dict, Any
+from typing import List
 
-from dulwich import client
+from dulwich import porcelain
+from dulwich.client import get_transport_and_path
+from dulwich.objects import Commit, Tree
+from dulwich.refs import SYMREF
+from dulwich.repo import Repo
 from httpx import AsyncClient
 from pydantic import Field
 
@@ -18,7 +25,7 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
     AddedFile,
     ModifiedFile,
     RemovedFile,
-    FileChange, LoaderMetadata,
+    FileChange, LoaderMetadata, RootMetadata,
 )
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.system.specable import Specable
@@ -27,8 +34,9 @@ from eidolon_ai_sdk.util.async_wrapper import make_async
 
 class GitHubLoaderSpec(DocumentLoaderSpec):
     """
-    Loads files from a GitHub repository. Note that you will likely hit rate limits on all but the smallest repositories
-    unless a TOKEN is provided
+    Deprecated. Will be removed at a later version.
+
+    Use GitHubLoaderV2 instead
     """
 
     owner: str
@@ -47,7 +55,12 @@ class GitHubLoaderSpec(DocumentLoaderSpec):
 
 
 class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):
+    def __init__(self, *args, **kwargs):
+        logger.warning("GitHubLoader is deprecated. Use GitHubLoaderV2 instead")
+        super().__init__(*args, **kwargs)
+
     async def get_changes(self, metadata: LoaderMetadata) -> AsyncIterator[FileChange]:
+        logger.warning("GitHubLoader is deprecated. Use GitHubLoaderV2 instead")
         metadata = {doc.path: doc.metadata async for doc in metadata.doc_metadata()}
         async with AsyncClient(**self.spec.client_args) as client:
             tasks: List[Task] = []
@@ -117,53 +130,144 @@ class GitHubLoaderV2Spec(DocumentLoaderSpec):
     """
 
     url: str = Field(examples=["https://github.com/eidolon-ai/eidolon.git", "https://{GITHUB_TOKEN}@github.com/eidolon-ai/eidolon.git"], description="URL of the repository. Will be templated with envars.")
+    branch: str = "main"
     pattern: str | List[str] = "**"
     exclude: str | List[str] = []
+    diff_depth: int = 100
 
     def templated_url(self) -> str:
         return self.url.format_map(os.environ)
 
 
 class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
-    async def get_changes(self, metadata: LoaderMetadata) -> AsyncIterator[FileChange]:
-        depth = None
-        if 'rev' in metadata.root_metadata:
-            try:
-                depth = await self.get_commit_depth(metadata.root_metadata['rev'])
-            except _HistoryNotFound:
-                logger.warning(f"{metadata.root_metadata['rev']} not found in repository")
+    url: str
 
-        if depth is None:
-            logger.info("Initialising metadata")
-            #  todo: clone repo and get all diffs
-            yield None
-        elif depth >= 1:
-            logger.info('Getting changes')
-            #  todo get changes since last commit
-        elif depth == 0:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.url = self.spec.templated_url()
+
+    async def get_changes(self, metadata: LoaderMetadata) -> AsyncIterator[FileChange]:
+        pattern = set(self.spec.pattern if isinstance(self.spec.pattern, list) else [self.spec.pattern])
+        excluded = set(self.spec.exclude if isinstance(self.spec.exclude, list) else [self.spec.exclude])
+
+        found_pattern = set(metadata.root_metadata.get('pattern', []))
+        found_excluded = set(metadata.root_metadata.get('exclude', []))
+
+        current_commit = await self.get_current_head()
+        new_root_metadata = RootMetadata({'commit': current_commit, 'pattern': list(pattern), 'exclude': list(excluded)})
+
+        if 'commit' in metadata.root_metadata and metadata.root_metadata['commit'] == current_commit:
             logger.info("No changes detected")
-        else:  # should not be possible
-            logger.error("Unexpected depth scenario")
+        elif not metadata.root_metadata.get('commit') or found_pattern != pattern or found_excluded != excluded:
+            logger.info("Initializing loader with current commit as root commit.")
+            async with self._temp_repo(current_commit, 1) as repo:
+                async for change in self.from_uninitialized(repo, metadata):
+                    yield change
+            yield new_root_metadata
+        else:
+            async with self._temp_repo(current_commit, self.spec.diff_depth) as repo:
+                logger.info(f"Loading changes from commit {metadata.root_metadata['commit']} to {current_commit}")
+                try:
+                    old_commit: Optional[Commit] = repo[metadata.root_metadata['commit'].encode('ascii')]
+                    async for change in self.from_commit(repo, old_commit):
+                        yield change
+                except KeyError:
+                    logger.warning(f"Commit {metadata.root_metadata['commit']} not found in history (depth={self.spec.diff_depth})")
+                    async for change in self.from_uninitialized(repo, metadata):
+                        yield change
+            yield new_root_metadata
 
     @make_async
-    def get_commit_depth(self, rev1, rev2="HEAD"):
-        c = client.get_transport_and_path(url)[0]
+    def get_current_head(self) -> str:
+        client, path = get_transport_and_path(self.url)
+        refs = client.get_refs(path)
 
-        # Get commit history
-        walker = c.get_graph_walker()
-        commits = list(walker)
+        for ref, sha in refs.items():
+            if ref == b'HEAD' or (isinstance(sha, SYMREF) and sha.target == f'refs/heads/{self.spec.branch}'.encode()):
+                head_ref = sha if not isinstance(sha, SYMREF) else refs[sha.target]
+                return head_ref.decode('ascii')
 
-        # Find positions of commits
-        try:
-            pos1 = next(i for i, c in enumerate(commits) if c.id == rev1)
-            pos2 = next(i for i, c in enumerate(commits) if c.id == rev2)
-        except StopIteration:
-            raise _HistoryNotFound("Commit not found")
+        raise ValueError(f"No HEAD found for branch {self.spec.branch}")
 
-        return abs(pos2 - pos1)
+    async def from_uninitialized(self, repo: Repo, metadata: LoaderMetadata) -> AsyncIterator[FileChange]:
+        # if we are here we don't expect files, but there are edge cases where this is possible
+        existing_files = {doc.path: doc.metadata async for doc in metadata.doc_metadata()}
 
+        commit: Commit = repo[repo.head()]
+        tree: Tree = repo[commit.tree]
 
-class _HistoryNotFound(Exception):
-    pass
+        # Walk the tree and yield all files
+        for entry in tree.iteritems():
+            file_path = entry.path.decode()
+            blob = repo[entry.sha]
 
+            existing = existing_files.pop(file_path, None)
+            if existing:
+                if existing['sha'] != entry.sha.decode('ascii'):
+                    yield ModifiedFile(FileInfo(
+                        path=file_path,
+                        metadata={'sha': entry.sha.decode('ascii')},
+                        data=DataBlob(blob.data)
+                    ))
+            else:
+                yield AddedFile(FileInfo(
+                    path=file_path,
+                    metadata={'sha': entry.sha.decode('ascii')},
+                    data=DataBlob(blob.data)
+                ))
 
+        for file_path in existing_files.keys():
+            yield RemovedFile(file_path)
+
+    async def from_commit(self, repo: Repo, old_commit: Commit) -> AsyncIterator[FileChange]:
+        current_commit: Commit = repo[repo.head()]
+        # Get the changes between commits
+        changes = repo.object_store.tree_changes(
+            old_commit.tree,
+            current_commit.tree,
+        )
+
+        for (oldpath, newpath), (oldmode, newmode), (oldsha, newsha) in changes:
+            if not self._matches(newpath.decode()):
+                newpath = None
+            if oldpath and newpath is None:
+                yield RemovedFile(oldpath.decode())
+            else:
+                blob = repo[newsha]
+                file_info = FileInfo(
+                    path=newpath.decode(),
+                    metadata={'mode': newmode},
+                    data=DataBlob(blob.data)
+                )
+                yield AddedFile(file_info) if oldpath is None else ModifiedFile(file_info)
+
+    @asynccontextmanager
+    async def _temp_repo(self, current_commit: str, depth: int) -> AsyncContextManager[Repo]:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            repo: Repo = await self._clone(tmp_dir, depth)
+            try:
+                # Ensure we're at the exact commit we checked earlier
+                repo.refs.set_symbolic_ref(b'HEAD', f'refs/heads/{self.spec.branch}'.encode())
+                repo.refs.set_if_equals(repo.head(), None, current_commit.encode('ascii'))
+                yield repo
+            finally:
+                repo.close()
+
+    @make_async
+    def _clone(self, tmp_dir, depth) -> Repo:
+        return porcelain.clone(
+            self.url,
+            target=tmp_dir,
+            depth=depth,
+            branch=self.spec.branch
+        )
+
+    def _matches(self, path: str) -> bool:
+        if self.spec.pattern == "**" and not self.spec.exclude:
+            return True
+
+        pattern = set(self.spec.pattern if isinstance(self.spec.pattern, list) else [self.spec.pattern])
+        excluded = set(self.spec.exclude if isinstance(self.spec.exclude, list) else [self.spec.exclude])
+
+        matched = any(fnmatch.fnmatch(path, p) for p in pattern)
+        return matched and not any(fnmatch.fnmatch(path, e) for e in excluded)
