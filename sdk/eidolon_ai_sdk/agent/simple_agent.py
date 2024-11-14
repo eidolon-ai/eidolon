@@ -137,8 +137,7 @@ class SimpleAgent(AgentBuilder):
 
         template_args = {k: v.instantiate().value for k, v in self.prompt_templates.items()}
         env = Environment(undefined=StrictUndefined)
-        system_prompt = UserTextAPUMessage(prompt=env.from_string(self.system_prompt).render(**template_args))
-
+        system_prompt = env.from_string(self.system_prompt).render(**template_args)
         await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=system_prompt)])
 
 
@@ -283,8 +282,8 @@ def _make_input_schema(spec: SimpleAgent, action: ActionDefinition, metadata: Me
     required = []
     user_vars = meta.find_undeclared_variables(Environment().parse(action.user_prompt))
     # pop out any reserved keywords we will inject
-    if "datetime_iso" in user_vars:
-        user_vars.remove("datetime_iso")
+    for k in (k for k in (*spec.prompt_templates.keys(), "datetime_iso") if k in user_vars):
+        user_vars.remove(k)
     if len(user_vars) == 1 and "body" in user_vars and not spec.apus and not action.allow_file_upload:
         properties["body"] = dict(type="string", default=Body(..., media_type="text/plain"))
         required.append("body")
