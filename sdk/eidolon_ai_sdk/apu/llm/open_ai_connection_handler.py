@@ -35,10 +35,7 @@ class OpenAIConnectionHandler(Specable[OpenAIConnectionHandlerSpec]):
         return await self.makeClient().images.generate(**kwargs)
 
     async def _make_request(self, **kwargs):
-        try:
-            client = self.makeClient()
-        except OpenAIError as e:
-            raise HTTPException(500, str(e)) from e
+        client = self.makeClient()
         try:
             return await client.chat.completions.create(**kwargs)
         except APIStatusError as e:
