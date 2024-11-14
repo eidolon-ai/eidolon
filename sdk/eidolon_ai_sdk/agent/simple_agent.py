@@ -280,7 +280,7 @@ def _make_input_schema(spec: SimpleAgent, action: ActionDefinition, metadata: Me
         required.append("body")
     elif user_vars:
         props = {v: action.input_schema.get(v, dict(type="string")) for v in user_vars}
-        properties["body"] = dict(type="object", properties=props)
+        properties["body"] = dict(type="object", properties=props, required=list(props.keys()))
         required.append("body")
 
     if action.allow_file_upload:
