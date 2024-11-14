@@ -6,7 +6,7 @@ from typing import List, Literal, Optional, Union, Dict, Any
 
 from fastapi import Body
 from jinja2 import Environment, meta, StrictUndefined
-from pydantic import field_validator, model_validator, BaseModel
+from pydantic import field_validator, model_validator, BaseModel, Field
 from pydantic_core import to_jsonable_python, SchemaError
 
 from eidolon_ai_client.events import (
@@ -24,9 +24,13 @@ from eidolon_ai_sdk.apu.agents_logic_unit import AgentsLogicUnitSpec, AgentsLogi
 from eidolon_ai_sdk.apu.apu import APU
 from eidolon_ai_sdk.system.agent_builder import AgentBuilder
 from eidolon_ai_sdk.system.processes import ProcessDoc
-from eidolon_ai_sdk.system.reference_model import AnnotatedReference
+from eidolon_ai_sdk.system.reference_model import AnnotatedReference, Reference
 from eidolon_ai_sdk.system.resources.resources_base import Metadata
 from eidolon_ai_sdk.util.schema_to_model import schema_to_model
+
+
+class Template(BaseModel):
+    value: Any
 
 
 class ActionDefinition(BaseModel):
@@ -101,9 +105,9 @@ class SimpleAgent(AgentBuilder):
     )
     agent_refs: List[str] = []
     actions: List[ActionDefinition] = [ActionDefinition()]
-    apu: AnnotatedReference[APU]
     apus: List[NamedAPU] = []
     title_generation_mode: Literal["none", "on_request", "auto"] = "none"
+    prompt_templates: Dict[str, Reference[Template]] = Field({}, description="A dictionary of Templates that can be used as jinja2 keys in system or action prompts")
 
     @model_validator(mode="before")
     def validate_apu(cls, value):
@@ -130,7 +134,12 @@ class SimpleAgent(AgentBuilder):
             default_apu_ref = ([apu.apu for apu in self.apus if apu.default] or [self.apus[0].apu])[0]
         default_apu = default_apu_ref.instantiate()
         t = default_apu.main_thread(process_id)
-        await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=self.system_prompt)])
+
+        template_args = {k: v.instantiate().value for k, v in self.prompt_templates.items()}
+        env = Environment(undefined=StrictUndefined)
+        system_prompt = UserTextAPUMessage(prompt=env.from_string(self.system_prompt).render(**template_args))
+
+        await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=system_prompt)])
 
 
 # todo, this should be in spec
@@ -209,12 +218,13 @@ def fn(spec: SimpleAgent, metadata: Metadata):
                     attached_files_messages.append(AttachedFileMessage(file=fh, include_directly=include_directly))
                     attached_files.append(fh)
 
-            body = dict(datetime_iso=datetime.now().isoformat(), body=str(request_body))
+            template_args = {k: v.instantiate().value for k, v in spec.prompt_templates.items()}
+            template_args.update(dict(datetime_iso=datetime.now().isoformat(), body=str(request_body)))
             if isinstance(request_body, dict):
-                body.update(request_body)
+                template_args.update(request_body)
 
             env = Environment(undefined=StrictUndefined)
-            text_message = UserTextAPUMessage(prompt=env.from_string(action.user_prompt).render(**body))
+            text_message = UserTextAPUMessage(prompt=env.from_string(action.user_prompt).render(**template_args))
 
             if execute_on_apu and execute_on_apu in apus:
                 apu = apus[execute_on_apu]

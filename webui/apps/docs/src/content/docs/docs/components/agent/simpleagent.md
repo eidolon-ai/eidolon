@@ -17,6 +17,7 @@ range of actions based on its configuration.
 | - [actions](#actions )                             | No      | array                         | No         | -          | Actions               |
 | - [apus](#apus )                                   | No      | array                         | No         | -          | Apus                  |
 | - [title_generation_mode](#title_generation_mode ) | No      | enum (of string)              | No         | -          | Title Generation Mode |
+| - [prompt_templates](#prompt_templates )           | No      | object                        | No         | -          | Prompt Templates      |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -428,5 +429,30 @@ Must be one of:
 * "none"
 * "on_request"
 * "auto"
+
+## <a name="prompt_templates"></a>10. Property `prompt_templates`
+
+**Title:** Prompt Templates
+
+|                           |                                                                                                                            |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                   |
+| **Required**              | No                                                                                                                         |
+| **Additional properties** | [[Should-conform]](#prompt_templates_additionalProperties "Each additional property must conform to the following schema") |
+| **Default**               | `{}`                                                                                                                       |
+
+**Description:** A dictionary of Templates that can be used as jinja2 keys in system or action prompts
+
+| Property                                      | Pattern | Type                | Deprecated | Definition | Title/Description |
+| --------------------------------------------- | ------- | ------------------- | ---------- | ---------- | ----------------- |
+| - [](#prompt_templates_additionalProperties ) | No      | [Reference[Template]](/docs/components/template/overview) | No         | -          | -                 |
+
+### <a name="prompt_templates_additionalProperties"></a>10.1. Property `additionalProperties`
+
+|              |                                                                    |
+| ------------ | ------------------------------------------------------------------ |
+| **Type**     | [`Reference[Template]`](/docs/components/template/overview)                                              |
+| **Required** | No                                                                 |
+| **Default**  | `{"implementation": "eidolon_ai_sdk.agent.simple_agent.Template"}` |
 
 ----------------------------------------------------------------------------------------------------------------------------
