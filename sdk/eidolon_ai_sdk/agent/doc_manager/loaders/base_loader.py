@@ -61,10 +61,6 @@ class DocumentLoader(ABC, Specable[DocumentLoaderSpec]):
     async def get_changes(self, metadata: LoaderMetadata) -> AsyncIterator[FileChange]:
         pass
 
-    @abstractmethod
-    async def list_files(self) -> AsyncIterator[str]:
-        pass
-
 
 class LoaderMetadata:
     root_metadata: Dict[str, Any]

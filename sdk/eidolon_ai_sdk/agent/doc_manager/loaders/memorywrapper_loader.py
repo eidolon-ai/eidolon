@@ -1,6 +1,6 @@
 import asyncio
 import hashlib
-from typing import Dict, Any, AsyncIterator, Optional
+from typing import AsyncIterator, Optional
 
 from opentelemetry import trace
 
@@ -49,10 +49,6 @@ class WrappedMemoryLoader(DocumentLoader, Specable[WrappedMemoryLoaderSpec]):
 
     async def start(self):
         await self.memory.start()
-
-    async def list_files(self) -> AsyncIterator[str]:
-        async for file in self.memory.glob(self.spec.pattern):
-            yield file.file_path
 
     async def get_changes(self, metadata: LoaderMetadata) -> AsyncIterator[FileChange]:
         metadata = {doc.path: doc.metadata async for doc in metadata.doc_metadata()}

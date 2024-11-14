@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+from functools import partial
 from typing import List
 
 import time
@@ -66,11 +67,11 @@ class DocumentManager(Specable[DocumentManagerSpec]):
         self.loader = self.spec.loader.instantiate()
         self.loader.name = self.spec.name
         self.logger = logging.getLogger("eidolon")
-        self.processor = self.spec.doc_processor.instantiate()
+        self.processor: DocumentProcessor = self.spec.doc_processor.instantiate()
         self.collection_name = f"doc_sync_{self.spec.name}"
 
     async def list_files(self):
-        return self.loader.list_files()
+        return [doc.path async for doc in self.processor.list_files(self.collection_name)]
 
     async def sync_docs(self, force: bool = False):
         if force or self.last_reload + self.spec.recheck_frequency < time.time():
@@ -86,7 +87,7 @@ class DocumentManager(Specable[DocumentManagerSpec]):
             else:
                 root_metadata = {}
 
-            metadata = LoaderMetadata(metadata=json.loads(root_metadata), doc_fn=self.processor.list_files)
+            metadata = LoaderMetadata(metadata=json.loads(root_metadata), doc_fn=partial(self.processor.list_files, collection_name=self.collection_name))
             with tracer.start_as_current_span("syncing docs"):
                 async for change in self.loader.get_changes(metadata):
                     while len(tasks) > self.spec.concurrency:
