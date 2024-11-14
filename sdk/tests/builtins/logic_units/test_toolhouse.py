@@ -1,7 +1,6 @@
 import pytest
-from eidolon_ai_sdk.builtins.logic_units.toolhouse_logic_unit import Toolhouse, tool_build
+from eidolon_ai_sdk.builtins.logic_units.toolhouse_logic_unit import Toolhouse
 from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
-from eidolon_ai_sdk.system.tool_builder import ToolBuilder
 from eidolon_ai_sdk.util.class_utils import fqn
 from eidolon_ai_client import client
 
