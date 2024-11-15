@@ -8,6 +8,7 @@ from typing import AsyncContextManager, Optional
 from typing import AsyncIterator, Dict, Any
 from typing import List
 
+import certifi
 from dulwich import porcelain
 from dulwich.client import get_transport_and_path, default_urllib3_manager
 from dulwich.objects import Commit, Tree
@@ -123,6 +124,12 @@ class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):
         return op(FileInfo(file["path"], new_metadata, await self._data(client, file)))
 
 
+# dulwich requires these to be set
+os.environ['SSL_CERT_FILE'] = certifi.where()
+os.environ['REQUESTS_CA_BUNDLE'] = certifi.where()
+os.environ['CURL_CA_BUNDLE'] = certifi.where()
+
+
 class GitHubLoaderV2Spec(DocumentLoaderSpec):
     """
     Loads files from a GitHub repository. Note that you will likely hit rate limits on all but the smallest repositories
@@ -154,24 +161,30 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
         found_excluded = set(metadata.root_metadata.get('exclude', []))
 
         current_commit = current_commit_override or await self.get_current_head()
-        new_root_metadata = RootMetadata({'commit': current_commit, 'pattern': list(pattern), 'exclude': list(excluded)})
+        new_root_metadata = RootMetadata({'pattern': list(pattern), 'exclude': list(excluded)})
 
         if 'commit' in metadata.root_metadata and metadata.root_metadata['commit'] == current_commit:
             logger.info("No changes detected")
         elif not metadata.root_metadata.get('commit') or found_pattern != pattern or found_excluded != excluded:
             logger.info("Initializing loader with current commit as root commit.")
             async with self._temp_repo(current_commit, 1) as repo:
+                new_root_metadata.metadata['commit'] = repo.head().decode('ascii')
                 async for change in self.from_uninitialized(repo, metadata):
                     yield change
             yield new_root_metadata
         else:
             async with self._temp_repo(current_commit, self.spec.diff_depth) as repo:
+                new_root_metadata.metadata['commit'] = repo.head().decode('ascii')
                 logger.info(f"Loading changes from commit {metadata.root_metadata['commit']} to {current_commit}")
                 try:
                     old_commit: Optional[Commit] = repo[metadata.root_metadata['commit'].encode('ascii')]
+                    found_commit = True
+                except KeyError:
+                    found_commit = False
+                if found_commit:
                     async for change in self.from_commit(repo, old_commit):
                         yield change
-                except KeyError:
+                else:
                     logger.warning(f"Commit {metadata.root_metadata['commit']} not found in history (depth={self.spec.diff_depth})")
                     async for change in self.from_uninitialized(repo, metadata):
                         yield change
@@ -183,9 +196,8 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
         refs = client.get_refs(path)
 
         for ref, sha in refs.items():
-            if ref == b'HEAD' or (isinstance(sha, SYMREF) and sha.target == f'refs/heads/{self.spec.branch}'.encode()):
-                head_ref = sha if not isinstance(sha, SYMREF) else refs[sha.target]
-                return head_ref.decode('ascii')
+            if ref == b'HEAD':
+                return sha.decode('ascii')
 
         raise ValueError(f"No HEAD found for branch {self.spec.branch}")
 
@@ -249,9 +261,6 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
         with tempfile.TemporaryDirectory() as tmp_dir:
             repo: Repo = await self._clone(tmp_dir, depth)
             try:
-                # Ensure we're at the exact commit we checked earlier
-                repo.refs.set_symbolic_ref(b'HEAD', f'refs/heads/{self.spec.branch}'.encode())
-                repo.refs.set_if_equals(repo.head(), None, current_commit.encode('ascii'))
                 yield repo
             finally:
                 repo.close()
@@ -262,7 +271,8 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
             self.url,
             target=tmp_dir,
             depth=depth,
-            branch=self.spec.branch
+            branch=self.spec.branch,
+            checkout=True,
         )
 
     def _matches(self, path: str) -> bool:
