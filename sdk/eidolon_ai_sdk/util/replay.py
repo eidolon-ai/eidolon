@@ -1,19 +1,19 @@
 from __future__ import annotations
 
-import dill
 import inspect
 import os
 import textwrap
-import yaml
 from functools import wraps
 from glob import glob
-from pydantic import BaseModel
 from typing import Optional
+
+import dill
+import yaml
+from pydantic import BaseModel
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.kernel import AgentOSKernel
-from eidolon_ai_sdk.util.str_utils import log_stack_trace
 
 
 class ReplayConfig(BaseModel):
@@ -32,8 +32,8 @@ def str_presenter(dumper, data):
         for line in data.split("\n"):
             lines.extend(textwrap.wrap(line, width=80, break_long_words=False, replace_whitespace=False))
         data = "\n".join(lines)
-        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
-    return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+        return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
+    return dumper.represent_scalar("tag:yaml.org,2002:str", data)
 
 
 yaml.add_representer(str, str_presenter)
@@ -56,22 +56,33 @@ async def default_parser(resp):
 
 
 def replayable(
-        fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None
+    fn, serializer=default_serializer, deserializer=default_deserializer, parser=default_parser, name_override=None
 ):
     config = AgentOSKernel.get_instance(ReplayConfig)
 
     async def maybe_save_args(*args, **kwargs):
         if config.save_loc:
             try:
-                existing_dirs = [
-                    os.path.split(d.file_path)[-1] async for d in AgentOS.file_memory.glob(config.save_loc + "/*")
-                ]
-                dir_number = [int(d.split("_")[0]) for d in existing_dirs]
-                top = max(0, *dir_number) if dir_number else -1
-                next_ = str(top + 1)
-                next_ = "0" * (config.digit_length - len(next_)) + next_
-                loc = f"{config.save_loc}/{next_}_{name_override or fn.__name__}"
-                await AgentOS.file_memory.mkdir(loc)
+                count = 0
+                file_saved = False
+                while not file_saved:
+                    existing_dirs = [
+                        os.path.split(d.file_path)[-1] async for d in AgentOS.file_memory.glob(config.save_loc + "/*")
+                    ]
+                    dir_number = [int(d.split("_")[0]) for d in existing_dirs]
+                    top = max(0, *dir_number) if dir_number else -1
+                    next_ = str(top + 1)
+                    next_ = "0" * (config.digit_length - len(next_)) + next_
+                    loc = f"{config.save_loc}/{next_}_{name_override or fn.__name__}"
+                    try:
+                        await AgentOS.file_memory.mkdir(loc)
+                        file_saved = True
+                    except FileExistsError:
+                        logger.info(f"Save location {loc} already exists")
+                        if count > 10:
+                            raise Exception("Could not create save location")
+                    finally:
+                        count += 1
 
                 printable_save_loc = loc
                 if hasattr(AgentOS.file_memory, "resolve"):
@@ -84,7 +95,6 @@ def replayable(
                 await AgentOS.file_memory.write_file(loc + "/deserializer.dill", dill.dumps(deserializer))
                 await AgentOS.file_memory.write_file(loc + "/parser.dill", dill.dumps(parser))
             except Exception as e:
-                log_stack_trace()
                 logger.exception(e)
 
     @wraps(fn)

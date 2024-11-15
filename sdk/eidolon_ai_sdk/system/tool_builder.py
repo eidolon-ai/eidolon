@@ -14,7 +14,6 @@ from eidolon_ai_sdk.util.partial import partial, return_value
 _ToolBuilderState = namedtuple("_ToolBuilderState", ["dynamic_contracts", "tools"])
 _ToolDefinition = namedtuple("_ToolDefinition", ["name", "description", "parameter", "fn"])
 
-
 T = TypeVar("T", bound="ToolBuilder")
 
 
@@ -38,10 +37,7 @@ class ToolBuilder(BaseModel):
 
     @classmethod
     def tool(
-            cls: Type[T],
-            name: str = None,
-            description: Optional[str] = None,
-            parameters: dict = None
+        cls: Type[T], name: str = None, description: Optional[str] = None, parameters: dict = None
     ) -> Callable[[Callable[..., Awaitable[Any] | AsyncIterable[StreamEvent]]], Callable]:
         """
         A decorator to define a tool.
@@ -70,7 +66,7 @@ class ToolBuilder(BaseModel):
 
         return decorator
 
-    def clone_thread(self, old_context: CallContext, new_context: CallContext):
+    async def clone_thread(self, old_context: CallContext, new_context: CallContext):
         """
         Custom logic to execute when cloning a thread.
 
@@ -90,10 +86,14 @@ class ToolBuilder(BaseModel):
     @classmethod
     def _state(cls) -> _ToolBuilderState:
         if not hasattr(cls, "_state_attr"):
-            setattr(cls, "_state_attr", _ToolBuilderState(
-                dynamic_contracts=[],
-                tools=([], []),
-            ))
+            setattr(
+                cls,
+                "_state_attr",
+                _ToolBuilderState(
+                    dynamic_contracts=[],
+                    tools=([], []),
+                ),
+            )
         return cls._state_attr
 
     @classmethod
@@ -118,7 +118,7 @@ class ToolBuilder(BaseModel):
                     sig = inspect.signature(builder)
                     has_kwargs = any(p.kind == p.VAR_KEYWORD for p in sig.parameters.values())
                     kwargs = {}
-                    if has_kwargs or 'spec' in sig.parameters:
+                    if has_kwargs or "spec" in sig.parameters:
                         kwargs["spec"] = self
                     if has_kwargs or "call_context" in sig.parameters:
                         kwargs["call_context"] = call_context
@@ -135,7 +135,7 @@ class ToolBuilder(BaseModel):
                 sig = inspect.signature(tool.fn)
                 has_kwargs = any(p.kind == p.VAR_KEYWORD for p in sig.parameters.values())
                 kwargs = {}
-                if has_kwargs or 'spec' in sig.parameters:
+                if has_kwargs or "spec" in sig.parameters:
                     kwargs["spec"] = self
                 tool_fn = partial(tool.fn, **kwargs)
                 acc.append(

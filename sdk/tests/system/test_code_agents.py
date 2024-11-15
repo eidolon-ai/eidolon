@@ -173,7 +173,7 @@ class TestHelloWorld:
         assert json == {
             "agent": "HelloWorld",
             "available_actions": [],
-            "data": "big bad server error",
+            "data": "Exception: big bad server error\nSee server logs for more details",
             "parent_process_id": None,
             "process_id": f"test_unhandled_error[{program}]_0",
             "state": "unhandled_error",
@@ -185,7 +185,7 @@ class TestHelloWorld:
         stream = (await agent.create_process()).stream_action(program, "error")
         events = {type(e): e async for e in stream}
         assert ErrorEvent in events
-        assert events[ErrorEvent].reason == "big bad server error"
+        assert events[ErrorEvent].reason == "Exception: big bad server error\nSee server logs for more details"
         assert events[AgentStateEvent].state == "unhandled_error"
 
         found = await Process.get(stream).status()
@@ -342,38 +342,51 @@ class TestStateMachine:
         assert post.data == "low man on the totem pole"
 
     async def test_records_agent_transition_metrics(self):
-        with patch("eidolon_ai_sdk.util.posthog.posthog_enabled") as metrics_enabled, patch("eidolon_ai_sdk.util.posthog.PosthogConfig") as mock:
+        with patch("eidolon_ai_sdk.util.posthog.posthog_enabled") as metrics_enabled, patch(
+            "eidolon_ai_sdk.util.posthog.PosthogConfig"
+        ) as mock:
             metrics_enabled.return_value = True
-            status = await run_program("StateMachine", "idle", json=dict(desired_state="bar", response="low man on the totem pole"))
+            status = await run_program(
+                "StateMachine", "idle", json=dict(desired_state="bar", response="low man on the totem pole")
+            )
             with pytest.raises(AgentError):
                 await status.action("error")
 
         posthog_events = mock.client.capture.call_args_list
         process_state_transitions = [e.kwargs for e in posthog_events if e.kwargs["event"] == "process_state_transition"]
         assert {e["properties"]["process_id"] for e in process_state_transitions} == {status.process_id}
-        assert process_state_transitions[0]['properties']['state'] == 'initialized'
-        assert process_state_transitions[1]['properties']['state'] == 'processing'
-        assert process_state_transitions[2]['properties']['state'] == 'bar'
-        assert process_state_transitions[3]['properties']['state'] == 'processing'
-        assert process_state_transitions[4]['properties']['state'] == 'unhandled_error'
-        assert process_state_transitions[4]['properties']['error'] == {'detail': 'big bad server error', 'status_code': 500}
+        assert process_state_transitions[0]["properties"]["state"] == "initialized"
+        assert process_state_transitions[1]["properties"]["state"] == "processing"
+        assert process_state_transitions[2]["properties"]["state"] == "bar"
+        assert process_state_transitions[3]["properties"]["state"] == "processing"
+        assert process_state_transitions[4]["properties"]["state"] == "unhandled_error"
+        assert process_state_transitions[4]["properties"]["error"] == {
+            "detail": "big bad server error",
+            "status_code": 500,
+        }
 
     async def test_records_http_metrics(self):
-        with patch("eidolon_ai_sdk.util.posthog.posthog_enabled") as metrics_enabled, patch("eidolon_ai_sdk.util.posthog.PosthogConfig") as mock:
+        with patch("eidolon_ai_sdk.util.posthog.posthog_enabled") as metrics_enabled, patch(
+            "eidolon_ai_sdk.util.posthog.PosthogConfig"
+        ) as mock:
             metrics_enabled.return_value = True
-            status = await run_program("StateMachine", "idle", json=dict(desired_state="bar", response="low man on the totem pole"))
+            status = await run_program(
+                "StateMachine", "idle", json=dict(desired_state="bar", response="low man on the totem pole")
+            )
             with pytest.raises(AgentError):
                 await status.action("error")
 
         posthog_events = mock.client.capture.call_args_list
         http_requests = [e.kwargs for e in posthog_events if e.kwargs["event"] == "http_request"]
-        assert http_requests[0]['properties']['method'] == 'POST'
-        assert http_requests[0]['properties']['response_code'] == 200
-        assert http_requests[0]['properties']['route'] == '/processes'
-        assert http_requests[1]['properties']['method'] == 'POST'
-        assert http_requests[1]['properties']['response_code'] == 200
-        assert http_requests[1]['properties']['route'] == '/processes/{process_id}/agent/{agent_name}/actions/{action_name}'
-        assert http_requests[2]['properties']['response_code'] == 500
+        assert http_requests[0]["properties"]["method"] == "POST"
+        assert http_requests[0]["properties"]["response_code"] == 200
+        assert http_requests[0]["properties"]["route"] == "/processes"
+        assert http_requests[1]["properties"]["method"] == "POST"
+        assert http_requests[1]["properties"]["response_code"] == 200
+        assert (
+            http_requests[1]["properties"]["route"] == "/processes/{process_id}/agent/{agent_name}/actions/{action_name}"
+        )
+        assert http_requests[2]["properties"]["response_code"] == 500
 
     async def test_can_transition_state(self):
         init = await run_program(

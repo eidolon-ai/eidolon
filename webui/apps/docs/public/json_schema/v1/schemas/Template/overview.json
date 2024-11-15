@@ -1,0 +1,12 @@
+{
+  "anyOf": [
+    {
+      "$ref": "../Template/Template.json"
+    }
+  ],
+  "reference_pointer": {
+    "default_impl": "eidolon_ai_sdk.agent.simple_agent.Template",
+    "type": "Template"
+  },
+  "title": "Template"
+}

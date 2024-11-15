@@ -1,9 +1,9 @@
 import json
 import logging
+from http import HTTPStatus
 from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast, Type
 
 import yaml
-from fastapi import HTTPException
 from ollama import AsyncClient, ResponseError, Options
 from pydantic import Field, create_model, BaseModel
 
@@ -48,9 +48,9 @@ async def convert_to_ollama(message: LLMMessage):
 
 llama3 = "llama3"
 
-OllamaOptions: Type[BaseModel] = create_model('OllamaOptions', **{
-    field_name: (field_type, None) for field_name, field_type in Options.__annotations__.items()
-})
+OllamaOptions: Type[BaseModel] = create_model(
+    "OllamaOptions", **{field_name: (field_type, None) for field_name, field_type in Options.__annotations__.items()}
+)
 
 
 class OllamaLLMUnitSpec(LLMUnitSpec):
@@ -58,8 +58,13 @@ class OllamaLLMUnitSpec(LLMUnitSpec):
     temperature: float = 0.3
     force_json: bool = True
     max_tokens: Optional[int] = None
-    host: Optional[str] = Field(default=None, description="Running Ollama location.\nDefaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not set.")
-    client_options: OllamaOptions = Field(default=OllamaOptions(), description="Additional arguments when calling ollama.AsyncClient.chat")
+    host: Optional[str] = Field(
+        default=None,
+        description="Running Ollama location.\nDefaults to envar OLLAMA_HOST with fallback to 127.0.0.1:11434 if that is not set.",
+    )
+    client_options: OllamaOptions = Field(
+        default=OllamaOptions(), description="Additional arguments when calling ollama.AsyncClient.chat"
+    )
 
 
 class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
@@ -79,7 +84,9 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
         logger.info("executing ollama llm request")
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("request content:\n" + yaml.dump(request))
-        llm_request = replayable(fn=_ollama_client(self.spec.host), name_override="ollama_completion", parser=_raw_parser)
+        llm_request = replayable(
+            fn=_ollama_client(self.spec.host), name_override="ollama_completion", parser=_raw_parser
+        )
         complete_message = ""
         try:
             async for m_chunk in llm_request(**request):
@@ -105,7 +112,7 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
                 content = json.loads(complete_message) if complete_message else {}
                 yield ObjectOutputEvent(content=content)
         except ResponseError as e:
-            raise HTTPException(status_code=e.status_code, detail=e.error)
+            raise OllamaError(f"Received {e.status_code} {HTTPStatus(e.status_code).name} from Ollama") from e
 
     async def _build_request(self, messages, output_format):
         messages = [await convert_to_ollama(message) for message in messages]
@@ -132,7 +139,7 @@ class OllamaLLMUnit(LLMUnit, Specable[OllamaLLMUnitSpec]):
             options["num_predict"] = self.spec.max_tokens
         if self.spec.temperature >= 0:
             options["temperature"] = self.spec.temperature
-        request['options'] = options
+        request["options"] = options
         if not is_string:
             request["format"] = "json"
         return is_string, request
@@ -160,3 +167,7 @@ async def _raw_parser(resp):
 
         if message["message"]:
             yield message["chunk"]["message"]["content"]
+
+
+class OllamaError(Exception):
+    pass

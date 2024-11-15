@@ -184,7 +184,7 @@ def test_filter_json_for_path_list():
             "name": "Cat 2",
             "status": "available",
             "tags": [{"name": "tag2"}, {"name": "tag3"}],
-            "category":{"name": "Cats"},
+            "category": {"name": "Cats"},
         },
         {
             "name": "Dog 1",

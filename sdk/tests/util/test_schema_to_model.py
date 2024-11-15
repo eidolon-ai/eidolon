@@ -139,12 +139,7 @@ class TestSchemaToModel:
         assert "Error creating field 'name'" in str(exc_info.value)
 
     def test_failing_schema(self):
-        schema = {
-            "type": "object",
-            "properties": {
-                "stock_prices": ["props cant be arrays"]
-            }
-        }
+        schema = {"type": "object", "properties": {"stock_prices": ["props cant be arrays"]}}
         with pytest.raises(SchemaError) as e:
             schema_to_model(schema, "InvalidModel")
 

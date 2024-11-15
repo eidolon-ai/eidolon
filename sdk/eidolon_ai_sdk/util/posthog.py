@@ -112,6 +112,7 @@ def report_server_started(time_to_start: float, number_of_agents: int, error: bo
 @cache
 def _builtin_agents():
     from eidolon_ai_sdk.builtins.code_builtins import named_builtins
+
     return {r.metadata.name for r in named_builtins()}
 
 
@@ -120,7 +121,7 @@ def report_agent_state_change(process_id, state, error: Optional[Any] = None):
     l_distinct_id = RequestContext.get("X-Posthog-Distinct-Id", machine_id())
     props = properties()
     props["process_id"] = process_id
-    props['agent_type'] = _get_agent_type()
+    props["agent_type"] = _get_agent_type()
     props["state"] = state
     if error:
         props["error"] = error
@@ -129,14 +130,14 @@ def report_agent_state_change(process_id, state, error: Optional[Any] = None):
 
 
 def _get_agent_type():
-    agent_type = RequestContext.get('agent_type', default="unknown")
+    agent_type = RequestContext.get("agent_type", default="unknown")
     if agent_type not in _builtin_agents():
         agent_type = "custom"
     return agent_type
 
 
-AGENT_PATTERN = re.compile(r'(/agents?/)([^/]+)')
-ACTIONS_PATTERN = re.compile(r'(/actions/)([^/]+)')
+AGENT_PATTERN = re.compile(r"(/agents?/)([^/]+)")
+ACTIONS_PATTERN = re.compile(r"(/actions/)([^/]+)")
 
 
 class PostHogMiddleware(BaseHTTPMiddleware):
@@ -144,24 +145,22 @@ class PostHogMiddleware(BaseHTTPMiddleware):
         t0 = time.perf_counter()
         l_distinct_id = RequestContext.get("X-Posthog-Distinct-Id", machine_id())
         props = properties()
-        props['response_type'] = request.headers.get("accept", "unknown")
+        props["response_type"] = request.headers.get("accept", "unknown")
         pre_sub = get_route_name(request)
         if pre_sub:
             post_sub = AGENT_PATTERN.sub(r"\1{agent_name}", pre_sub)  # replaces
             post_sub = ACTIONS_PATTERN.sub(r"\1{action_name}", post_sub)
-            props['route'] = post_sub
-        props['method'] = request.method
+            props["route"] = post_sub
+        props["method"] = request.method
         try:
             response = await call_next(request)
-            props['response_code'] = response.status_code
+            props["response_code"] = response.status_code
         except Exception as e:
-            props['response_code'] = 500
-            props['error'] = str(e)
+            props["response_code"] = 500
+            props["error"] = str(e)
             raise e
         finally:
-            props['duration'] = time.perf_counter() - t0
-            metric(PosthogConfig.client.capture)(
-                l_distinct_id, event="http_request", properties=props
-            )
+            props["duration"] = time.perf_counter() - t0
+            metric(PosthogConfig.client.capture)(l_distinct_id, event="http_request", properties=props)
 
         return response

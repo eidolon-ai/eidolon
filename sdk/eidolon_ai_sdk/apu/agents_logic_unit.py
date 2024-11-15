@@ -176,7 +176,7 @@ class AgentsLogicUnit(Specable[AgentsLogicUnitSpec], LogicUnit):
                 content=dict(
                     action="created new conversation",
                     conversation_id=process.process_id,
-                )
+                ),
             )
             if type_ is str:
                 body = kwargs.get("body", "")

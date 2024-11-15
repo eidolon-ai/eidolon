@@ -18,6 +18,7 @@ skip_decorator: Callable[[type[TestMachine]], type[TestMachine]]
 
 try:
     import pytest
+
     skip_decorator = pytest.mark.skip(reason="This test class should not be run by pytest")
 except ImportError:
     # Define a no-op decorator if pytest is not installed
@@ -49,7 +50,9 @@ class TestMachine(MachineResource):
                     implementation=fqn(SimilarityMemoryImpl),
                     vector_store=dict(
                         implementation=fqn(ChromaVectorStore),
-                        url=f"file://{similarity_memory}", )),
+                        url=f"file://{similarity_memory}",
+                    ),
+                ),
             ),
         )
         self._file_memory = file_memory

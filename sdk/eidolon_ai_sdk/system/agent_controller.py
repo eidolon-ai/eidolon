@@ -68,7 +68,9 @@ class AgentController:
         if hasattr(self.agent, "start"):
             await self.agent.start()
 
-        handlers = await self.agent.get_handlers() if isinstance(self.agent, AgentBuilderBase) else get_handlers(self.agent)
+        handlers = (
+            await self.agent.get_handlers() if isinstance(self.agent, AgentBuilderBase) else get_handlers(self.agent)
+        )
         for handler in handlers:
             if handler.name in self.actions:
                 self.actions[handler.name].extra["allowed_states"] = (
@@ -380,13 +382,15 @@ class AgentController:
                 yield AgentStateEvent(state="http_error", available_actions=self.get_available_actions("http_error"))
                 yield ErrorEvent(reason=e.detail, details=dict(status_code=e.status_code))
         except Exception as e:
-            logger.exception(f"Unhandled Error {e}")
+            logger.exception("Unhandled Error")
             if not seen_end:
                 await process.update(state="unhandled_error", error_info=dict(detail=str(e), status_code=500))
                 yield AgentStateEvent(
                     state="unhandled_error", available_actions=self.get_available_actions("unhandled_error")
                 )
-                yield ErrorEvent(reason=str(e), details=dict(status_code=500))
+                yield ErrorEvent(
+                    reason=f"{type(e).__name__}: {e}\nSee server logs for more details", details=dict(status_code=500)
+                )
 
     async def stream_agent_fn(self, handler, **kwargs) -> AsyncIterator[StreamEvent]:
         if isinstance(self.agent, AgentBuilderBase):
@@ -434,7 +438,7 @@ class AgentController:
         params_values = [v for v in params.values() if v.kind != Parameter.VAR_KEYWORD]
 
         async def _run_program(**_kwargs):
-            RequestContext.set(key='agent_type', value=type(self.agent).__name__, propagate=False)
+            RequestContext.set(key="agent_type", value=type(self.agent).__name__, propagate=False)
             return await self.run_program(handler, **_kwargs)
 
         _run_program.__signature__ = sig.replace(parameters=params_values, return_annotation=typing.Any)

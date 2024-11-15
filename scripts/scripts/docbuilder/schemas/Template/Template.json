@@ -1,0 +1,23 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "Template",
+      "title": "Implementation"
+    },
+    "value": {
+      "title": "Value"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.agent.simple_agent.Template",
+    "group": "Template",
+    "name": "Template",
+    "overrides": {}
+  },
+  "required": [
+    "value",
+    "implementation"
+  ],
+  "title": "Template",
+  "type": "object"
+}

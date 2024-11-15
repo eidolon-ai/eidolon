@@ -21,7 +21,20 @@ from eidolon_ai_sdk.util.partial import partial, return_value
 T = TypeVar("T", bound=BaseModel)
 
 
-_ActionState = namedtuple("_ActionState", ["name", "title", "sub_title", "description", "allowed_states", "input_model", "output_model", "custom_user_input_event", "fn"])
+_ActionState = namedtuple(
+    "_ActionState",
+    [
+        "name",
+        "title",
+        "sub_title",
+        "description",
+        "allowed_states",
+        "input_model",
+        "output_model",
+        "custom_user_input_event",
+        "fn",
+    ],
+)
 _AgentState = namedtuple("_AgentState", ["dynamic_contracts", "actions"])
 
 
@@ -52,16 +65,16 @@ class AgentBuilderBase(BaseModel):
 
     @classmethod
     def action(
-            cls,
-            name: Optional[str] = None,
-            title: Optional[str] = None,
-            sub_title: Optional[str] = None,
-            description: Optional[str] = None,
-            allowed_states: List[str] = None,
-            input_model: Optional[Type[BaseModel]] = None,
-            output_model: Type = Any,
-            custom_user_input_event: bool = False,
-            partials: Dict[str, Any] = None
+        cls,
+        name: Optional[str] = None,
+        title: Optional[str] = None,
+        sub_title: Optional[str] = None,
+        description: Optional[str] = None,
+        allowed_states: List[str] = None,
+        input_model: Optional[Type[BaseModel]] = None,
+        output_model: Type = Any,
+        custom_user_input_event: bool = False,
+        partials: Dict[str, Any] = None,
     ) -> Callable[[Callable[..., Awaitable[Any] | AsyncIterable[StreamEvent]]], Callable]:
         """
         A decorator to registers an action with the agent.
@@ -95,7 +108,19 @@ class AgentBuilderBase(BaseModel):
                 raise ValueError(f"Action with name {name_} already exists")
 
             actions = cls._state().actions[1] if cls._is_locked() else cls._state().actions[0]
-            actions.append(_ActionState(name_, title, sub_title, description_, allowed_states_, input_model, output_model, custom_user_input_event, fn))
+            actions.append(
+                _ActionState(
+                    name_,
+                    title,
+                    sub_title,
+                    description_,
+                    allowed_states_,
+                    input_model,
+                    output_model,
+                    custom_user_input_event,
+                    fn,
+                )
+            )
             return fn
 
         return decorator
@@ -148,7 +173,7 @@ class AgentBuilderBase(BaseModel):
                     sig = inspect.signature(builder)
                     has_kwargs = any(p.kind == p.VAR_KEYWORD for p in sig.parameters.values())
                     kwargs = {}
-                    if has_kwargs or 'spec' in sig.parameters:
+                    if has_kwargs or "spec" in sig.parameters:
                         kwargs["spec"] = self
                     if has_kwargs or "metadata" in sig.parameters:
                         kwargs["metadata"] = self._metadata
@@ -164,7 +189,7 @@ class AgentBuilderBase(BaseModel):
             sig = inspect.signature(action.fn)
             has_kwargs = any(p.kind == p.VAR_KEYWORD for p in sig.parameters.values())
             kwargs = {}
-            if has_kwargs or 'spec' in sig.parameters:
+            if has_kwargs or "spec" in sig.parameters:
                 kwargs["spec"] = self
             if has_kwargs or "metadata" in sig.parameters:
                 kwargs["metadata"] = self._metadata
@@ -172,19 +197,21 @@ class AgentBuilderBase(BaseModel):
                 raise ValueError("action must be an async function")
             if hasattr(self, action.name):
                 logger.warning(f"Action with name {action.name} already exists, overwriting...")
-            handlers_acc.append(FnHandler(
-                name=action.name,
-                fn=partial(action.fn, **kwargs),
-                description=return_value(action.description or action.fn.__doc__),
-                input_model_fn=return_value(action.input_model) if action.input_model else get_input_model,
-                output_model_fn=return_value(action.output_model) if action.output_model else get_output_model,
-                extra=dict(
-                    allowed_states=action.allowed_states,
-                    custom_user_input_event=action.custom_user_input_event,
-                    title=action.title,
-                    sub_title=action.sub_title,
-                ),
-            ))
+            handlers_acc.append(
+                FnHandler(
+                    name=action.name,
+                    fn=partial(action.fn, **kwargs),
+                    description=return_value(action.description or action.fn.__doc__),
+                    input_model_fn=return_value(action.input_model) if action.input_model else get_input_model,
+                    output_model_fn=return_value(action.output_model) if action.output_model else get_output_model,
+                    extra=dict(
+                        allowed_states=action.allowed_states,
+                        custom_user_input_event=action.custom_user_input_event,
+                        title=action.title,
+                        sub_title=action.sub_title,
+                    ),
+                )
+            )
         self._handlers = handlers_acc
 
     async def get_handlers(self) -> List[FnHandler]:
@@ -195,20 +222,23 @@ class AgentBuilder(AgentBuilderBase):
     apu: AnnotatedReference[APU]
     agent_refs: List[str] = Field(
         default=[],
-        description="A list of agents this agent can communicate with. Agents are referenced by name (metadata.name)."
+        description="A list of agents this agent can communicate with. Agents are referenced by name (metadata.name).",
     )
     tools: List[Reference[LogicUnit]] = Field(
         default=[],
-        description="A list of [tools](https://www.eidolonai.com/docs/components/logicunit/overview) available to the agent.")
+        description="A list of [tools](https://www.eidolonai.com/docs/components/logicunit/overview) available to the agent.",
+    )
 
     def apu_instance(self) -> APU:
         logic_units = copy.copy(self.tools) if self.tools else []
         if self.agent_refs:
-            logic_units.append(Reference(
-                implementation=fqn(AgentsLogicUnit),
-                agents=self.agent_refs,
-            ))
+            logic_units.append(
+                Reference(
+                    implementation=fqn(AgentsLogicUnit),
+                    agents=self.agent_refs,
+                )
+            )
         apu = copy.deepcopy(self.apu)
         if logic_units:
-            apu.setdefault('logic_units', []).extend(logic_units)
+            apu.setdefault("logic_units", []).extend(logic_units)
         return apu.instantiate()
