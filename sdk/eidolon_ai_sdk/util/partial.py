@@ -29,6 +29,7 @@ def partial(fn, **partial_kwargs):
     parameters = [param for name, param in sig.parameters.items() if name not in partial_kwargs]
     wrapper.__signature__ = sig.replace(parameters=parameters, return_annotation=sig.return_annotation)
     wrapper.__annotations__ = {k: v for k, v in fn.__annotations__.items() if k not in partial_kwargs}
+    wrapper.__doc__ = fn.__doc__
 
     return wrapper
 

@@ -37,7 +37,11 @@ class ToolBuilder(BaseModel):
 
     @classmethod
     def tool(
-        cls: Type[T], name: str = None, description: Optional[str] = None, parameters: dict = None, partials: Dict[str, Any] = None,
+        cls: Type[T],
+        name: str = None,
+        description: Optional[str] = None,
+        parameters: dict = None,
+        partials: Dict[str, Any] = None,
     ) -> Callable[[Callable[..., Awaitable[Any] | AsyncIterable[StreamEvent]]], Callable]:
         """
         A decorator to define a tool.
@@ -57,8 +61,8 @@ class ToolBuilder(BaseModel):
         """
 
         def decorator(fn: Callable[..., Awaitable[Any] | AsyncIterable[StreamEvent]]):
-            fn = partial(fn, **(partials or {}))
             name_ = name or fn.__name__
+            fn = partial(fn, **(partials or {}))
             if cls._is_locked():
                 cls._state().tools[1].append(_ToolDefinition(name_, description, parameters, fn))
             else:
@@ -76,7 +80,8 @@ class ToolBuilder(BaseModel):
         """
         pass
 
-    async def delete_process(self, process_id: str):  # async def fn(process_id: string)
+    @classmethod
+    async def delete_process(cls, process_id: str):  # async def fn(process_id: string)
         """
         Custom logic to execute when deleting a process.
 

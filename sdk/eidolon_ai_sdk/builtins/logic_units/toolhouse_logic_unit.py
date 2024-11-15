@@ -25,29 +25,27 @@ def tool_build(spec: Toolhouse):
         th.set_base_url(spec.base_url)
 
     tools = th.get_tools()
-    
-    
+
     ## Running Tool
     for tool in tools:
-        @Toolhouse.tool(description=tool['function']['description'], name=tool['function']['name'], parameters=tool['function']['parameters'], partials=dict(tool=tool))
-        async def tool_register(tool, **kwargs): 
-            toolcall_args = {k:v for k,v in kwargs.items() if k != 'spec'}
+
+        @Toolhouse.tool(
+            description=tool["function"]["description"],
+            name=tool["function"]["name"],
+            parameters=tool["function"]["parameters"],
+            partials=dict(tool=tool),
+        )
+        async def tool_register(tool, **kwargs):
+            toolcall_args = {k: v for k, v in kwargs.items() if k != "spec"}
             run_tool_request = RunToolsRequest(
                 dict(
-                    type="function", 
-                    function=dict(name=tool['function']['name'], arguments=json.dumps(toolcall_args)), 
-                    id="foo"
-                ), 
-                th.provider, 
-                th.metadata, 
-                th.bundle
+                    type="function",
+                    function=dict(name=tool["function"]["name"], arguments=json.dumps(toolcall_args)),
+                    id="foo",
+                ),
+                th.provider,
+                th.metadata,
+                th.bundle,
             )
             run_response = th.tools.run_tools(run_tool_request)
-            return run_response.content['content']
-            
-            
-
-    
-
-
-
+            return run_response.content["content"]
