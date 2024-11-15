@@ -57,8 +57,8 @@ class ToolBuilder(BaseModel):
         """
 
         def decorator(fn: Callable[..., Awaitable[Any] | AsyncIterable[StreamEvent]]):
-            fn = partial(fn, **(partials or {}))
             name_ = name or fn.__name__
+            fn = partial(fn, **(partials or {}))
             if cls._is_locked():
                 cls._state().tools[1].append(_ToolDefinition(name_, description, parameters, fn))
             else:
