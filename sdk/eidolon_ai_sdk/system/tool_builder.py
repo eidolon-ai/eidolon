@@ -80,7 +80,8 @@ class ToolBuilder(BaseModel):
         """
         pass
 
-    async def delete_process(self, process_id: str):  # async def fn(process_id: string)
+    @classmethod
+    async def delete_process(cls, process_id: str):  # async def fn(process_id: string)
         """
         Custom logic to execute when deleting a process.
 
