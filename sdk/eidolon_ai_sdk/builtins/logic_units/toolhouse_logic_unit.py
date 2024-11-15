@@ -2,25 +2,19 @@ import json
 import os
 from typing import Optional
 from toolhouse import Toolhouse as TH
-
 from pydantic import Field
-
 from eidolon_ai_sdk.system.tool_builder import ToolBuilder
-
 from toolhouse.models.RunToolsRequest import RunToolsRequest
+
 
 class Toolhouse(ToolBuilder):
     """A configurable tool backed by Toolhouse.ai that can be added to Eidolon Agents"""
-    ## At a high level, here's what we need:
-    ## 2. Toolhouse API_KEY
-    ## 3. Toolhouse bundle 
-    ## 4. Function argument to be passed into toolhouse call
     api_key: str = Field(default_factory=lambda:os.environ['TOOLHOUSE_API_KEY'])
     bundle: str = "default"
     base_url: Optional[str] = None
 
 
-
+## Building Tool
 @Toolhouse.dynamic_contract
 def tool_build(spec: Toolhouse):
     th = TH(api_key=spec.api_key, provider="openai")
@@ -29,16 +23,16 @@ def tool_build(spec: Toolhouse):
 
     tools = th.get_tools()
     
-    #breakpoint()
-
+    
+    ## Running Tool
     for tool in tools:
-        @Toolhouse.tool(description=tool['function']['description'], name=tool['function']['name'], parameters=tool['function']['parameters'])
-        async def tool_register(**kwargs): ## What is the args going in here
-            ## tool will be kwarg
+        @Toolhouse.tool(description=tool['function']['description'], name=tool['function']['name'], parameters=tool['function']['parameters'], partials=dict(tool=tool))
+        async def tool_register(tool, **kwargs): 
+            toolcall_args = {k:v for k,v in kwargs.items() if k != 'spec'}
             run_tool_request = RunToolsRequest(
                 dict(
                     type="function", 
-                    function=dict(name=tool['function']['name'], arguments=json.dumps(kwargs)), 
+                    function=dict(name=tool['function']['name'], arguments=json.dumps(toolcall_args)), 
                     id="foo"
                 ), 
                 th.provider, 
@@ -46,28 +40,9 @@ def tool_build(spec: Toolhouse):
                 th.bundle
             )
             run_response = th.tools.run_tools(run_tool_request)
-            return run_response.content.content
+            return run_response.content['content']
             
-            #print(kwargs) ## Need to execute toolhouse request and return the response (Run the tool), set up another test that sets up agent that uses tool, look @ test_tool_builder to see how to define agent to run server with, talking to agent and having it use one of the tools
-        ## Might have agent set up first to debug 
-
-
-    ## Loop through tools (prob array of tools) Register it on toolhouse class @Toolhouse.tool (name, desc, json), function that i register, is supposed to run the tool w/ proper arguments 
-    ## Get pytest running and debugger 
-
-    ## To do on or before 11/1 
-    ## Loop through tools, array, and register each tool on toolhouse class
-    ## @Toolhouse.tool (name, desc, json), the function I register 
-    ## Is supposed to run the tool w/ proper arguments. 
-    ## So ... Get each tool, register it, and run it? What to do with response?
-    ## Note: Check tool_builder and test_tool_builder for reference.
-    ## Get pytest running and debugger --> Check out docs and Luke's code for this
-
-
-    ##
-
-   
-
+            
 
     
 

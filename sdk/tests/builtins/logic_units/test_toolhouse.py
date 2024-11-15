@@ -6,8 +6,6 @@ from eidolon_ai_client import client
 
 
 ## Build Agent to do testing: 
-
-
 @pytest.fixture(scope="module", autouse=True)
 async def server(run_app):
     resource_toolhouse = Resource(
@@ -28,7 +26,7 @@ async def server(run_app):
         yield ra
 
 
-## Building them
+## Building the tools and seeing if they show up as expected
 async def test_tool_registration():
     tools = await Toolhouse().build_tools(None)
     assert len(tools)==3
@@ -38,17 +36,15 @@ async def test_tool_registration():
 
 
 
-# Check if they can use tools
+# Check if the tools work and are useable
 async def test_build_tools():
     process = await client.Agent.get("toolhouse_agent").create_process()
-    resp = await process.action("converse", body="Use the web search tool to check the price of NVIDIA Stock") ## Set up debugger lah to see if this thing actually works. 
-    assert "148.73" in resp.data
+    resp = await process.action("converse", body="Use the web search tool to check the capital of France. Respond 'correct' if the web tool returns 'Paris' and 'incorrect' otherwise.") 
+    assert "correct" in resp.data.lower()
 
 
 
 
-#async def test_tool_run():
-    #pass
 
     
 
