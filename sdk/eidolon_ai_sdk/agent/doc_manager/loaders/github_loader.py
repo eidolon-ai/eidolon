@@ -9,7 +9,7 @@ from typing import AsyncIterator, Dict, Any
 from typing import List
 
 from dulwich import porcelain
-from dulwich.client import get_transport_and_path
+from dulwich.client import get_transport_and_path, default_urllib3_manager
 from dulwich.objects import Commit, Tree
 from dulwich.refs import SYMREF
 from dulwich.repo import Repo
@@ -146,14 +146,14 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
         super().__init__(*args, **kwargs)
         self.url = self.spec.templated_url()
 
-    async def get_changes(self, metadata: LoaderMetadata) -> AsyncIterator[FileChange]:
+    async def get_changes(self, metadata: LoaderMetadata, current_commit_override: Optional[str] = None) -> AsyncIterator[FileChange]:
         pattern = set(self.spec.pattern if isinstance(self.spec.pattern, list) else [self.spec.pattern])
         excluded = set(self.spec.exclude if isinstance(self.spec.exclude, list) else [self.spec.exclude])
 
         found_pattern = set(metadata.root_metadata.get('pattern', []))
         found_excluded = set(metadata.root_metadata.get('exclude', []))
 
-        current_commit = await self.get_current_head()
+        current_commit = current_commit_override or await self.get_current_head()
         new_root_metadata = RootMetadata({'commit': current_commit, 'pattern': list(pattern), 'exclude': list(excluded)})
 
         if 'commit' in metadata.root_metadata and metadata.root_metadata['commit'] == current_commit:
@@ -199,6 +199,9 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
         # Walk the tree and yield all files
         for entry in tree.iteritems():
             file_path = entry.path.decode()
+            if not self._matches(file_path):
+                continue
+
             blob = repo[entry.sha]
 
             existing = existing_files.pop(file_path, None)

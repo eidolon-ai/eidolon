@@ -66,7 +66,7 @@ class LoaderMetadata:
     root_metadata: Dict[str, Any]
 
     def __init__(self, metadata: Dict[str, Any], doc_fn):
-        self.metadata = metadata
+        self.root_metadata = metadata
         self._fn = doc_fn
 
     async def doc_metadata(self) -> AsyncGenerator[FileInfoMetadata]:
