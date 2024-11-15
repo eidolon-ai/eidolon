@@ -53,34 +53,34 @@ class Reference(BaseModel):
     )
 
     @classmethod
-    def __get_pydantic_json_schema__(
-            cls, core_schema: cs.CoreSchema, handler: GetJsonSchemaHandler
-    ) -> JsonSchemaValue:
+    def __get_pydantic_json_schema__(cls, core_schema: cs.CoreSchema, handler: GetJsonSchemaHandler) -> JsonSchemaValue:
         if cls._bound == object:
             json_schema = handler(core_schema)
             json_schema = handler.resolve_ref_schema(json_schema)
             json_schema["properties"] = dict(implementation=dict(type="string", title="Implementation"))
-            if "Used to create references to other classes." in json_schema.get('description', ""):  # delete description if it is not overridden
-                del json_schema['description']
+            if "Used to create references to other classes." in json_schema.get(
+                "description", ""
+            ):  # delete description if it is not overridden
+                del json_schema["description"]
             return json_schema
 
         from eidolon_ai_sdk.system.kernel import AgentOSKernel
 
-        title = (cls._bound if isinstance(cls._bound, str) else cls._bound.__name__)
+        title = cls._bound if isinstance(cls._bound, str) else cls._bound.__name__
 
-        core_schema['ref'] = f"Reference[{title}]"
+        core_schema["ref"] = f"Reference[{title}]"
         json_schema = handler(core_schema)
         json_schema = handler.resolve_ref_schema(json_schema)
         json_schema["title"] = title
         if not isinstance(cls._bound, str) and cls._bound.__doc__:
-            json_schema['description'] = textwrap.dedent(cls._bound.__doc__).strip()
+            json_schema["description"] = textwrap.dedent(cls._bound.__doc__).strip()
         json_schema["reference_pointer"] = {
             "type": cls._bound if isinstance(cls._bound, str) else cls._bound.__name__,
             "default_impl": cls._default,
         }
 
-        del json_schema['type']
-        del json_schema['properties']
+        del json_schema["type"]
+        del json_schema["properties"]
         del json_schema["additionalProperties"]
 
         json_schema["anyOf"] = []
@@ -97,14 +97,14 @@ class Reference(BaseModel):
                     overrides=overrides,
                     clz=pointer,
                     name=r.metadata.name,
-                    group=json_schema["reference_pointer"]['type'],
+                    group=json_schema["reference_pointer"]["type"],
                 )
                 ref = handler(_pseudo_pointer(r.metadata.name).__pydantic_core_schema__)
-                if r.metadata.name == json_schema["reference_pointer"]['type']:
+                if r.metadata.name == json_schema["reference_pointer"]["type"]:
                     group_component_ref = ref
                 ref_schema = handler.resolve_ref_schema(ref)
-                if 'reference_details' not in ref_schema:
-                    ref_schema['reference_details'] = reference_details
+                if "reference_details" not in ref_schema:
+                    ref_schema["reference_details"] = reference_details
                     if hasattr(clz, "__pydantic_core_schema__"):
                         obj_ref = clz.__get_pydantic_json_schema__(clz.__pydantic_core_schema__, handler)
                     else:
@@ -114,20 +114,22 @@ class Reference(BaseModel):
                             additionalProperties=True,
                         )
                     desired_ref_schema = handler.resolve_ref_schema(obj_ref)
-                    desired_ref_schema['properties']['implementation'] = dict(const=r.metadata.name, title="Implementation")
-                    desired_ref_schema['properties'] = dict(  # put implementation at the top
-                        implementation=desired_ref_schema['properties'].pop('implementation'),
-                        **desired_ref_schema['properties']
+                    desired_ref_schema["properties"]["implementation"] = dict(
+                        const=r.metadata.name, title="Implementation"
+                    )
+                    desired_ref_schema["properties"] = dict(  # put implementation at the top
+                        implementation=desired_ref_schema["properties"].pop("implementation"),
+                        **desired_ref_schema["properties"],
                     )
                     desired_ref_schema.pop("$defs", None)
                     desired_ref_schema.setdefault("required", []).append("implementation")
                     ref_schema.update(desired_ref_schema)
-                    ref_schema['title'] = r.metadata.name
+                    ref_schema["title"] = r.metadata.name
                     for key, value in overrides.items():
-                        ref_schema['properties'].setdefault(key, {})['default'] = value
+                        ref_schema["properties"].setdefault(key, {})["default"] = value
                 json_schema["anyOf"].append(ref)
 
-        json_schema["anyOf"] = sorted(json_schema["anyOf"], key=lambda x: x['$ref'])
+        json_schema["anyOf"] = sorted(json_schema["anyOf"], key=lambda x: x["$ref"])
         if len(json_schema["anyOf"]) > 1:
             json_schema["anyOf"] = [js for js in json_schema["anyOf"] if js != group_component_ref]
             json_schema["anyOf"] = json_schema["anyOf"][1:] + json_schema["anyOf"][:1]
@@ -209,7 +211,9 @@ class Reference(BaseModel):
         try:
             reference_class = self._get_reference_class()
         except InvalidFQN as e:
-            raise PydanticCustomError("reference_error", "{e}", dict(e=f"'{e.fqn}' is not a valid reference or fully qualified name"))
+            raise PydanticCustomError(
+                "reference_error", "{e}", dict(e=f"'{e.fqn}' is not a valid reference or fully qualified name")
+            )
         except Exception as e:
             raise PydanticCustomError("reference_error", "{e}", dict(e=e))
         spec = Reference.get_spec_type(reference_class)

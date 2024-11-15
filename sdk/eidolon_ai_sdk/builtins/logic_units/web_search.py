@@ -69,7 +69,7 @@ class Browser(LogicUnit, Specable[BrowseSpec]):
                 raise ValueError(f"Summarizer {self.spec.summarizer} not supported")
 
 
-# Requires Google project, Custom Search Engine ID, and API key. 
+# Requires Google project, Custom Search Engine ID, and API key.
 # For CSE_ID see https://programmablesearchengine.google.com/controlpanel/all
 # For CSE_TOKEN (API KEY) see https://developers.google.com/custom-search/v1/introduction
 # Add CSE_ID and CSE_TOKEN to .env and restart server

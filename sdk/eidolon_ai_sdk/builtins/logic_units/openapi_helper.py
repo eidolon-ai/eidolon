@@ -68,8 +68,15 @@ def build_actions(operations_to_expose: List[Operation], schema: dict, title: st
                                 else:
                                     logger.error(f"Unsupported parameter location {param['in']}")
 
-                        params["fields__"] = dict(type="array", description="The fields to include in the response or omit for all fields. This is necessary to limit the response size. This should be a list of paths separated by '.'",
-                                                    items=dict(type="string", description="The path of a response field as it appears in the json schema"), required=False)
+                        params["fields__"] = dict(
+                            type="array",
+                            description="The fields to include in the response or omit for all fields. This is necessary to limit the response size. This should be a list of paths separated by '.'",
+                            items=dict(
+                                type="string",
+                                description="The path of a response field as it appears in the json schema",
+                            ),
+                            required=False,
+                        )
 
                         if "requestBody" in method:
                             params["__body__"] = _body_model(method, name)
@@ -83,7 +90,12 @@ def build_actions(operations_to_expose: List[Operation], schema: dict, title: st
                                 action_schema=dict(type="object", properties=params, required=required),
                                 description=description,
                                 tool_call=_call_endpoint(
-                                    operation.path, operation.result_filters, method_name, methodParams, max_size, call_fn
+                                    operation.path,
+                                    operation.result_filters,
+                                    method_name,
+                                    methodParams,
+                                    max_size,
+                                    call_fn,
                                 ),
                             )
                         )
@@ -130,7 +142,9 @@ def _convert_runtime_value(query_params: List[Tuple[str, Any]], param: dict, val
         query_params.append((param["name"], str(value)))
 
 
-def _call_endpoint(path: str, result_filters: Optional[List[str]], method: str, _method_params, max_content: int, call_fn: callable):
+def _call_endpoint(
+    path: str, result_filters: Optional[List[str]], method: str, _method_params, max_content: int, call_fn: callable
+):
     method_params = _method_params.copy() if _method_params else None
     result_filters = result_filters.copy() if result_filters else None
 

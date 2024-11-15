@@ -3,9 +3,8 @@ from typing import List, Any, Dict, Literal, Union, AsyncIterator
 
 from pydantic import BaseModel, Field
 
-from eidolon_ai_client.events import StreamEvent, ToolCall
-from eidolon_ai_sdk.apu.call_context import CallContext
-from eidolon_ai_sdk.apu.llm_message import LLMMessage, AssistantMessage, ToolResponseMessage
+from eidolon_ai_client.events import StreamEvent
+from eidolon_ai_sdk.apu.llm_message import LLMMessage
 from eidolon_ai_sdk.apu.processing_unit import ProcessingUnit
 from eidolon_ai_sdk.system.reference_model import Reference
 from eidolon_ai_sdk.system.specable import Specable
@@ -69,21 +68,6 @@ class LLMUnit(ProcessingUnit, Specable[LLMUnitSpec], ABC):
             supports_tools=self.model.supports_tools,
             supports_image_input=self.model.supports_image_input,
             supports_audio_input=self.model.supports_audio_input,
-        )
-
-    def create_assistant_message(self, call_context: CallContext, contents: str, tool_call_events) -> LLMMessage:
-        return AssistantMessage(
-            type="assistant",
-            content=contents,
-            tool_calls=[tce.tool_call for tce in tool_call_events],
-        )
-
-    def create_tool_response_message(self, logic_unit_name: str, tc: ToolCall, content: str) -> LLMMessage:
-        return ToolResponseMessage(
-            logic_unit_name=logic_unit_name,
-            tool_call_id=tc.tool_call_id,
-            result=content,
-            name=tc.name,
         )
 
     @abstractmethod

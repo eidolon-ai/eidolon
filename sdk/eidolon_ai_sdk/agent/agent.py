@@ -26,7 +26,7 @@ def register_program(
         input_model=input_model,
         output_model=output_model,
         allowed_states=["initialized"],
-        **extra
+        **extra,
     )
 
 

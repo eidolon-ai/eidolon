@@ -42,7 +42,9 @@ def patched_vcr(test_name):
 @pytest.fixture(autouse=True)
 def vcr_config():
     def ignore_some_localhost(request: VcrRequest):
-        if (request.host == "0.0.0.0" or request.host == "localhost") and request.port != 11434:  # 11434 is the ollama port
+        if (
+            request.host == "0.0.0.0" or request.host == "localhost"
+        ) and request.port != 11434:  # 11434 is the ollama port
             return None
         elif request.host == "login.microsoftonline.com":
             return None
@@ -68,11 +70,16 @@ def run_app(machine_manager):
     @asynccontextmanager
     async def fn(*agents):
         async with machine_manager() as machine:
-            resources = [a if isinstance(a, Resource) else AgentResource(
-                apiVersion="eidolon/v1",
-                spec=Reference(implementation=fqn(a)),
-                metadata=Metadata(name=a.__name__),
-            ) for a in agents]
+            resources = [
+                a
+                if isinstance(a, Resource)
+                else AgentResource(
+                    apiVersion="eidolon/v1",
+                    spec=Reference(implementation=fqn(a)),
+                    metadata=Metadata(name=a.__name__),
+                )
+                for a in agents
+            ]
             with serve_thread([machine, *resources], machine_name=machine.metadata.name) as ra:
                 yield ra
 

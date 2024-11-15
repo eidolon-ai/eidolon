@@ -1,13 +1,16 @@
 import json
 import logging
+from http import HTTPStatus
 from io import BytesIO
 from typing import List, Optional, Union, Literal, Dict, Any, AsyncIterator, cast
 
 import yaml
 from PIL import Image
-from fastapi import HTTPException
 from mistralai.async_client import MistralAsyncClient
-from mistralai.exceptions import MistralConnectionException, MistralAPIStatusException, MistralAPIException
+from mistralai.exceptions import (
+    MistralAPIException,
+    MistralException,
+)
 from mistralai.models.chat_completion import ChatCompletionStreamResponse, ResponseFormat, ResponseFormats, Function
 
 from eidolon_ai_client.events import (
@@ -133,10 +136,10 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
         Specable.__init__(self, **kwargs)
 
     async def execute_llm(
-            self,
-            messages: List[LLMMessage],
-            tools: List[LLMCallFunction],
-            output_format: Union[Literal["str"], Dict[str, Any]],
+        self,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
         can_stream_message, request = await self._build_request(messages, tools, output_format)
 
@@ -185,20 +188,14 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
                 logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
                 if not self.spec.force_json or tools:
                     # message format looks like json```{...}```, parse content and pull out the json
-                    complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
+                    complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
                 try:
                     content = json.loads(complete_message) if complete_message else {}
                 except json.JSONDecodeError as e:
-                    logger.error(f"Error decoding response JSON from Mistral: {complete_message}")
-                    logger.exception(e)
-                    raise HTTPException(502, "Error decoding response JSON from Mistral") from e
+                    raise MistralException("Invalid JSON from Mistral") from e
                 yield ObjectOutputEvent(content=content)
-        except MistralConnectionException as e:
-            raise HTTPException(429, f"Mistral Connection Error: {e.message}") from e
-        except MistralAPIStatusException as e:
-            raise HTTPException(502, f"Mistral Status Error: {e.message}") from e
         except MistralAPIException as e:
-            raise HTTPException(502, f"Mistral Error: {e.message}") from e
+            raise MistralException(f"Received {e.http_status} {HTTPStatus(e.http_status).name} from Mistral") from e
 
     async def _build_request(self, inMessages, inTools, output_format):
         tools = await self._build_tools(inTools)
@@ -232,11 +229,16 @@ class MistralGPT(LLMUnit, Specable[MistralGPTSpec]):
             is_string = True
         elif tools:
             is_string = False
-            tools.append(dict(type="function", function=Function(
-                name="RespondDirectly",
-                description="respond directly to the user without calling any other tools",
-                parameters=dict(type="object", properties=dict(response=output_format))
-            ).model_dump()))
+            tools.append(
+                dict(
+                    type="function",
+                    function=Function(
+                        name="RespondDirectly",
+                        description="respond directly to the user without calling any other tools",
+                        parameters=dict(type="object", properties=dict(response=output_format)),
+                    ).model_dump(),
+                )
+            )
         else:
             is_string = False
             force_json_msg = (

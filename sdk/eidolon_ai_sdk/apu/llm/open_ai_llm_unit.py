@@ -110,10 +110,10 @@ class OpenAILLMBase(LLMUnit, Specable[OpenAILLMBaseSpec]):
         self.connection_handler = connection_handler
 
     async def execute_llm(
-            self,
-            messages: List[LLMMessage],
-            tools: List[LLMCallFunction],
-            output_format: Union[Literal["str"], Dict[str, Any]],
+        self,
+        messages: List[LLMMessage],
+        tools: List[LLMCallFunction],
+        output_format: Union[Literal["str"], Dict[str, Any]],
     ) -> AsyncIterator[AssistantMessage]:
         is_string, request = await self._build_request(messages, tools, output_format)
 
@@ -126,6 +126,7 @@ class OpenAILLMBase(LLMUnit, Specable[OpenAILLMBaseSpec]):
         raw_completion = cast(AsyncStream[ChatCompletionChunk], await self.connection_handler.completion(**request))
         completion = raw_completion
         if isinstance(completion, ChatCompletion):
+
             async def _fn():
                 yield raw_completion
 
@@ -170,7 +171,7 @@ class OpenAILLMBase(LLMUnit, Specable[OpenAILLMBaseSpec]):
             logger.debug(f"open ai llm object response: {complete_message}", extra=dict(content=complete_message))
             if not self.spec.force_json:
                 # message format looks like json```{...}```, parse content and pull out the json
-                complete_message = complete_message[complete_message.find("{"): complete_message.rfind("}") + 1]
+                complete_message = complete_message[complete_message.find("{") : complete_message.rfind("}") + 1]
 
             if complete_message:
                 yield ObjectOutputEvent(content=json.loads(complete_message))
@@ -231,11 +232,11 @@ class OpenAILLMBase(LLMUnit, Specable[OpenAILLMBaseSpec]):
             request["max_tokens"] = self.spec.max_tokens
 
         if not self.spec.supports_system_messages:
-            if len(messages) >= 2 and messages[0].get("role") == "system" and messages[1].get('role') == "user":
+            if len(messages) >= 2 and messages[0].get("role") == "system" and messages[1].get("role") == "user":
                 system_message = messages.pop(0)
-                text_content = [c for c in messages[0]["content"] if c['type'] == "text"][0]
+                text_content = [c for c in messages[0]["content"] if c["type"] == "text"][0]
                 text_to_add = f"For the rest of the conversation, follow the following instructions:\n<INSTRUCTIONS>\n{system_message['content']}\n</INSTRUCTIONS>"
-                text_content['text'] = f"{text_to_add}\n\n{text_content['text']}"
+                text_content["text"] = f"{text_to_add}\n\n{text_content['text']}"
             else:
                 raise RuntimeError("System messages are not supported by this model, but unable to transform messages")
 
@@ -278,8 +279,9 @@ class OpenAIGPT(OpenAILLMBase, Specable[OpenAiGPTSpec]):
         Specable.__init__(self, **kwargs)
         if self.spec.connection_handler:
             logger.warning(
-                "\"connection_handler\" is deprecated and will be removed. Use client_args if customizing an openai connection or AzureLLMUnit if connecting to Azure.")
+                '"connection_handler" is deprecated and will be removed. Use client_args if customizing an openai connection or AzureLLMUnit if connecting to Azure.'
+            )
             connection_handler = self.spec.connection_handler.instantiate()
         else:
             connection_handler = OpenAIConnectionHandler(spec=OpenAIConnectionHandlerSpec(**self.spec.client_args))
-        super().__init__(connection_handler=connection_handler, ** kwargs)
+        super().__init__(connection_handler=connection_handler, **kwargs)

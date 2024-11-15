@@ -15,10 +15,16 @@ class VectaraSearchSpec(BaseModel):
     """
 
     corpus_key: str = Field(description="The corpus key to search in.")
-    description: str = Field("Search documents related to {corpus_key}.", description="Description of the tool presented to LLM. Will be formatted with corpus_key.")
+    description: str = Field(
+        "Search documents related to {corpus_key}.",
+        description="Description of the tool presented to LLM. Will be formatted with corpus_key.",
+    )
     vectara_url: str = "https://api.vectara.io/"
     read_document_enabled: bool = Field(False, description="Enable read_document tool.")
-    read_document_description: Optional[str] = Field("Read a document from {corpus_key}.", description="Description of the tool presented to LLM. Will be formatted with corpus_key.")
+    read_document_description: Optional[str] = Field(
+        "Read a document from {corpus_key}.",
+        description="Description of the tool presented to LLM. Will be formatted with corpus_key.",
+    )
 
 
 class VectaraSearch(Specable[VectaraSearchSpec], LogicUnit):
@@ -35,10 +41,7 @@ class VectaraSearch(Specable[VectaraSearchSpec], LogicUnit):
 
     @property
     def _headers(self):
-        return {
-            'Accept': 'application/json',
-            'x-api-key': self._token
-        }
+        return {"Accept": "application/json", "x-api-key": self._token}
 
     def _url(self, suffix):
         return urljoin(self.spec.vectara_url, suffix)
@@ -54,13 +57,18 @@ class VectaraSearch(Specable[VectaraSearchSpec], LogicUnit):
                     search=dict(
                         limit=limit,
                         offset=offset,
-                    )
+                    ),
                 ),
             )
             response.raise_for_status()
             response_body = response.json()
-            content = [dict(text=r.get("text"), document_id=r.get("document_id")) for r in response_body["search_results"]]
-            documents = {r.get("document_id"): r.get("document_metadata", {}).get("title") for r in response_body["search_results"]}
+            content = [
+                dict(text=r.get("text"), document_id=r.get("document_id")) for r in response_body["search_results"]
+            ]
+            documents = {
+                r.get("document_id"): r.get("document_metadata", {}).get("title")
+                for r in response_body["search_results"]
+            }
             return dict(search_results=content, documents=documents)
 
     @llm_function(description=lambda lu, _: lu.spec.read_document_description.format(corpus_key=lu.spec.corpus_key))

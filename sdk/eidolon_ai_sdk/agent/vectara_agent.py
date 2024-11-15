@@ -9,8 +9,13 @@ from httpx import AsyncClient
 from httpx_sse import EventSource
 from pydantic import BaseModel, Field
 
-from eidolon_ai_client.events import StringOutputEvent, StartStreamContextEvent, ObjectOutputEvent, \
-    EndStreamContextEvent, AgentStateEvent
+from eidolon_ai_client.events import (
+    StringOutputEvent,
+    StartStreamContextEvent,
+    ObjectOutputEvent,
+    EndStreamContextEvent,
+    AgentStateEvent,
+)
 from eidolon_ai_sdk.agent.agent import register_action
 from eidolon_ai_sdk.system.processes import MongoDoc
 from eidolon_ai_sdk.system.specable import Specable
@@ -26,7 +31,10 @@ class VectaraAgentSpec(BaseModel):
     corpus_key: str
     description: str = "Search documents related to {{ corpus_key }}"
     vectara_url: str = "https://api.vectara.io/"
-    body_overrides: dict = Field({}, description="Arguments to use when creating / continuing a chat. See https://docs.vectara.com/docs/rest-api/create-chat for more information.")
+    body_overrides: dict = Field(
+        {},
+        description="Arguments to use when creating / continuing a chat. See https://docs.vectara.com/docs/rest-api/create-chat for more information.",
+    )
 
 
 # We need to store chatid / processid mappings since vectara doesn't have metatdata / query concepts
@@ -44,11 +52,7 @@ class VectaraAgent(Specable[VectaraAgentSpec]):
 
     @property
     def _headers(self):
-        return {
-            'Content-Type': 'application/json',
-            'Accept': 'text/event-stream',
-            'x-api-key': self._token
-        }
+        return {"Content-Type": "application/json", "Accept": "text/event-stream", "x-api-key": self._token}
 
     def _url(self, suffix):
         return urljoin(self.spec.vectara_url, suffix)
@@ -77,10 +81,10 @@ class VectaraAgent(Specable[VectaraAgentSpec]):
                 if sse_event.event == "chat_info":
                     if not doc:
                         data = json.loads(sse_event.data)
-                        doc = await VectaraDoc.create(process_id=process_id, vectara_chat_id=data['chat_id'])
+                        doc = await VectaraDoc.create(process_id=process_id, vectara_chat_id=data["chat_id"])
                 elif sse_event.event == "generation_chunk":
                     data = json.loads(sse_event.data)
-                    yield StringOutputEvent(content=data['generation_chunk'])
+                    yield StringOutputEvent(content=data["generation_chunk"])
                 elif sse_event.event == "search_results":
                     for result in json.loads(sse_event.data)["search_results"]:
                         yield ObjectOutputEvent(stream_context="response_info", content=result)

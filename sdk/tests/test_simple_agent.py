@@ -120,8 +120,8 @@ class TestBadAuthToken:
 
     async def test_action_does_not_have_query_params(self):
         response = await Machine().openapi()
-        parameters = response['paths']['/processes/{process_id}/agent/openai/actions/converse']['post']['parameters']
-        query_params = [p for p in parameters if p['in'] != 'path']
+        parameters = response["paths"]["/processes/{process_id}/agent/openai/actions/converse"]["post"]["parameters"]
+        query_params = [p for p in parameters if p["in"] != "path"]
         assert not query_params
 
     async def test_openai_bad_auth(self):
@@ -129,21 +129,21 @@ class TestBadAuthToken:
         with pytest.raises(AgentError) as err:
             await process.action("converse", body="What is the capital of France?")
         assert err.value.status_code == 500
-        assert "AuthenticationError" in err.value.response.json()['data']
+        assert "401 UNAUTHORIZED" in err.value.response.json()["data"]
 
     async def test_anthropic_bad_auth(self):
         process = await Agent.get("anthropic").create_process()
         with pytest.raises(AgentError) as err:
             await process.action("converse", body="What is the capital of France?")
         assert err.value.status_code == 500
-        assert "Anthropic Authentication Error" in err.value.response.json()['data']
+        assert "401 UNAUTHORIZED" in err.value.response.json()["data"]
 
     async def test_mistral_bad_auth(self):
         process = await Agent.get("minstral").create_process()
         with pytest.raises(AgentError) as err:
             await process.action("converse", body="What is the capital of France?")
-        assert err.value.status_code == 502
-        assert "Unauthorized" in err.value.response.json()['data']
+        assert err.value.status_code == 500
+        assert "401 UNAUTHORIZED" in err.value.response.json()["data"]
 
 
 class TestNoAuthToken:
@@ -163,9 +163,9 @@ class TestNoAuthToken:
     @pytest.fixture(scope="class", autouse=True)
     async def server(self, run_app, envar_manager):
         async with run_app(
-                r("openai", apu="GPT4o"),
-                r("anthropic", apu="ClaudeSonnet"),
-                r("minstral", apu="MistralLarge"),
+            r("openai", apu="GPT4o"),
+            r("anthropic", apu="ClaudeSonnet"),
+            r("minstral", apu="MistralLarge"),
         ) as ra:
             yield ra
 
@@ -174,21 +174,21 @@ class TestNoAuthToken:
         with pytest.raises(AgentError) as err:
             await process.action("converse", body="What is the capital of France?")
         assert err.value.status_code == 500
-        assert "OPENAI_API_KEY environment variable" in err.value.response.json()['data']
+        assert "OPENAI_API_KEY environment variable" in err.value.response.json()["data"]
 
     async def test_anthropic_bad_auth(self):
         process = await Agent.get("anthropic").create_process()
         with pytest.raises(AgentError) as err:
             await process.action("converse", body="What is the capital of France?")
         assert err.value.status_code == 500
-        assert "Authentication Error" in err.value.response.json()['data']
+        assert "set environment variable `ANTHROPIC_API_KEY`" in err.value.response.json()["data"]
 
     async def test_mistral_bad_auth(self):
         process = await Agent.get("minstral").create_process()
         with pytest.raises(AgentError) as err:
             await process.action("converse", body="What is the capital of France?")
-        assert err.value.status_code == 502
-        assert "Unauthorized" in err.value.response.json()['data']
+        assert err.value.status_code == 500
+        assert "401 UNAUTHORIZED" in err.value.response.json()["data"]
 
 
 def pytest_generate_tests(metafunc):
@@ -327,3 +327,30 @@ class TestSimpleTests:
         process = await Agent.get("complex_refs").create_process()
         resp = await process.action("converse", body="What is the capital of France?")
         assert "paris" in resp.data.lower()
+
+
+class TestSimpleAgentNoMatrix:
+    @pytest.fixture(scope="class", autouse=True)
+    async def server(self, run_app):
+        async with run_app(r(
+            name="templated_system",
+            system_prompt="you are a helpful assistant. The magic word is {{ magic_word }}",
+            apu="GPT4o",
+            prompt_templates=dict(magic_word=dict(value="plantains"))
+        ), r(
+            name="templated_action",
+            actions=[dict(user_prompt="{{ body }} (The magic word is {{ magic_word }})")],
+            apu="GPT4o",
+            prompt_templates=dict(magic_word=dict(value="plantains"))
+        )) as ra:
+            yield ra
+
+    async def test_templates_system_prompt(self):
+        process = await Agent.get("templated_system").create_process()
+        resp = await process.action("converse", body="What is the magic word?")
+        assert "plantain" in resp.data.lower()
+
+    async def test_templates_action(self):
+        process = await Agent.get("templated_action").create_process()
+        resp = await process.action("converse", body="What is the magic word?")
+        assert "plantain" in resp.data.lower()

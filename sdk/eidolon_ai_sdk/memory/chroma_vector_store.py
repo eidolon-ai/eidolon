@@ -1,9 +1,11 @@
 import threading
 
 import chromadb
+
 try:
     from chromadb import Include, QueryResult
     from chromadb.api.models.Collection import Collection
+
     chromadb.config.is_thin_client = False  # we may have chromadb_client and chromadb installed at same time
 except ImportError:
     QueryResult = type(object)
@@ -86,7 +88,9 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
         if url.scheme == "file":
             path = url.path
             if not hasattr(chromadb, "PersistentClient"):
-                raise RuntimeError("chromadb must be installed to use ChromaDB backed by local file storage. Specify `path` to use a remote ChromaDB or install chromadb via `pip install chromadb`.")
+                raise RuntimeError(
+                    "chromadb must be installed to use ChromaDB backed by local file storage. Specify `path` to use a remote ChromaDB or install chromadb via `pip install chromadb`."
+                )
             self.client = chromadb.PersistentClient(path)
         else:
             host = url.hostname

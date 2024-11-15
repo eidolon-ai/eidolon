@@ -13,18 +13,14 @@ async def server(run_app):
             apiVersion="eidolon/v1",
             kind="Reference",
             metadata=Metadata(name="OllamaLLMUnit"),
-            spec=dict(
-                implementation=fqn(OllamaLLMUnit),
-                temperature=-1
-            ),
-
+            spec=dict(implementation=fqn(OllamaLLMUnit), temperature=-1),
         ),
         Resource(
             apiVersion="eidolon/v1",
             kind="Agent",
             metadata=Metadata(name="default"),
             spec=dict(implementation="SimpleAgent", apu="Llamma3-8b"),
-        )
+        ),
     ]
     async with run_app(*resources) as ra:
         yield ra

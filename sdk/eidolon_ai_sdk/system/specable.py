@@ -30,9 +30,7 @@ class Specable(Generic[T]):
         return schema__
 
     @classmethod
-    def __get_pydantic_json_schema__(
-            cls, core_schema: cs.CoreSchema, handler: GetJsonSchemaHandler
-    ) -> JsonSchemaValue:
+    def __get_pydantic_json_schema__(cls, core_schema: cs.CoreSchema, handler: GetJsonSchemaHandler) -> JsonSchemaValue:
         ref = handler(core_schema)
         json_schema = handler.resolve_ref_schema(ref)
         json_schema["title"] = cls.__name__

@@ -85,6 +85,15 @@
       ],
       "title": "Title Generation Mode",
       "type": "string"
+    },
+    "prompt_templates": {
+      "additionalProperties": {
+        "$ref": "../Template/overview.json"
+      },
+      "default": {},
+      "description": "A dictionary of Templates that can be used as jinja2 keys in system or action prompts",
+      "title": "Prompt Templates",
+      "type": "object"
     }
   },
   "reference_details": {

@@ -4,7 +4,6 @@ from eidolon_ai_sdk.memory.similarity_memory import SimilarityMemoryImpl
 
 
 class AgentMemory:
-
     file_memory: FileMemoryBase
     symbolic_memory: SymbolicMemoryBase
     similarity_memory: SimilarityMemoryImpl

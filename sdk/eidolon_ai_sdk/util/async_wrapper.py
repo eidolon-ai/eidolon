@@ -1,7 +1,7 @@
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 from functools import wraps, partial
-from typing import Callable
+from typing import Callable, Awaitable
 
 from opentelemetry import context as otel_context, trace
 from opentelemetry.trace import Tracer
@@ -37,7 +37,7 @@ tracer = trace.get_tracer(__name__)
 executor = TracedThreadPoolExecutor(tracer)
 
 
-def make_async(func, exe=executor):
+def make_async(func, exe=executor) -> Callable[..., Awaitable]:
     """
     Decorator to make a sync function async and non-blocking by running them in a thread.
     """
