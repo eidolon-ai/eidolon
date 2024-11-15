@@ -3,7 +3,8 @@ title: Toolhouse
 description: Description of the Toolhouse component
 ---
 
-**Description:** A configurable tool backed by Toolhouse.ai that can be added to Eidolon Agents
+**Description:** A configurable tool backed by Toolhouse.ai that can be added to Eidolon Agents.
+Toolhouse is the complete cloud infrastructure to equip LLMs with actions and knowledge.
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -32,6 +33,8 @@ Specific value: `"Toolhouse"`
 | **Type**     | `string` |
 | **Required** | No       |
 
+**Description:** Toolhouse API_KEY to connect toolhouse.
+
 ## <a name="bundle"></a>3. Property `bundle`
 
 **Title:** Bundle
@@ -41,6 +44,8 @@ Specific value: `"Toolhouse"`
 | **Type**     | `string`    |
 | **Required** | No          |
 | **Default**  | `"default"` |
+
+**Description:** groups of tools you want to pass to the LLM based on specific contextual need of each LLM call or agent.
 
 ## <a name="base_url"></a>4. Property `base_url`
 
