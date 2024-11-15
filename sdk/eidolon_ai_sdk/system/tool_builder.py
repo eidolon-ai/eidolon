@@ -37,7 +37,11 @@ class ToolBuilder(BaseModel):
 
     @classmethod
     def tool(
-        cls: Type[T], name: str = None, description: Optional[str] = None, parameters: dict = None, partials: Dict[str, Any] = None,
+        cls: Type[T],
+        name: str = None,
+        description: Optional[str] = None,
+        parameters: dict = None,
+        partials: Dict[str, Any] = None,
     ) -> Callable[[Callable[..., Awaitable[Any] | AsyncIterable[StreamEvent]]], Callable]:
         """
         A decorator to define a tool.
