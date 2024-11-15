@@ -3,6 +3,10 @@ from eidolon_ai_sdk.builtins.logic_units.toolhouse_logic_unit import Toolhouse
 from eidolon_ai_sdk.system.resources.resources_base import Metadata, Resource
 from eidolon_ai_sdk.util.class_utils import fqn
 from eidolon_ai_client import client
+import os
+
+# Default API Key 
+os.environ.setdefault("TOOLHOUSE_API_KEY", "test")
 
 
 ## Build Agent to do testing: 
