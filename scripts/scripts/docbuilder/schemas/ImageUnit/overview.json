@@ -1,6 +1,9 @@
 {
   "anyOf": [
     {
+      "$ref": "../AudioUnit/Toolhouse.json"
+    },
+    {
       "$ref": "../LogicUnit/OpenAIImageUnit.json"
     }
   ],

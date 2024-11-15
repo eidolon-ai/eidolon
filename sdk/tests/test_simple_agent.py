@@ -332,17 +332,20 @@ class TestSimpleTests:
 class TestSimpleAgentNoMatrix:
     @pytest.fixture(scope="class", autouse=True)
     async def server(self, run_app):
-        async with run_app(r(
-            name="templated_system",
-            system_prompt="you are a helpful assistant. The magic word is {{ magic_word }}",
-            apu="GPT4o",
-            prompt_templates=dict(magic_word=dict(value="plantains"))
-        ), r(
-            name="templated_action",
-            actions=[dict(user_prompt="{{ body }} (The magic word is {{ magic_word }})")],
-            apu="GPT4o",
-            prompt_templates=dict(magic_word=dict(value="plantains"))
-        )) as ra:
+        async with run_app(
+            r(
+                name="templated_system",
+                system_prompt="you are a helpful assistant. The magic word is {{ magic_word }}",
+                apu="GPT4o",
+                prompt_templates=dict(magic_word=dict(value="plantains")),
+            ),
+            r(
+                name="templated_action",
+                actions=[dict(user_prompt="{{ body }} (The magic word is {{ magic_word }})")],
+                apu="GPT4o",
+                prompt_templates=dict(magic_word=dict(value="plantains")),
+            ),
+        ) as ra:
             yield ra
 
     async def test_templates_system_prompt(self):

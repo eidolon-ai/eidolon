@@ -107,7 +107,9 @@ class SimpleAgent(AgentBuilder):
     actions: List[ActionDefinition] = [ActionDefinition()]
     apus: List[NamedAPU] = []
     title_generation_mode: Literal["none", "on_request", "auto"] = "none"
-    prompt_templates: Dict[str, Reference[Template]] = Field({}, description="A dictionary of Templates that can be used as jinja2 keys in system or action prompts")
+    prompt_templates: Dict[str, Reference[Template]] = Field(
+        {}, description="A dictionary of Templates that can be used as jinja2 keys in system or action prompts"
+    )
 
     @model_validator(mode="before")
     def validate_apu(cls, value):

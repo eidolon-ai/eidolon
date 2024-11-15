@@ -74,6 +74,10 @@ pydantic = "^2.9.2"
 chromadb-client = "^0.5.15"
 bs4 = "^0.0.2"
 aiofiles = "^24.1.0"
+toolhouse = "^1.3.0"
+
+# llama-index is required by toolhouse, but version compatibility is wrong, so pin it here while they figure that out
+llama-index = "^0.11.23"
 
 [tool.poetry.extras]
 all = [ "playwright", "chromadb", "unstructured",]
