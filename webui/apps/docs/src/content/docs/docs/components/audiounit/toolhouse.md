@@ -3,6 +3,8 @@ title: Toolhouse
 description: Description of the Toolhouse component
 ---
 
+**Description:** A configurable tool backed by Toolhouse.ai that can be added to Eidolon Agents
+
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
 | + [implementation](#implementation ) | No      | const  | No         | -          | Implementation    |

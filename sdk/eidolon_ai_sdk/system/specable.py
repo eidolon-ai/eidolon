@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import textwrap
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, Type
 
 from pydantic import GetJsonSchemaHandler, BaseModel
 from pydantic.json_schema import JsonSchemaValue
@@ -34,10 +34,7 @@ class Specable(Generic[T]):
         ref = handler(core_schema)
         json_schema = handler.resolve_ref_schema(ref)
         json_schema["title"] = cls.__name__
-        if "extra" not in cls.specable_cls().model_config:  # default to no extra props
-            json_schema["additionalProperties"] = False
-        if "description" not in json_schema and cls.specable_cls().__doc__:
-            json_schema["description"] = textwrap.dedent(cls.specable_cls().__doc__).strip()
+        transform_spec_schema(json_schema, cls.specable_cls())
         return json_schema
 
     @classmethod
@@ -51,3 +48,14 @@ class Specable(Generic[T]):
             return specable.__args__[0]
         else:
             raise ValueError(f"Specable base {cls} not found")
+
+
+def transform_spec_schema(json_schema: dict, spec_cls: Type[BaseModel]):
+    """
+    Warning, mutates object rather than creating a new schema
+    """
+
+    if "extra" not in spec_cls.model_config:  # default to no extra props
+        json_schema["additionalProperties"] = False
+    if "description" not in json_schema and spec_cls.__doc__:
+        json_schema["description"] = textwrap.dedent(spec_cls.__doc__).strip()

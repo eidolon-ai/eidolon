@@ -8,7 +8,9 @@ from toolhouse.models.RunToolsRequest import RunToolsRequest
 
 
 class Toolhouse(ToolBuilder):
-    """A configurable tool backed by Toolhouse.ai that can be added to Eidolon Agents"""
+    """
+    A configurable tool backed by Toolhouse.ai that can be added to Eidolon Agents
+    """
 
     api_key: str = Field(default_factory=lambda: os.environ["TOOLHOUSE_API_KEY"])
     bundle: str = "default"

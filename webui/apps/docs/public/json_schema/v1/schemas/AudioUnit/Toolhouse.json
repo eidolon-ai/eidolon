@@ -1,4 +1,6 @@
 {
+  "additionalProperties": false,
+  "description": "A configurable tool backed by Toolhouse.ai that can be added to Eidolon Agents",
   "properties": {
     "implementation": {
       "const": "Toolhouse",
