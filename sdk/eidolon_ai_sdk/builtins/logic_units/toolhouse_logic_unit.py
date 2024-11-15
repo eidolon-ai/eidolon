@@ -32,10 +32,19 @@ def tool_build(spec: Toolhouse):
     #breakpoint()
 
     for tool in tools:
-        @Toolhouse.tool(description=tool['function']['description'], name=tool['function']['name'], input_schema=tool['function']['parameters'])
+        @Toolhouse.tool(description=tool['function']['description'], name=tool['function']['name'], parameters=tool['function']['parameters'])
         async def tool_register(**kwargs): ## What is the args going in here
             ## tool will be kwarg
-            run_tool_request = RunToolsRequest(dict(type="function", function=dict(name=tool['function']['name'], arguments=json.dumps(kwargs)), id="foo"), th.provider, th.metadata, th.bundle)
+            run_tool_request = RunToolsRequest(
+                dict(
+                    type="function", 
+                    function=dict(name=tool['function']['name'], arguments=json.dumps(kwargs)), 
+                    id="foo"
+                ), 
+                th.provider, 
+                th.metadata, 
+                th.bundle
+            )
             run_response = th.tools.run_tools(run_tool_request)
             return run_response.content.content
             

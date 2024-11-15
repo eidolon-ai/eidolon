@@ -11,17 +11,20 @@ from eidolon_ai_client import client
 
 @pytest.fixture(scope="module", autouse=True)
 async def server(run_app):
-    async with run_app(
-        Resource(
+    resource_toolhouse = Resource(
             apiVersion="eidolon/v1",
             kind="Agent",
-            metadata=Metadata(name="toolhouse_agent",
+            metadata=Metadata(
+                name="toolhouse_agent"
+            ), 
             spec=dict(
                 implementation="SimpleAgent",
                 apu=dict(logic_units=[dict(implementation=fqn(Toolhouse))])
-            ),
+            )
     )
-        )
+    
+    async with run_app(
+        resource_toolhouse
          ) as ra:
         yield ra
 
