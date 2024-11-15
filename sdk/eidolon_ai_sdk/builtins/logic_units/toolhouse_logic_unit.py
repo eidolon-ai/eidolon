@@ -8,9 +8,12 @@ from toolhouse.models.RunToolsRequest import RunToolsRequest
 
 
 class Toolhouse(ToolBuilder):
-    """A configurable tool backed by Toolhouse.ai that can be added to Eidolon Agents"""
-    api_key: str = Field(default_factory=lambda:os.environ['TOOLHOUSE_API_KEY'])
-    bundle: str = "default"
+    """
+    A configurable tool backed by Toolhouse.ai that can be added to Eidolon Agents.
+    Toolhouse is the complete cloud infrastructure to equip LLMs with actions and knowledge.
+    """
+    api_key: str = Field(default_factory=lambda:os.environ['TOOLHOUSE_API_KEY'], description="Toolhouse API_KEY to connect toolhouse.")
+    bundle: str = Field(default="default", description="groups of tools you want to pass to the LLM based on specific contextual need of each LLM call or agent.")
     base_url: Optional[str] = None
 
 
