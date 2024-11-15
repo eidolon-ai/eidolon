@@ -1,0 +1,40 @@
+{
+  "properties": {
+    "implementation": {
+      "const": "Toolhouse",
+      "title": "Implementation"
+    },
+    "api_key": {
+      "title": "Api Key",
+      "type": "string"
+    },
+    "bundle": {
+      "default": "default",
+      "title": "Bundle",
+      "type": "string"
+    },
+    "base_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Base Url"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.builtins.logic_units.toolhouse_logic_unit.Toolhouse",
+    "group": "AudioUnit",
+    "name": "Toolhouse",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "Toolhouse",
+  "type": "object"
+}
