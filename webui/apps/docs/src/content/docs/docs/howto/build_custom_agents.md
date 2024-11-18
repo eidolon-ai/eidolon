@@ -14,8 +14,12 @@ Eidolon includes an <a href="https://github.com/eidolon-ai/eidolon/tree/main/sdk
 *Audience: software developers*
 
 ## When to Create a Custom Agent Template
-- If an existing agent template works for you, but you want to extend its capabilities, attach an existing tool or consider creating a [custom tool](/docs/howto/build_custom_tools/).
-- If you want an agent to behave differently to solve a specific problem, create a custom agent template.
+If an existing agent template works for you, but you want to extend its capabilities, attach an existing tool or consider creating a [custom tool](/docs/howto/build_custom_tools/).
+
+Consider a custom agent template if:
+- You want an agent to behave differently to solve a specific problem, create a custom agent template.
+- You frequently make the same customizations on agent resources.
+- You want to control the scope of what is configurable in agent resource files.
 
 > Not sure how tools can extend an agent's capabilities? See [Eidolon's pre-built tools](/docs/components/logicunit/overview) for some examples. (*Note: tools were formerly referred to as "LogicUnits".*)
 
@@ -24,9 +28,14 @@ For this example, you'll create a custom agent template that plans responses bef
 
 Notes:
 > A completed example is available for reference at <a href="https://github.com/eidolon-ai/howto-custom-agent" target=_blank>Eidolon's github page</a>.
- 
-> This guide assumes you have an Eidolon **agent-machine** running. If you don't, create a new GitHub repository using the [agent-machine template](https://github.com/new?template_name=agent-machine&template_owner=eidolon-ai). Then clone your repository to your local machine and follow the steps below.
 
+Eidolon provides an <a href="https://github.com/eidolon-ai/agent-machine" target=_blank>agent-machine</a> template that has everything you need to build and deploy agents. All that's missing is your business logic.
+
+```bash
+git clone https://github.com/eidolon-ai/agent-machine.git
+cd agent-machine
+```
+ 
 🚨 All commands assume you are in the root directory of your **agent-machine** repository.
 
 ### 1. Define the Configuration
@@ -129,7 +138,7 @@ spec:
   description: "Custom agent that plans before responding"  # Optional: Override default configuration
 ```
 
-> The FQN is the complete import path to your agent template class, which must be on the server's `PYTHONPATH`
+> Note: the FQN is the complete import path to your agent template class, which must be on the server's `PYTHONPATH`. The `agent-machine` takes care of this for you.
 
 ### 4. Build and Deploy
 Build and deploy your agent to the Eidolon server by running the script at the root of your **agent-machine**. Your custom agent will now start planning responses before executing them.
@@ -137,6 +146,8 @@ Build and deploy your agent to the Eidolon server by running the script at the r
 ```bash
 make docker-serve
 ```
+
+> Note: you may be prompted to enter your OPENAI_API_KEY. See [Quickstart Prerequisites](/docs/quickstart#prerequisites) if this is your first time running Eidolon.
 ## Add Dynamic Actions
 
 To take this example to the next level, you can code the agent to dynamically configure actions based on runtime values.
