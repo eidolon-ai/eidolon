@@ -5,7 +5,7 @@ description: How to create custom agentic AI templates with Eidolon
 A guide for software developers to create custom agentic AI templates with Eidolon
 
 ## Overview
-Eidolon provides built-in [Agent Templates](/docs/components/agents/overview) that automate workflows and serve people. The [SimpleAgent](/docs/components/agent/simpleagent), for example, is a general-purpose, conversational agent template that can be configured at deployment to perform a wide variety of tasks. 
+Eidolon provides built-in [Agent Templates](/docs/components/agent/overview) that automate workflows and serve people. The [SimpleAgent](/docs/components/agent/simpleagent), for example, is a general-purpose, conversational agent template that can be configured at deployment to perform a wide variety of tasks. 
 
 Sometimes, however, you have a domain-specific problem that needs a custom agent. 
 
@@ -52,7 +52,7 @@ class PlanningAgent(AgentBuilder):
     user_prompt_template: str = "{user_message}\n\nFollow the execution plan below:\n{steps}"
 ```
 
-The <a href="sdk/eidolon_ai_sdk/system/agent_builder.py" target=_blank>AgentBuilder</a> provides configuration defaults for core capabilities:
+The <a href="https://github.com/eidolon-ai/eidolon/blob/main/sdk/eidolon_ai_sdk/system/agent_builder.py" target=_blank>AgentBuilder</a> provides configuration defaults for core capabilities:
 - `apu`: Makes LLM calls without managing state or model-specific behavior
 - `agent_refs`: Communicates with other agents
 - `tools`: Adds additional capabilities
@@ -104,7 +104,7 @@ signature. `name` and `description` come from the function name and docstrings r
 while `body` is determined by how <a href="https://fastapi.tiangolo.com/" target=_blank>FastAPI</a> interprets the function signature.
 
 > The `APU` (Agent Processing Unit) is at the center of the Eidolon AI SDK. It allows you to make LLM calls without needing to keep
-track of state or model capabilities. It is a multi-modal, model-agnostic interface. To learn more, see the <a href="/docs/architecture/agent_apu" target=blank>architecture documentation</a> and the Eidolon blog <a href="/post/what_is_apu" target=_blank>What is an APU?</a>.
+track of state or model capabilities. It is a multi-modal, model-agnostic interface. To learn more, see the <a href="/docs/architecture/agent_apu" target=blank>architecture documentation</a> and the Eidolon blog <a href="/what_is_apu" target=_blank>What is an APU?</a>.
 
 > `Threads` are used to manage the state of a conversation. Each thread has its own memory, so LLM requests can be 
 siloed. You can create new threads (with no memory), or clone an existing thread to reuse its previous memories without 
