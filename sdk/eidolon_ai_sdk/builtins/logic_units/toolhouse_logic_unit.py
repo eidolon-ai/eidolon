@@ -24,7 +24,7 @@ def tool_build(spec: Toolhouse):
     if spec.base_url:
         th.set_base_url(spec.base_url)
 
-    tools = th.get_tools()
+    tools = th.get_tools(bundle=th.bundle)
 
     ## Running Tool
     for tool in tools:
