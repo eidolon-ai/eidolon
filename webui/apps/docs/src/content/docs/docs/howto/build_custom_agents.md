@@ -1,36 +1,42 @@
 ---
 title: How to Build Custom Agent Templates
-description: A guide to creating custom agent templates in Eidolon
+description: How to create custom agentic AI templates with Eidolon
 ---
-A guide to creating custom agent templates in Eidolon
+A guide for software developers to create custom agentic AI templates with Eidolon
 
 ## Overview
-Eidolon provides built-in [AgentTemplates](/docs/components/agents/overview). The [SimpleAgent](/docs/components/agent/simpleagent), for example, is a general-purpose, conversational agent that can be configured and enhanced to perform a wide variety of tasks. Sometimes, however, you may need to create custom agents for domain-specific problems.
+Eidolon provides built-in [Agent Templates](/docs/components/agents/overview) that automate workflows and serve people. The [SimpleAgent](/docs/components/agent/simpleagent), for example, is a general-purpose, conversational agent template that can be configured at deployment to perform a wide variety of tasks. 
+
+Sometimes, however, you have a domain-specific problem that needs a custom agent. 
+
+Eidolon includes an <a href="https://github.com/eidolon-ai/eidolon/tree/main/sdk" target=_blank>agent SDK</a> that makes it easy for software developers to create custom agents. The ease of creating custom agent templates in Eidolon expands the reach of agentic AI to more real-world business use cases.
+
+*Audience: software developers*
 
 ## When to Create a Custom Agent Template
-- If you only need to enhance the capabilities of an existing agent template, consider creating a [custom tool](/docs/howto/build_custom_tools/) instead
-- Create a custom agent template when you need to define a new agent architecture for a specific problem
+- If an existing agent template works for you, but you want to extend its capabilities, attach an existing tool or consider creating a [custom tool](/docs/howto/build_custom_tools/).
+- If you want an agent to behave differently to solve a specific problem, create a custom agent template.
 
-> Note: If you want to see this in action, but don't want to build it yourself, you can find the example available on 
-[github](https://github.com/eidolon-ai/howto-custom-agent).
+> Not sure how tools can extend an agent's capabilities? See [Eidolon's pre-built tools](/docs/components/logicunit/overview) for some examples. (*Note: tools were formerly referred to as "LogicUnits".*)
 
 ## Building a Custom Agent Template
-Let's create an example agent template that plans responses before executing them.
+For this example, you'll create a custom agent template that plans responses before executing them.
 
-This guide will assume you already have an `agent-machine` that you are building with. If you don't, you create a new 
-repository using the [agent-machine template](https://github.com/new?template_name=agent-machine&template_owner=eidolon-ai). 
-Once you have created a new repository, clone it to your local machine and follow the steps below.
+Notes:
+> A completed example is available for reference at <a href="https://github.com/eidolon-ai/howto-custom-agent" target=_blank>Eidolon's github page</a>.
+ 
+> This guide assumes you have an Eidolon **agent-machine** running. If you don't, create a new GitHub repository using the [agent-machine template](https://github.com/new?template_name=agent-machine&template_owner=eidolon-ai). Then clone your repository to your local machine and follow the steps below.
 
-🚨 All commands will assume you are in the root directory of your agent-machine repository.
+🚨 All commands assume you are in the root directory of your **agent-machine** repository.
 
 ### 1. Define the Configuration
-First, create a new file `components/planning_agent.py` to implement our Agent template.
+Create a new file `components/planning_agent.py` to implement our custom agent template.
 
 ```bash
 touch components/planning_agent.py
 ```
 
-Next, create your agent template configuration by extending the `AgentBuilder` class:
+Edit `planning_agent.py` to create the agent template configuration. Extend the `AgentBuilder` class as follows:
 
 ```python
 from eidolon_ai_sdk.system.agent_builder import AgentBuilder
@@ -46,10 +52,12 @@ class PlanningAgent(AgentBuilder):
     user_prompt_template: str = "{user_message}\n\nFollow the execution plan below:\n{steps}"
 ```
 
-The `AgentBuilder` provides some default configuration as well that is not shown:
-- `apu`: Make LLM calls without managing state or model-specific behavior
-- `agent_refs`: Communicate with other agents
-- `tools`: Add additional capabilities
+The <a href="sdk/eidolon_ai_sdk/system/agent_builder.py" target=_blank>AgentBuilder</a> provides configuration defaults for core capabilities:
+- `apu`: Makes LLM calls without managing state or model-specific behavior
+- `agent_refs`: Communicates with other agents
+- `tools`: Adds additional capabilities
+
+These built-in capabilities make your job as a developer faster and easier without compromising flexibility.
 
 ### 2. Add Agent Actions
 
@@ -92,19 +100,19 @@ async def converse(process_id: str, user_message: Annotated[str, Body()], spec: 
 ```
 #### Notes:
 > The action `name`, `description`, and `body` are automatically built using the function 
-signature. The first two come from the function name and docstrings respectively (but can be overridden by parameter), 
-while the third is determined by how [FastAPI](https://fastapi.tiangolo.com/) interprets the function signature.
+signature. `name` and `description` come from the function name and docstrings respectively (but can be overridden by parameter), 
+while `body` is determined by how <a href="https://fastapi.tiangolo.com/" target=_blank>FastAPI</a> interprets the function signature.
 
-> The `APU` is at the center of the Eidolon AI SDK. It allows you to make LLM calls without needing to keep
-track of state or model capabilities. It is a multi-modal, model-agnostic interface.
+> The `APU` (Agent Processing Unit) is at the center of the Eidolon AI SDK. It allows you to make LLM calls without needing to keep
+track of state or model capabilities. It is a multi-modal, model-agnostic interface. To learn more, see the <a href="/docs/architecture/agent_apu" target=blank>architecture documentation</a> and the Eidolon blog <a href="/post/what_is_apu" target=_blank>What is an APU?</a>.
 
-> `Threads` are used to manage the state of a conversation. Each thread has its own memory, so llm requests can be 
-siloed. You can create new threads (with no memory), or clone an existing thread to reuse it's previous memories without 
+> `Threads` are used to manage the state of a conversation. Each thread has its own memory, so LLM requests can be 
+siloed. You can create new threads (with no memory), or clone an existing thread to reuse its previous memories without 
 adding to them.
 
 ### 3. Using Your Custom Agent Template
-Now, to use your custom agent template, create a new agent resource and reference the PlanningAgent 
-implementation by its using its [Fully Qualified Name (FQN)](https://peps.python.org/pep-3155/):
+To use your custom agent template, create a new agent resource and reference the `PlanningAgent` 
+implementation by its <a href="https://peps.python.org/pep-3155" target=_blank>Fully Qualified Name (FQN)</a>:
 
 ```bash
 touch resources/planning_agent.eidolon.yaml
@@ -114,7 +122,7 @@ touch resources/planning_agent.eidolon.yaml
 apiVersion: server.eidolonai.com/v1alpha1
 kind: Agent
 metadata:
-  name: planning-agent
+  name: planning-agent # The name you give your agent for deployment. You can use hyphens, but no underscores, spaces, or other punctuation.
 spec:
   # Implementation is the FQN of your agent template class.
   implementation: components.planning_agent.PlanningAgent
@@ -124,23 +132,23 @@ spec:
 > The FQN is the complete import path to your agent template class, which must be on the server's `PYTHONPATH`
 
 ### 4. Build and Deploy
-Finally, build and deploy your agent to the Eidolon server and your agent will now start planning responses before executing them.
+Build and deploy your agent to the Eidolon server by running the script at the root of your **agent-machine**. Your custom agent will now start planning responses before executing them.
 
 ```bash
 make docker-serve
 ```
 ## Add Dynamic Actions
 
-You can code the agent to dynamically configure the action based on runtime values.
+To take this example to the next level, you can code the agent to dynamically configure actions based on runtime values.
 
-In the example below, `description` is added to the `PlanningAgent` spec. Compare this with the code in step [1. Define the Configuration](#1.-Define-the-Configuration).
+In the example below, `description` is added to the `PlanningAgent` spec. Compare this with the code in step [1. Define the Configuration](#1-define-the-configuration).
 
 ```python
 class PlanningAgent(AgentBuilder):
     description: str = "Custom agent that plans before responding"
 ```
 
-The outer `build_actions` function can dynamically modify the action based on the value of `spec.description`. Compare this with the code in step [2. Add Agent Actions](#2.-Add-Agent-Actions)
+The outer `build_actions` function can dynamically modify the action based on the value of `spec.description`. Compare this with the code in step [2. Add Agent Actions](#2-add-agent-actions)
 
 ```python
 @PlanningAgent.dynamic_contract
