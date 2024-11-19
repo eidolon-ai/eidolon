@@ -1,6 +1,6 @@
 {
   "additionalProperties": false,
-  "description": "Loads files from a GitHub repository. Note that you will likely hit rate limits on all but the smallest repositories\nunless a TOKEN is provided",
+  "description": "Deprecated. Will be removed at a later version.\n\nUse GitHubLoaderV2 instead",
   "properties": {
     "implementation": {
       "const": "GitHubLoader",
