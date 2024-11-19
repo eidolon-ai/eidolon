@@ -213,14 +213,14 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
                     client = LocalGitClient()
                     wants = [f.file_info.metadata['sha'].encode('ascii') for f in blobless_changes]
 
-                    await make_async(client.fetch_pack)(
+                    client.fetch_pack(
                         repo.path,
                         determine_wants=lambda refs: wants,
                         graph_walker=NullGraphWalker(),
                         pack_data=repo.object_store.add_pack()[0].write,
                     )
-                    async for change in self._transform_changes(blobless_changes, repo):
-                        yield change
+                    for change in blobless_changes:
+                        yield await self._transform_change(change, repo)
 
                 yield RootMetadata({'commit': current_commit, 'pattern': list(pattern), 'exclude': list(excluded)})
 
