@@ -3,6 +3,7 @@ import fnmatch
 import os
 import tempfile
 from asyncio import Task
+from contextlib import asynccontextmanager
 from typing import AsyncIterator, Dict, Any
 from typing import List
 from typing import Optional
@@ -153,6 +154,21 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
         super().__init__(*args, **kwargs)
         self.url = self.spec.templated_url()
 
+    @asynccontextmanager
+    async def with_repo(self, depth):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            repo: Repo = await make_async(porcelain.clone)(
+                self.url,
+                target=tmp_dir,
+                depth=depth,
+                branch=self.spec.branch,
+                bare=True,
+            )
+            try:
+                yield repo
+            finally:
+                repo.close()
+
     async def get_changes(self, metadata: LoaderMetadata, current_commit_override: Optional[str] = None) -> AsyncIterator[FileChange]:
         pattern = set(self.spec.pattern if isinstance(self.spec.pattern, list) else [self.spec.pattern])
         excluded = set(self.spec.exclude if isinstance(self.spec.exclude, list) else [self.spec.exclude])
@@ -166,15 +182,7 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
         if commit_matches and found_pattern == pattern and found_excluded == excluded:
             logger.info("No changes detected")
         else:
-            with tempfile.TemporaryDirectory() as tmp_dir:
-                repo: Repo = await make_async(porcelain.clone)(
-                    self.url,
-                    target=tmp_dir,
-                    depth=self.spec.diff_depth if 'commit' in metadata.root_metadata else 1,
-                    branch=self.spec.branch,
-                    bare=True,
-                )
-            try:
+            async with self.with_repo(self.spec.diff_depth if 'commit' in metadata.root_metadata else 1) as repo:
                 commit: Commit = repo[current_commit.encode('ascii')]
                 try:
                     old_commit: Optional[Commit] = repo[metadata.root_metadata['commit'].encode('ascii')]
@@ -202,19 +210,19 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
                         yield change
 
                 if blobless_changes:
-                    await make_async(LocalGitClient().fetch_pack)(
-                        tmp_dir,
-                        depth=1,
-                        determine_wants=lambda refs: [f.file_info.metadata['sha'].encode('ascii') for f in blobless_changes],
-                        graph_walker=_NullGraphWalker(),
-                        pack_data=repo.object_store.add_pack,
+                    client = LocalGitClient()
+                    wants = [f.file_info.metadata['sha'].encode('ascii') for f in blobless_changes]
+
+                    await make_async(client.fetch_pack)(
+                        repo.path,
+                        determine_wants=lambda refs: wants,
+                        graph_walker=NullGraphWalker(),
+                        pack_data=repo.object_store.add_pack()[0].write,
                     )
                     async for change in self._transform_changes(blobless_changes, repo):
                         yield change
 
                 yield RootMetadata({'commit': current_commit, 'pattern': list(pattern), 'exclude': list(excluded)})
-            finally:
-                repo.close()
 
     async def _transform_changes(self, blobless, repo):
         tasks = []
@@ -227,7 +235,7 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
 
     @make_async
     def _transform_change(self, change, repo):
-        change.file_info.data = DataBlob(repo[change.file_info.metadata['sha']].data)
+        change.file_info.data = DataBlob(repo[change.file_info.metadata['sha'].encode('ascii')].data)
         return change
 
     @make_async
@@ -318,11 +326,13 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
         return matched and not any(fnmatch.fnmatch(full_path, e) for e in excluded)
 
 
-class _NullGraphWalker:
+class NullGraphWalker:
     """A graph walker that always returns no commits."""
+    def __init__(self):
+        self.shallow = set()
 
-    def __next__(self, *args, **kwargs):
-        raise StopIteration()
+    def __next__(self):
+        return None  # Return None instead of raising StopIteration
 
-    def ack(self, *args, **kwargs):
+    def ack(self, sha):
         pass
