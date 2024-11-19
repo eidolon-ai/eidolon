@@ -11,7 +11,7 @@ from typing import Optional
 import certifi
 from dulwich import porcelain
 from dulwich.client import get_transport_and_path
-from dulwich.objects import Commit, Tree
+from dulwich.objects import Tree
 from dulwich.repo import Repo
 from httpx import AsyncClient
 from pydantic import Field
@@ -270,7 +270,7 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
                             data=None
                         ))
                     else:
-                        logger.debug(f"Skipping unchanged file", full_path)
+                        logger.debug("Skipping unchanged file", full_path)
                 else:
                     yield AddedFile(FileInfo(
                         path=full_path,
@@ -279,7 +279,7 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
                     ))
             else:
                 print(full_path, "unknown")
-                logger.debug(f"Skipping non-matching file", full_path)
+                logger.debug("Skipping non-matching file", full_path)
 
         if delete_remaining:
             print("deleting remaining", len(existing_files))
