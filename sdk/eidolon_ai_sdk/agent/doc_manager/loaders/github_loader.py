@@ -259,6 +259,7 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
                 ):
                     yield change
             elif self._matches(full_path):
+                print(full_path, "known")
                 existing = existing_files.pop(full_path, None)
                 sha_str = entry.sha.decode('ascii')
                 if existing:
@@ -268,6 +269,8 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
                             metadata={'sha': sha_str},
                             data=None
                         ))
+                    else:
+                        logger.debug(f"Skipping unchanged file", full_path)
                 else:
                     yield AddedFile(FileInfo(
                         path=full_path,
@@ -275,11 +278,13 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
                         data=None
                     ))
             else:
+                print(full_path, "unknown")
                 logger.debug(f"Skipping non-matching file", full_path)
 
-            if delete_remaining:
-                for p in existing_files.keys():
-                    yield RemovedFile(p)
+        if delete_remaining:
+            print("deleting remaining", len(existing_files))
+            for p in existing_files.keys():
+                yield RemovedFile(p)
 
     def _matches(self, path: str) -> bool:
         if self.spec.pattern == "**" and not self.spec.exclude:

@@ -1,4 +1,3 @@
-from collections import Counter
 from typing import List
 
 import pytest
@@ -26,7 +25,7 @@ def md(metadata: dict = None, files: List[FileInfoMetadata] = None):
     return LoaderMetadata(metadata, yielder)
 
 
-# @pytest.mark.vcr()
+@pytest.mark.vcr()
 async def test_can_load_repo(github_loader: GitHubLoaderV2):
     changes = [c async for c in github_loader.get_changes(md())]
     assert len(changes) > 40
@@ -38,6 +37,7 @@ async def test_can_load_repo(github_loader: GitHubLoaderV2):
     assert "commit" in grouped[RootMetadata][0].metadata
 
 
+@pytest.mark.vcr()
 async def test_reload_is_noop(github_loader: GitHubLoaderV2):
     changes = [c async for c in github_loader.get_changes(md())]
     assert len(changes) > 40
@@ -50,6 +50,7 @@ async def test_reload_is_noop(github_loader: GitHubLoaderV2):
     assert len(changes) == 0
 
 
+@pytest.mark.vcr()
 async def test_reloads_only_changed_files(github_loader: GitHubLoaderV2):
     files = [c.file_info async for c in github_loader.get_changes(md()) if isinstance(c, AddedFile)]
 
@@ -66,7 +67,6 @@ async def test_reloads_only_changed_files(github_loader: GitHubLoaderV2):
     files = [FileInfoMetadata(path=a.path, metadata=a.metadata) for a in files]
 
     changes = [c async for c in github_loader.get_changes(md(files=files))]
-    assert len(changes) > 40
     grouped = {}
     for c in changes:
         grouped.setdefault(type(c), []).append(c)
