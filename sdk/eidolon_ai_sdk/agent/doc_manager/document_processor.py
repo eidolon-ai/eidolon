@@ -82,6 +82,6 @@ class DocumentProcessor(Specable[DocumentProcessorSpec]):
             await self.remove_file(collection_name, file_info.path)
             await self.add_file(collection_name, file_info)
 
-    async def list_files(self, collection_name: str) -> AsyncGenerator[FileInfoMetadata]:
+    async def list_files(self, collection_name: str) -> AsyncGenerator[FileInfoMetadata, None]:
         async for file in AgentOS.symbolic_memory.find(collection_name, {}):
             yield FileInfoMetadata(file["file_path"], file["data"])

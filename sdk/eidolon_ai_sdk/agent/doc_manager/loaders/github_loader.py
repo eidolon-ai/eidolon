@@ -123,12 +123,6 @@ class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):
         return op(FileInfo(file["path"], new_metadata, await self._data(client, file)))
 
 
-# dulwich requires these to be set
-os.environ['SSL_CERT_FILE'] = certifi.where()
-os.environ['REQUESTS_CA_BUNDLE'] = certifi.where()
-os.environ['CURL_CA_BUNDLE'] = certifi.where()
-
-
 class GitHubLoaderV2Spec(DocumentLoaderSpec):
     """
     Loads files from a GitHub repository. Note that you will likely hit rate limits on all but the smallest repositories
@@ -148,11 +142,22 @@ class GitHubLoaderV2Spec(DocumentLoaderSpec):
 
 
 class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
+    _init: bool = False
     url: str
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.url = self.spec.templated_url()
+        self._init()
+
+    @classmethod()
+    def _init(cls):
+        if not cls._init:
+            # dulwich requires these to be set
+            os.environ['SSL_CERT_FILE'] = certifi.where()
+            os.environ['REQUESTS_CA_BUNDLE'] = certifi.where()
+            os.environ['CURL_CA_BUNDLE'] = certifi.where()
+            cls._init = True
 
     @asynccontextmanager
     async def with_repo(self):
