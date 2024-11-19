@@ -1,0 +1,59 @@
+interactions:
+- request:
+    body: '{"provider": "openai", "metadata": {}, "bundle": "default"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '59'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Toolhouse/1.2.1 Python/3.12.6
+      authorization:
+      - XXXXXX
+    method: POST
+    uri: https://api.toolhouse.ai/v1/get_tools
+  response:
+    body:
+      string: '[{"type":"function","function":{"name":"code_interpreter","description":"Allows
+        you to run the code you generate. You can use this tool to verify that the
+        code you generate is valid and contains all the relevant dependencies. IMPORTANT:
+        When sending code, end your code with a print statement of the result. If
+        you return something, make sure to change that return statement for a print
+        statement.","parameters":{"type":"object","properties":{"code_str":{"type":"string","description":"The
+        code to execute. Only Python is supported at the moment. IMPORTANT: When sending
+        code, end your code with a print statement of the result. If you return something,
+        make sure to change that return statement for a print statement."}}}},"required":["code_str"]},{"type":"function","function":{"name":"exa_web_search","description":"Performs
+        a web search using a search engine like Google Search. You can use the Google
+        search query syntax. By default, web search returns up to 5 results, but your
+        LLM can specify a different number of results. To do so, you can prompt your
+        LLM to pass a ''num_results'' argument to your query.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"The
+        search query. You can use natural language to describe what you want to search
+        for."},"num_results":{"type":"number","description":"The number of results
+        you want to get. If you don''t specify this parameter, you''ll get 3 results."}}}},"required":["query"]},{"type":"function","function":{"name":"scraper","description":"Gets
+        the content of a page using the URL you specify.","parameters":{"type":"object","properties":{"url":{"type":"string","description":"The
+        URL of the page you want to get the contents of. Specify a canonical URL."}}}},"required":["url"]}]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1762'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 15 Nov 2024 02:02:26 GMT
+      X-Amzn-Trace-Id:
+      - Root=1-6736abb1-06374baa30c1fb6e5a6ba5e2;Parent=3de12f1f1e59afe9;Sampled=0;Lineage=1:26438fdb:0
+      x-amz-apigw-id:
+      - BQ_D1Gk3vHcEKtQ=
+      x-amzn-RequestId:
+      - bbd2a748-1e1e-4d78-8ad2-3ef45d6f6507
+    status:
+      code: 200
+      message: OK
+version: 1

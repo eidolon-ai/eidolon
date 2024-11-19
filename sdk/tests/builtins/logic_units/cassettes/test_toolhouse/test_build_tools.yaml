@@ -1,0 +1,511 @@
+interactions:
+- request:
+    body: '{"provider": "openai", "metadata": {}, "bundle": "default"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '59'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Toolhouse/1.2.1 Python/3.12.6
+      authorization:
+      - XXXXXX
+    method: POST
+    uri: https://api.toolhouse.ai/v1/get_tools
+  response:
+    body:
+      string: '[{"type":"function","function":{"name":"code_interpreter","description":"Allows
+        you to run the code you generate. You can use this tool to verify that the
+        code you generate is valid and contains all the relevant dependencies. IMPORTANT:
+        When sending code, end your code with a print statement of the result. If
+        you return something, make sure to change that return statement for a print
+        statement.","parameters":{"type":"object","properties":{"code_str":{"type":"string","description":"The
+        code to execute. Only Python is supported at the moment. IMPORTANT: When sending
+        code, end your code with a print statement of the result. If you return something,
+        make sure to change that return statement for a print statement."}}}},"required":["code_str"]},{"type":"function","function":{"name":"exa_web_search","description":"Performs
+        a web search using a search engine like Google Search. You can use the Google
+        search query syntax. By default, web search returns up to 5 results, but your
+        LLM can specify a different number of results. To do so, you can prompt your
+        LLM to pass a ''num_results'' argument to your query.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"The
+        search query. You can use natural language to describe what you want to search
+        for."},"num_results":{"type":"number","description":"The number of results
+        you want to get. If you don''t specify this parameter, you''ll get 3 results."}}}},"required":["query"]},{"type":"function","function":{"name":"scraper","description":"Gets
+        the content of a page using the URL you specify.","parameters":{"type":"object","properties":{"url":{"type":"string","description":"The
+        URL of the page you want to get the contents of. Specify a canonical URL."}}}},"required":["url"]}]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1762'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 15 Nov 2024 02:02:27 GMT
+      X-Amzn-Trace-Id:
+      - Root=1-6736abb3-6fa3e70108f0ef651ddc4ed3;Parent=2d5c3260544bc46a;Sampled=0;Lineage=1:26438fdb:0
+      x-amz-apigw-id:
+      - BQ_EDF1pPHcEFFQ=
+      x-amzn-RequestId:
+      - ada46f2e-be74-44d4-a5fe-12ec7c4746a3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!python/object/new:_io.BytesIO
+      state: !!python/tuple
+      - !!binary |
+        eyJtZXNzYWdlcyI6IFt7InJvbGUiOiAic3lzdGVtIiwgImNvbnRlbnQiOiAiWW91IGFyZSBhIGhl
+        bHBmdWwgYXNzaXN0YW50LiBBbHdheXMgdXNlIHRoZSBwcm92aWRlZCB0b29scywgaWYgYXBwcm9w
+        cmlhdGUsIHRvIGNvbXBsZXRlIHRoZSB0YXNrLiJ9LCB7InJvbGUiOiAidXNlciIsICJjb250ZW50
+        IjogW3sidHlwZSI6ICJ0ZXh0IiwgInRleHQiOiAiVXNlIHRoZSB3ZWIgc2VhcmNoIHRvb2wgdG8g
+        Y2hlY2sgdGhlIGNhcGl0YWwgb2YgRnJhbmNlLiBSZXNwb25kICdjb3JyZWN0JyBpZiB0aGUgd2Vi
+        IHRvb2wgcmV0dXJucyAnUGFyaXMnIGFuZCAnaW5jb3JyZWN0JyBvdGhlcndpc2UuIn1dfV0sICJt
+        b2RlbCI6ICJncHQtNC10dXJibyIsICJzdHJlYW0iOiB0cnVlLCAidGVtcGVyYXR1cmUiOiAwLjMs
+        ICJ0b29scyI6IFt7InR5cGUiOiAiZnVuY3Rpb24iLCAiZnVuY3Rpb24iOiB7Im5hbWUiOiAiVG9v
+        bGhvdXNlX2NvZGVfaW50ZXJwcmV0ZXIiLCAiZGVzY3JpcHRpb24iOiAiQWxsb3dzIHlvdSB0byBy
+        dW4gdGhlIGNvZGUgeW91IGdlbmVyYXRlLiBZb3UgY2FuIHVzZSB0aGlzIHRvb2wgdG8gdmVyaWZ5
+        IHRoYXQgdGhlIGNvZGUgeW91IGdlbmVyYXRlIGlzIHZhbGlkIGFuZCBjb250YWlucyBhbGwgdGhl
+        IHJlbGV2YW50IGRlcGVuZGVuY2llcy4gSU1QT1JUQU5UOiBXaGVuIHNlbmRpbmcgY29kZSwgZW5k
+        IHlvdXIgY29kZSB3aXRoIGEgcHJpbnQgc3RhdGVtZW50IG9mIHRoZSByZXN1bHQuIElmIHlvdSBy
+        ZXR1cm4gc29tZXRoaW5nLCBtYWtlIHN1cmUgdG8gY2hhbmdlIHRoYXQgcmV0dXJuIHN0YXRlbWVu
+        dCBmb3IgYSBwcmludCBzdGF0ZW1lbnQuIiwgInBhcmFtZXRlcnMiOiB7InR5cGUiOiAib2JqZWN0
+        IiwgInByb3BlcnRpZXMiOiB7ImNvZGVfc3RyIjogeyJ0eXBlIjogInN0cmluZyIsICJkZXNjcmlw
+        dGlvbiI6ICJUaGUgY29kZSB0byBleGVjdXRlLiBPbmx5IFB5dGhvbiBpcyBzdXBwb3J0ZWQgYXQg
+        dGhlIG1vbWVudC4gSU1QT1JUQU5UOiBXaGVuIHNlbmRpbmcgY29kZSwgZW5kIHlvdXIgY29kZSB3
+        aXRoIGEgcHJpbnQgc3RhdGVtZW50IG9mIHRoZSByZXN1bHQuIElmIHlvdSByZXR1cm4gc29tZXRo
+        aW5nLCBtYWtlIHN1cmUgdG8gY2hhbmdlIHRoYXQgcmV0dXJuIHN0YXRlbWVudCBmb3IgYSBwcmlu
+        dCBzdGF0ZW1lbnQuIn19fX19LCB7InR5cGUiOiAiZnVuY3Rpb24iLCAiZnVuY3Rpb24iOiB7Im5h
+        bWUiOiAiVG9vbGhvdXNlX2V4YV93ZWJfc2VhcmNoIiwgImRlc2NyaXB0aW9uIjogIlBlcmZvcm1z
+        IGEgd2ViIHNlYXJjaCB1c2luZyBhIHNlYXJjaCBlbmdpbmUgbGlrZSBHb29nbGUgU2VhcmNoLiBZ
+        b3UgY2FuIHVzZSB0aGUgR29vZ2xlIHNlYXJjaCBxdWVyeSBzeW50YXguIEJ5IGRlZmF1bHQsIHdl
+        YiBzZWFyY2ggcmV0dXJucyB1cCB0byA1IHJlc3VsdHMsIGJ1dCB5b3VyIExMTSBjYW4gc3BlY2lm
+        eSBhIGRpZmZlcmVudCBudW1iZXIgb2YgcmVzdWx0cy4gVG8gZG8gc28sIHlvdSBjYW4gcHJvbXB0
+        IHlvdXIgTExNIHRvIHBhc3MgYSAnbnVtX3Jlc3VsdHMnIGFyZ3VtZW50IHRvIHlvdXIgcXVlcnku
+        IiwgInBhcmFtZXRlcnMiOiB7InR5cGUiOiAib2JqZWN0IiwgInByb3BlcnRpZXMiOiB7InF1ZXJ5
+        IjogeyJ0eXBlIjogInN0cmluZyIsICJkZXNjcmlwdGlvbiI6ICJUaGUgc2VhcmNoIHF1ZXJ5LiBZ
+        b3UgY2FuIHVzZSBuYXR1cmFsIGxhbmd1YWdlIHRvIGRlc2NyaWJlIHdoYXQgeW91IHdhbnQgdG8g
+        c2VhcmNoIGZvci4ifSwgIm51bV9yZXN1bHRzIjogeyJ0eXBlIjogIm51bWJlciIsICJkZXNjcmlw
+        dGlvbiI6ICJUaGUgbnVtYmVyIG9mIHJlc3VsdHMgeW91IHdhbnQgdG8gZ2V0LiBJZiB5b3UgZG9u
+        J3Qgc3BlY2lmeSB0aGlzIHBhcmFtZXRlciwgeW91J2xsIGdldCAzIHJlc3VsdHMuIn19fX19LCB7
+        InR5cGUiOiAiZnVuY3Rpb24iLCAiZnVuY3Rpb24iOiB7Im5hbWUiOiAiVG9vbGhvdXNlX3NjcmFw
+        ZXIiLCAiZGVzY3JpcHRpb24iOiAiR2V0cyB0aGUgY29udGVudCBvZiBhIHBhZ2UgdXNpbmcgdGhl
+        IFVSTCB5b3Ugc3BlY2lmeS4iLCAicGFyYW1ldGVycyI6IHsidHlwZSI6ICJvYmplY3QiLCAicHJv
+        cGVydGllcyI6IHsidXJsIjogeyJ0eXBlIjogInN0cmluZyIsICJkZXNjcmlwdGlvbiI6ICJUaGUg
+        VVJMIG9mIHRoZSBwYWdlIHlvdSB3YW50IHRvIGdldCB0aGUgY29udGVudHMgb2YuIFNwZWNpZnkg
+        YSBjYW5vbmljYWwgVVJMLiJ9fX19fV19
+      - 0
+      - null
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      content-length:
+      - '2190'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - AsyncOpenAI/Python 1.42.0
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 1.42.0
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.6
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: 'data: {"id":"chatcmpl-ATfxE7LGDKpFwQ8viZJENvbFnH8ZT","object":"chat.completion.chunk","created":1731636148,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{"role":"assistant","content":null,"tool_calls":[{"index":0,"id":"call_CUY0VTZLeqCYC255j2JEvyPO","type":"function","function":{"name":"Toolhouse_exa_web_search","arguments":""}}],"refusal":null},"logprobs":null,"finish_reason":null}]}
+
+
+        data: {"id":"chatcmpl-ATfxE7LGDKpFwQ8viZJENvbFnH8ZT","object":"chat.completion.chunk","created":1731636148,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"{\""}}]},"logprobs":null,"finish_reason":null}]}
+
+
+        data: {"id":"chatcmpl-ATfxE7LGDKpFwQ8viZJENvbFnH8ZT","object":"chat.completion.chunk","created":1731636148,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"query"}}]},"logprobs":null,"finish_reason":null}]}
+
+
+        data: {"id":"chatcmpl-ATfxE7LGDKpFwQ8viZJENvbFnH8ZT","object":"chat.completion.chunk","created":1731636148,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"\":\""}}]},"logprobs":null,"finish_reason":null}]}
+
+
+        data: {"id":"chatcmpl-ATfxE7LGDKpFwQ8viZJENvbFnH8ZT","object":"chat.completion.chunk","created":1731636148,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"What"}}]},"logprobs":null,"finish_reason":null}]}
+
+
+        data: {"id":"chatcmpl-ATfxE7LGDKpFwQ8viZJENvbFnH8ZT","object":"chat.completion.chunk","created":1731636148,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"
+        is"}}]},"logprobs":null,"finish_reason":null}]}
+
+
+        data: {"id":"chatcmpl-ATfxE7LGDKpFwQ8viZJENvbFnH8ZT","object":"chat.completion.chunk","created":1731636148,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"
+        the"}}]},"logprobs":null,"finish_reason":null}]}
+
+
+        data: {"id":"chatcmpl-ATfxE7LGDKpFwQ8viZJENvbFnH8ZT","object":"chat.completion.chunk","created":1731636148,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"
+        capital"}}]},"logprobs":null,"finish_reason":null}]}
+
+
+        data: {"id":"chatcmpl-ATfxE7LGDKpFwQ8viZJENvbFnH8ZT","object":"chat.completion.chunk","created":1731636148,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"
+        of"}}]},"logprobs":null,"finish_reason":null}]}
+
+
+        data: {"id":"chatcmpl-ATfxE7LGDKpFwQ8viZJENvbFnH8ZT","object":"chat.completion.chunk","created":1731636148,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"
+        France"}}]},"logprobs":null,"finish_reason":null}]}
+
+
+        data: {"id":"chatcmpl-ATfxE7LGDKpFwQ8viZJENvbFnH8ZT","object":"chat.completion.chunk","created":1731636148,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"?\""}}]},"logprobs":null,"finish_reason":null}]}
+
+
+        data: {"id":"chatcmpl-ATfxE7LGDKpFwQ8viZJENvbFnH8ZT","object":"chat.completion.chunk","created":1731636148,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"}"}}]},"logprobs":null,"finish_reason":null}]}
+
+
+        data: {"id":"chatcmpl-ATfxE7LGDKpFwQ8viZJENvbFnH8ZT","object":"chat.completion.chunk","created":1731636148,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{},"logprobs":null,"finish_reason":"tool_calls"}]}
+
+
+        data: [DONE]
+
+
+        '
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 8e2ba8c33e7515cb-EWR
+      Connection:
+      - keep-alive
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Date:
+      - Fri, 15 Nov 2024 02:02:28 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cf_bm=Ro.qxB4NUMK_H8u3XhUCsx._tXHPknG0lFIgtkUX63E-1731636148-1.0.1.1-iKW2bNOIZ_shumSZBNilD8DgmsDOanMoxQJtHzyCBLhmC_2Swk055W36NT9fjZqh68YkN5C7sDh1DuAvp6lRUw;
+        path=/; expires=Fri, 15-Nov-24 02:32:28 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=TrVINgvej_rZM_ENZlx0Zp.x_7rz9Rsvx4ATMKdiD3s-1731636148689-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      openai-organization:
+      - user-no3ivdebkrszzgub5st56zit
+      openai-processing-ms:
+      - '832'
+      openai-version:
+      - '2020-10-01'
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-ratelimit-limit-requests:
+      - '3000'
+      x-ratelimit-limit-tokens:
+      - '250000'
+      x-ratelimit-remaining-requests:
+      - '2999'
+      x-ratelimit-remaining-tokens:
+      - '249924'
+      x-ratelimit-reset-requests:
+      - 20ms
+      x-ratelimit-reset-tokens:
+      - 18ms
+      x-request-id:
+      - req_9e934226151468546b243da58d5317cf
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"content": {"type": "function", "function": {"name": "exa_web_search",
+      "arguments": "{\"query\": \"What is the capital of France?\"}"}, "id": "foo"},
+      "provider": "openai", "metadata": {}, "bundle": "default"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '209'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Toolhouse/1.2.1 Python/3.12.6
+      authorization:
+      - XXXXXX
+    method: POST
+    uri: https://api.toolhouse.ai/v1/run_tools
+  response:
+    body:
+      string: '{"provider":"openai","content":{"role":"tool","tool_call_id":"foo","name":"exa_web_search","content":"title:
+        Paris - Wikipedia\nlink: https://en.wikipedia.org/wiki/Paris\ncontent: The
+        capital of France is Paris. \n\n\ntitle: Paris\nlink: https://commons.wikimedia.org/wiki/Paris\ncontent:
+        Paris is the capital city of France. \n\n\ntitle: Wikiwand - Paris\nlink:
+        https://www.wikiwand.com/en/Paris\ncontent: The capital of France is Paris.
+        \n\n\ntitle: Category:Paris - Wikinews, the free news source\nlink: https://en.wikinews.org/wiki/Paris\ncontent:
+        The capital of France is Paris. \n\n\ntitle: Paris, France Social Travel Network
+        - Touristlink\nlink: https://www.touristlink.com/france/paris/overview.html\ncontent:
+        The capital of France is Paris. \n"}}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '756'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 15 Nov 2024 02:02:31 GMT
+      X-Amzn-Trace-Id:
+      - Root=1-6736abb5-663302ce3241f2fa72a499a3;Parent=5f3fdda5056c6f17;Sampled=0;Lineage=1:26438fdb:0
+      x-amz-apigw-id:
+      - BQ_EZGVJPHcEJGg=
+      x-amzn-RequestId:
+      - e8a47a40-4f82-4154-95ac-adc085087ede
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"provider": "openai", "metadata": {}, "bundle": "default"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '59'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Toolhouse/1.2.1 Python/3.12.6
+      authorization:
+      - XXXXXX
+    method: POST
+    uri: https://api.toolhouse.ai/v1/get_tools
+  response:
+    body:
+      string: '[{"type":"function","function":{"name":"code_interpreter","description":"Allows
+        you to run the code you generate. You can use this tool to verify that the
+        code you generate is valid and contains all the relevant dependencies. IMPORTANT:
+        When sending code, end your code with a print statement of the result. If
+        you return something, make sure to change that return statement for a print
+        statement.","parameters":{"type":"object","properties":{"code_str":{"type":"string","description":"The
+        code to execute. Only Python is supported at the moment. IMPORTANT: When sending
+        code, end your code with a print statement of the result. If you return something,
+        make sure to change that return statement for a print statement."}}}},"required":["code_str"]},{"type":"function","function":{"name":"exa_web_search","description":"Performs
+        a web search using a search engine like Google Search. You can use the Google
+        search query syntax. By default, web search returns up to 5 results, but your
+        LLM can specify a different number of results. To do so, you can prompt your
+        LLM to pass a ''num_results'' argument to your query.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"The
+        search query. You can use natural language to describe what you want to search
+        for."},"num_results":{"type":"number","description":"The number of results
+        you want to get. If you don''t specify this parameter, you''ll get 3 results."}}}},"required":["query"]},{"type":"function","function":{"name":"scraper","description":"Gets
+        the content of a page using the URL you specify.","parameters":{"type":"object","properties":{"url":{"type":"string","description":"The
+        URL of the page you want to get the contents of. Specify a canonical URL."}}}},"required":["url"]}]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1762'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 15 Nov 2024 02:02:32 GMT
+      X-Amzn-Trace-Id:
+      - Root=1-6736abb8-4bc4248b3a6f7a9748cbfb56;Parent=09141c3219c5a466;Sampled=0;Lineage=1:26438fdb:0
+      x-amz-apigw-id:
+      - BQ_E1EC5PHcEMJg=
+      x-amzn-RequestId:
+      - 7fd40f4c-02c5-4e5d-9b69-3301afb45c85
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!python/object/new:_io.BytesIO
+      state: !!python/tuple
+      - !!binary |
+        eyJtZXNzYWdlcyI6IFt7InJvbGUiOiAic3lzdGVtIiwgImNvbnRlbnQiOiAiWW91IGFyZSBhIGhl
+        bHBmdWwgYXNzaXN0YW50LiBBbHdheXMgdXNlIHRoZSBwcm92aWRlZCB0b29scywgaWYgYXBwcm9w
+        cmlhdGUsIHRvIGNvbXBsZXRlIHRoZSB0YXNrLiJ9LCB7InJvbGUiOiAidXNlciIsICJjb250ZW50
+        IjogW3sidHlwZSI6ICJ0ZXh0IiwgInRleHQiOiAiVXNlIHRoZSB3ZWIgc2VhcmNoIHRvb2wgdG8g
+        Y2hlY2sgdGhlIGNhcGl0YWwgb2YgRnJhbmNlLiBSZXNwb25kICdjb3JyZWN0JyBpZiB0aGUgd2Vi
+        IHRvb2wgcmV0dXJucyAnUGFyaXMnIGFuZCAnaW5jb3JyZWN0JyBvdGhlcndpc2UuIn1dfSwgeyJy
+        b2xlIjogImFzc2lzdGFudCIsICJjb250ZW50IjogIiIsICJ0b29sX2NhbGxzIjogW3siaWQiOiAi
+        Y2FsbF9DVVkwVlRaTGVxQ1lDMjU1ajJKRXZ5UE8iLCAidHlwZSI6ICJmdW5jdGlvbiIsICJmdW5j
+        dGlvbiI6IHsibmFtZSI6ICJUb29saG91c2VfZXhhX3dlYl9zZWFyY2giLCAiYXJndW1lbnRzIjog
+        InsncXVlcnknOiAnV2hhdCBpcyB0aGUgY2FwaXRhbCBvZiBGcmFuY2U/J30ifX1dfSwgeyJyb2xl
+        IjogInRvb2wiLCAidG9vbF9jYWxsX2lkIjogImNhbGxfQ1VZMFZUWkxlcUNZQzI1NWoySkV2eVBP
+        IiwgImNvbnRlbnQiOiAiXCJ0aXRsZTogUGFyaXMgLSBXaWtpcGVkaWFcXG5saW5rOiBodHRwczov
+        L2VuLndpa2lwZWRpYS5vcmcvd2lraS9QYXJpc1xcbmNvbnRlbnQ6IFRoZSBjYXBpdGFsIG9mIEZy
+        YW5jZSBpcyBQYXJpcy4gXFxuXFxuXFxudGl0bGU6IFBhcmlzXFxubGluazogaHR0cHM6Ly9jb21t
+        b25zLndpa2ltZWRpYS5vcmcvd2lraS9QYXJpc1xcbmNvbnRlbnQ6IFBhcmlzIGlzIHRoZSBjYXBp
+        dGFsIGNpdHkgb2YgRnJhbmNlLiBcXG5cXG5cXG50aXRsZTogV2lraXdhbmQgLSBQYXJpc1xcbmxp
+        bms6IGh0dHBzOi8vd3d3Lndpa2l3YW5kLmNvbS9lbi9QYXJpc1xcbmNvbnRlbnQ6IFRoZSBjYXBp
+        dGFsIG9mIEZyYW5jZSBpcyBQYXJpcy4gXFxuXFxuXFxudGl0bGU6IENhdGVnb3J5OlBhcmlzIC0g
+        V2lraW5ld3MsIHRoZSBmcmVlIG5ld3Mgc291cmNlXFxubGluazogaHR0cHM6Ly9lbi53aWtpbmV3
+        cy5vcmcvd2lraS9QYXJpc1xcbmNvbnRlbnQ6IFRoZSBjYXBpdGFsIG9mIEZyYW5jZSBpcyBQYXJp
+        cy4gXFxuXFxuXFxudGl0bGU6IFBhcmlzLCBGcmFuY2UgU29jaWFsIFRyYXZlbCBOZXR3b3JrIC0g
+        VG91cmlzdGxpbmtcXG5saW5rOiBodHRwczovL3d3dy50b3VyaXN0bGluay5jb20vZnJhbmNlL3Bh
+        cmlzL292ZXJ2aWV3Lmh0bWxcXG5jb250ZW50OiBUaGUgY2FwaXRhbCBvZiBGcmFuY2UgaXMgUGFy
+        aXMuIFxcblwiIn1dLCAibW9kZWwiOiAiZ3B0LTQtdHVyYm8iLCAic3RyZWFtIjogdHJ1ZSwgInRl
+        bXBlcmF0dXJlIjogMC4zLCAidG9vbHMiOiBbeyJ0eXBlIjogImZ1bmN0aW9uIiwgImZ1bmN0aW9u
+        IjogeyJuYW1lIjogIlRvb2xob3VzZV9jb2RlX2ludGVycHJldGVyIiwgImRlc2NyaXB0aW9uIjog
+        IkFsbG93cyB5b3UgdG8gcnVuIHRoZSBjb2RlIHlvdSBnZW5lcmF0ZS4gWW91IGNhbiB1c2UgdGhp
+        cyB0b29sIHRvIHZlcmlmeSB0aGF0IHRoZSBjb2RlIHlvdSBnZW5lcmF0ZSBpcyB2YWxpZCBhbmQg
+        Y29udGFpbnMgYWxsIHRoZSByZWxldmFudCBkZXBlbmRlbmNpZXMuIElNUE9SVEFOVDogV2hlbiBz
+        ZW5kaW5nIGNvZGUsIGVuZCB5b3VyIGNvZGUgd2l0aCBhIHByaW50IHN0YXRlbWVudCBvZiB0aGUg
+        cmVzdWx0LiBJZiB5b3UgcmV0dXJuIHNvbWV0aGluZywgbWFrZSBzdXJlIHRvIGNoYW5nZSB0aGF0
+        IHJldHVybiBzdGF0ZW1lbnQgZm9yIGEgcHJpbnQgc3RhdGVtZW50LiIsICJwYXJhbWV0ZXJzIjog
+        eyJ0eXBlIjogIm9iamVjdCIsICJwcm9wZXJ0aWVzIjogeyJjb2RlX3N0ciI6IHsidHlwZSI6ICJz
+        dHJpbmciLCAiZGVzY3JpcHRpb24iOiAiVGhlIGNvZGUgdG8gZXhlY3V0ZS4gT25seSBQeXRob24g
+        aXMgc3VwcG9ydGVkIGF0IHRoZSBtb21lbnQuIElNUE9SVEFOVDogV2hlbiBzZW5kaW5nIGNvZGUs
+        IGVuZCB5b3VyIGNvZGUgd2l0aCBhIHByaW50IHN0YXRlbWVudCBvZiB0aGUgcmVzdWx0LiBJZiB5
+        b3UgcmV0dXJuIHNvbWV0aGluZywgbWFrZSBzdXJlIHRvIGNoYW5nZSB0aGF0IHJldHVybiBzdGF0
+        ZW1lbnQgZm9yIGEgcHJpbnQgc3RhdGVtZW50LiJ9fX19fSwgeyJ0eXBlIjogImZ1bmN0aW9uIiwg
+        ImZ1bmN0aW9uIjogeyJuYW1lIjogIlRvb2xob3VzZV9leGFfd2ViX3NlYXJjaCIsICJkZXNjcmlw
+        dGlvbiI6ICJQZXJmb3JtcyBhIHdlYiBzZWFyY2ggdXNpbmcgYSBzZWFyY2ggZW5naW5lIGxpa2Ug
+        R29vZ2xlIFNlYXJjaC4gWW91IGNhbiB1c2UgdGhlIEdvb2dsZSBzZWFyY2ggcXVlcnkgc3ludGF4
+        LiBCeSBkZWZhdWx0LCB3ZWIgc2VhcmNoIHJldHVybnMgdXAgdG8gNSByZXN1bHRzLCBidXQgeW91
+        ciBMTE0gY2FuIHNwZWNpZnkgYSBkaWZmZXJlbnQgbnVtYmVyIG9mIHJlc3VsdHMuIFRvIGRvIHNv
+        LCB5b3UgY2FuIHByb21wdCB5b3VyIExMTSB0byBwYXNzIGEgJ251bV9yZXN1bHRzJyBhcmd1bWVu
+        dCB0byB5b3VyIHF1ZXJ5LiIsICJwYXJhbWV0ZXJzIjogeyJ0eXBlIjogIm9iamVjdCIsICJwcm9w
+        ZXJ0aWVzIjogeyJxdWVyeSI6IHsidHlwZSI6ICJzdHJpbmciLCAiZGVzY3JpcHRpb24iOiAiVGhl
+        IHNlYXJjaCBxdWVyeS4gWW91IGNhbiB1c2UgbmF0dXJhbCBsYW5ndWFnZSB0byBkZXNjcmliZSB3
+        aGF0IHlvdSB3YW50IHRvIHNlYXJjaCBmb3IuIn0sICJudW1fcmVzdWx0cyI6IHsidHlwZSI6ICJu
+        dW1iZXIiLCAiZGVzY3JpcHRpb24iOiAiVGhlIG51bWJlciBvZiByZXN1bHRzIHlvdSB3YW50IHRv
+        IGdldC4gSWYgeW91IGRvbid0IHNwZWNpZnkgdGhpcyBwYXJhbWV0ZXIsIHlvdSdsbCBnZXQgMyBy
+        ZXN1bHRzLiJ9fX19fSwgeyJ0eXBlIjogImZ1bmN0aW9uIiwgImZ1bmN0aW9uIjogeyJuYW1lIjog
+        IlRvb2xob3VzZV9zY3JhcGVyIiwgImRlc2NyaXB0aW9uIjogIkdldHMgdGhlIGNvbnRlbnQgb2Yg
+        YSBwYWdlIHVzaW5nIHRoZSBVUkwgeW91IHNwZWNpZnkuIiwgInBhcmFtZXRlcnMiOiB7InR5cGUi
+        OiAib2JqZWN0IiwgInByb3BlcnRpZXMiOiB7InVybCI6IHsidHlwZSI6ICJzdHJpbmciLCAiZGVz
+        Y3JpcHRpb24iOiAiVGhlIFVSTCBvZiB0aGUgcGFnZSB5b3Ugd2FudCB0byBnZXQgdGhlIGNvbnRl
+        bnRzIG9mLiBTcGVjaWZ5IGEgY2Fub25pY2FsIFVSTC4ifX19fX1dfQ==
+      - 0
+      - null
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - XXXXXX
+      connection:
+      - keep-alive
+      content-length:
+      - '3175'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - AsyncOpenAI/Python 1.42.0
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 1.42.0
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.6
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: 'data: {"id":"chatcmpl-ATfxIMfRIsFTJ1tLo3NhRwy2J0rZS","object":"chat.completion.chunk","created":1731636152,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{"role":"assistant","content":"","refusal":null},"logprobs":null,"finish_reason":null}]}
+
+
+        data: {"id":"chatcmpl-ATfxIMfRIsFTJ1tLo3NhRwy2J0rZS","object":"chat.completion.chunk","created":1731636152,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{"content":"Correct"},"logprobs":null,"finish_reason":null}]}
+
+
+        data: {"id":"chatcmpl-ATfxIMfRIsFTJ1tLo3NhRwy2J0rZS","object":"chat.completion.chunk","created":1731636152,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{"content":"."},"logprobs":null,"finish_reason":null}]}
+
+
+        data: {"id":"chatcmpl-ATfxIMfRIsFTJ1tLo3NhRwy2J0rZS","object":"chat.completion.chunk","created":1731636152,"model":"gpt-4-turbo-2024-04-09","system_fingerprint":"fp_5db30363ff","choices":[{"index":0,"delta":{},"logprobs":null,"finish_reason":"stop"}]}
+
+
+        data: [DONE]
+
+
+        '
+    headers:
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 8e2ba8e00fad43c2-EWR
+      Connection:
+      - keep-alive
+      Content-Type:
+      - text/event-stream; charset=utf-8
+      Date:
+      - Fri, 15 Nov 2024 02:02:33 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cf_bm=4ELBicyyQIvqOAHJPbVqTEHGoK81zE.VTnGz9ptWjRs-1731636153-1.0.1.1-XFSfP0qh7shnFIIvKCgEGWf_6m2cM.jk.x80lcFXNnX2ZWaR90aLLOTDVauJFyMFxiRl4L5LEYsvoDT6teyz.w;
+        path=/; expires=Fri, 15-Nov-24 02:32:33 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=DmElBKl8BTEH1JBJUjkA6.gGOOZ1s1w.Aon5cuoy5_I-1731636153056-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      openai-organization:
+      - user-no3ivdebkrszzgub5st56zit
+      openai-processing-ms:
+      - '585'
+      openai-version:
+      - '2020-10-01'
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-ratelimit-limit-requests:
+      - '3000'
+      x-ratelimit-limit-tokens:
+      - '250000'
+      x-ratelimit-remaining-requests:
+      - '2999'
+      x-ratelimit-remaining-tokens:
+      - '249758'
+      x-ratelimit-reset-requests:
+      - 20ms
+      x-ratelimit-reset-tokens:
+      - 57ms
+      x-request-id:
+      - req_59bba3d2ace2adbb8d5c628c7c47b8b5
+    status:
+      code: 200
+      message: OK
+version: 1

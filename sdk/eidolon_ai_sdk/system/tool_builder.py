@@ -2,7 +2,7 @@ import inspect
 from collections import namedtuple
 from contextlib import contextmanager
 from inspect import Parameter
-from typing import Optional, Callable, Awaitable, TypeVar, AsyncIterable, Any, List, cast, Type, get_type_hints
+from typing import Dict, Optional, Callable, Awaitable, TypeVar, AsyncIterable, Any, List, cast, Type, get_type_hints
 
 from pydantic import create_model, BaseModel
 
@@ -37,7 +37,11 @@ class ToolBuilder(BaseModel):
 
     @classmethod
     def tool(
-        cls: Type[T], name: str = None, description: Optional[str] = None, parameters: dict = None
+        cls: Type[T],
+        name: str = None,
+        description: Optional[str] = None,
+        parameters: dict = None,
+        partials: Dict[str, Any] = None,
     ) -> Callable[[Callable[..., Awaitable[Any] | AsyncIterable[StreamEvent]]], Callable]:
         """
         A decorator to define a tool.
@@ -58,6 +62,7 @@ class ToolBuilder(BaseModel):
 
         def decorator(fn: Callable[..., Awaitable[Any] | AsyncIterable[StreamEvent]]):
             name_ = name or fn.__name__
+            fn = partial(fn, **(partials or {}))
             if cls._is_locked():
                 cls._state().tools[1].append(_ToolDefinition(name_, description, parameters, fn))
             else:
@@ -75,7 +80,8 @@ class ToolBuilder(BaseModel):
         """
         pass
 
-    async def delete_process(self, process_id: str):  # async def fn(process_id: string)
+    @classmethod
+    async def delete_process(cls, process_id: str):  # async def fn(process_id: string)
         """
         Custom logic to execute when deleting a process.
 
@@ -144,7 +150,7 @@ class ToolBuilder(BaseModel):
                         description=return_value(tool.description or tool.fn.__doc__ or f"Execute function {tool.name}"),
                         input_model_fn=return_value(tool.parameter or _model_from_sig(tool_fn)),
                         output_model_fn=_output_model_fn,
-                        fn=lambda self, **kwargs: tool_fn(**kwargs),
+                        fn=lambda self, _fn=tool_fn, **kwargs: _fn(**kwargs),
                         extra=dict(title=tool.name),
                     )
                 )
