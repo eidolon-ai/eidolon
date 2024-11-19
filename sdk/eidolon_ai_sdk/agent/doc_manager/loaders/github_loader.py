@@ -138,7 +138,7 @@ class GitHubLoaderV2Spec(DocumentLoaderSpec):
     url: str = Field(examples=["https://github.com/eidolon-ai/eidolon.git",
                                "https://{GITHUB_TOKEN}@github.com/eidolon-ai/eidolon.git"],
                      description="URL of the repository. Will be templated with envars.")
-    branch: str = "main"
+    branch: str = "HEAD"
     pattern: str | List[str] = "**"
     exclude: str | List[str] = []
     diff_depth: int = 100
@@ -155,13 +155,12 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
         self.url = self.spec.templated_url()
 
     @asynccontextmanager
-    async def with_repo(self, depth):
+    async def with_repo(self):
         with tempfile.TemporaryDirectory() as tmp_dir:
             repo: Repo = await make_async(porcelain.clone)(
                 self.url,
                 target=tmp_dir,
-                depth=depth,
-                branch=self.spec.branch,
+                depth=1,
                 bare=True,
                 filter_spec="blob:none",
             )
@@ -170,41 +169,29 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
             finally:
                 repo.close()
 
-    async def get_changes(self, metadata: LoaderMetadata, current_commit_override: Optional[str] = None) -> AsyncIterator[FileChange]:
+    async def get_changes(self, metadata: LoaderMetadata) -> AsyncIterator[FileChange]:
         pattern = set(self.spec.pattern if isinstance(self.spec.pattern, list) else [self.spec.pattern])
         excluded = set(self.spec.exclude if isinstance(self.spec.exclude, list) else [self.spec.exclude])
 
         found_pattern = set(metadata.root_metadata.get('pattern', []))
         found_excluded = set(metadata.root_metadata.get('exclude', []))
 
-        current_commit = current_commit_override or await self.get_current_head()
+        current_commit = await self.get_current_head()
 
         commit_matches = 'commit' in metadata.root_metadata and metadata.root_metadata['commit'] == current_commit
         if commit_matches and found_pattern == pattern and found_excluded == excluded:
             logger.info("No changes detected")
         else:
-            async with self.with_repo(self.spec.diff_depth if 'commit' in metadata.root_metadata else 1) as repo:
-                commit: Commit = repo[current_commit.encode('ascii')]
-                try:
-                    old_commit: Optional[Commit] = repo[metadata.root_metadata['commit'].encode('ascii')]
-                except KeyError:
-                    old_commit = None
-                # Separate this check so actual logic doesn't happen in try/catch block.
-                if old_commit:
-                    changes = self.from_commit(repo, commit, old_commit)
-                else:
-                    tree: Tree = repo[commit.tree]
-                    changes = self.from_uninitialized(
-                        metadata,
-                        repo,
-                        tree,
-                        {doc.path: doc.metadata async for doc in metadata.doc_metadata()}
-                    )
-
+            async with self.with_repo() as repo:
                 # Since we are doing bare checkout, we don't actually have the data loaded.
                 # We fetch the blobs lazily that way we do not need to download irrelevant files
                 blobless_changes = []
-                async for change in changes:
+                async for change in self._get_changes(
+                        metadata,
+                        repo,
+                        repo[repo[current_commit.encode('ascii')].tree],
+                        {doc.path: doc.metadata async for doc in metadata.doc_metadata()}
+                ):
                     if isinstance(change, AddedFile) or isinstance(change, ModifiedFile):
                         blobless_changes.append(change)
                     else:
@@ -239,14 +226,17 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
     def get_current_head(self) -> str:
         client, path = get_transport_and_path(self.url)
         refs = client.get_refs(path)
+        branch_ref = self.spec.branch.encode('ascii')
+        if branch_ref in refs:
+            return refs[branch_ref].decode('ascii')
 
-        for ref, sha in refs.items():
-            if ref == b'HEAD':
-                return sha.decode('ascii')
+        branch_ref = f"refs/heads/{self.spec.branch}".encode('ascii')
+        if branch_ref in refs:
+            return refs[branch_ref].decode('ascii')
 
-        raise ValueError(f"No HEAD found for branch {self.spec.branch}")
+        raise ValueError(f"Neither Ref {branch_ref} nor Ref {self.spec.branch} found")
 
-    async def from_uninitialized(
+    async def _get_changes(
             self,
             metadata: LoaderMetadata,
             repo: Repo,
@@ -259,7 +249,7 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
             file_path = entry.path.decode()
             full_path = parent + '/' + file_path if parent else file_path
             if entry.mode == 0o040000:  # is directory check
-                async for change in self.from_uninitialized(
+                async for change in self._get_changes(
                     metadata,
                     repo=repo,
                     tree=repo[entry.sha],
@@ -270,17 +260,18 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
                     yield change
             elif self._matches(full_path):
                 existing = existing_files.pop(full_path, None)
+                sha_str = entry.sha.decode('ascii')
                 if existing:
-                    if existing['sha'] != entry.sha.decode('ascii'):
+                    if existing['sha'] != sha_str:
                         yield ModifiedFile(FileInfo(
                             path=full_path,
-                            metadata={'sha': entry.sha.decode('ascii')},
+                            metadata={'sha': sha_str},
                             data=None
                         ))
                 else:
                     yield AddedFile(FileInfo(
                         path=full_path,
-                        metadata={'sha': entry.sha.decode('ascii')},
+                        metadata={'sha': sha_str},
                         data=None
                     ))
             else:
@@ -289,26 +280,6 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
             if delete_remaining:
                 for p in existing_files.keys():
                     yield RemovedFile(p)
-
-    async def from_commit(self, repo: Repo, current_commit: Commit, old_commit: Commit) -> AsyncIterator[FileChange]:
-        # Get the changes between commits
-        changes = repo.object_store.tree_changes(
-            old_commit.tree,
-            current_commit.tree,
-        )
-
-        for (oldpath, newpath), _, (oldsha, newsha) in changes:
-            if not self._matches(parents, newpath.decode()):
-                newpath = None
-            if oldpath and newpath is None:
-                yield RemovedFile(oldpath.decode())
-            else:
-                file_info = FileInfo(
-                    path=newpath.decode(),
-                    metadata={'sha': newsha},
-                    data=None
-                )
-                yield AddedFile(file_info) if oldpath is None else ModifiedFile(file_info)
 
     def _matches(self, path: str) -> bool:
         if self.spec.pattern == "**" and not self.spec.exclude:
