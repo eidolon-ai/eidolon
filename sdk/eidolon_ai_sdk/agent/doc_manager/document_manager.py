@@ -71,7 +71,8 @@ class DocumentManager(Specable[DocumentManagerSpec]):
         self.collection_name = f"doc_sync_{self.spec.name}"
 
     async def list_files(self):
-        return [doc.path async for doc in self.processor.list_files(self.collection_name)]
+        async for doc in self.processor.list_files(self.collection_name):
+            yield doc.path
 
     async def sync_docs(self, force: bool = False):
         if force or self.last_reload + self.spec.recheck_frequency < time.time():
@@ -87,7 +88,7 @@ class DocumentManager(Specable[DocumentManagerSpec]):
             else:
                 root_metadata = {}
 
-            metadata = LoaderMetadata(metadata=json.loads(root_metadata), doc_fn=partial(self.processor.list_files, collection_name=self.collection_name))
+            metadata = LoaderMetadata(metadata=root_metadata, doc_fn=partial(self.processor.list_files, collection_name=self.collection_name))
             with tracer.start_as_current_span("syncing docs"):
                 async for change in self.loader.get_changes(metadata):
                     while len(tasks) > self.spec.concurrency:
