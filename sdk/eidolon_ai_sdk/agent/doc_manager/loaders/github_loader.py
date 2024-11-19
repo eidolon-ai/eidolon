@@ -10,7 +10,7 @@ from typing import Optional
 
 import certifi
 from dulwich import porcelain
-from dulwich.client import get_transport_and_path, LocalGitClient
+from dulwich.client import get_transport_and_path
 from dulwich.objects import Commit, Tree
 from dulwich.repo import Repo
 from httpx import AsyncClient
@@ -163,6 +163,7 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
                 depth=depth,
                 branch=self.spec.branch,
                 bare=True,
+                filter_spec="blob:none",
             )
             try:
                 yield repo
@@ -210,28 +211,24 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
                         yield change
 
                 if blobless_changes:
-                    client = LocalGitClient()
                     wants = [f.file_info.metadata['sha'].encode('ascii') for f in blobless_changes]
-
-                    client.fetch_pack(
-                        repo.path,
-                        determine_wants=lambda refs: wants,
-                        graph_walker=NullGraphWalker(),
-                        pack_data=repo.object_store.add_pack()[0].write,
-                    )
+                    client, path = get_transport_and_path(self.url)
+                    writer, done, abort = repo.object_store.add_pack()
+                    try:
+                        await make_async(client.fetch_pack)(
+                            path,
+                            determine_wants=lambda refs: wants,
+                            graph_walker=NullGraphWalker(),
+                            pack_data=writer.write,
+                        )
+                        done()
+                    except Exception:
+                        abort()
+                        raise
                     for change in blobless_changes:
                         yield await self._transform_change(change, repo)
 
                 yield RootMetadata({'commit': current_commit, 'pattern': list(pattern), 'exclude': list(excluded)})
-
-    async def _transform_changes(self, blobless, repo):
-        tasks = []
-        for change in blobless:
-            tasks.append(asyncio.create_task(self._transform_change(change, repo)))
-        while tasks:
-            done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
-            for task in done:
-                yield await task
 
     @make_async
     def _transform_change(self, change, repo):
@@ -272,27 +269,26 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
                 ):
                     yield change
             elif self._matches(full_path):
-                blob = repo[entry.sha]
-                existing = existing_files.pop(file_path, None)
+                existing = existing_files.pop(full_path, None)
                 if existing:
                     if existing['sha'] != entry.sha.decode('ascii'):
                         yield ModifiedFile(FileInfo(
-                            path=file_path,
+                            path=full_path,
                             metadata={'sha': entry.sha.decode('ascii')},
-                            data=DataBlob(blob.data)
+                            data=None
                         ))
                 else:
                     yield AddedFile(FileInfo(
-                        path=file_path,
+                        path=full_path,
                         metadata={'sha': entry.sha.decode('ascii')},
-                        data=DataBlob(blob.data)
+                        data=None
                     ))
             else:
-                logger.debug(f"Skipping non-matching file", file_path)
+                logger.debug(f"Skipping non-matching file", full_path)
 
             if delete_remaining:
-                for file_path in existing_files.keys():
-                    yield RemovedFile(file_path)
+                for p in existing_files.keys():
+                    yield RemovedFile(p)
 
     async def from_commit(self, repo: Repo, current_commit: Commit, old_commit: Commit) -> AsyncIterator[FileChange]:
         # Get the changes between commits

@@ -74,7 +74,7 @@ pydantic = "^2.9.2"
 chromadb-client = "^0.5.15"
 bs4 = "^0.0.2"
 aiofiles = "^24.1.0"
-dulwich = "^0.22.5"
+dulwich = "^0.22.6"
 
 [tool.poetry.extras]
 all = [ "playwright", "chromadb", "unstructured",]
