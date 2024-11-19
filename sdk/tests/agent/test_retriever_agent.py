@@ -1,7 +1,5 @@
-import os
 from os import environ
 
-import certifi
 import pytest
 
 from eidolon_ai_client.client import Agent
