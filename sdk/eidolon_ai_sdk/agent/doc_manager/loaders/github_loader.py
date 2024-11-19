@@ -3,16 +3,14 @@ import fnmatch
 import os
 import tempfile
 from asyncio import Task
-from contextlib import asynccontextmanager
-from typing import AsyncContextManager, Optional
 from typing import AsyncIterator, Dict, Any
 from typing import List
+from typing import Optional
 
 import certifi
 from dulwich import porcelain
-from dulwich.client import get_transport_and_path, default_urllib3_manager
+from dulwich.client import get_transport_and_path, LocalGitClient
 from dulwich.objects import Commit, Tree
-from dulwich.refs import SYMREF
 from dulwich.repo import Repo
 from httpx import AsyncClient
 from pydantic import Field
@@ -136,7 +134,9 @@ class GitHubLoaderV2Spec(DocumentLoaderSpec):
     unless a TOKEN is provided
     """
 
-    url: str = Field(examples=["https://github.com/eidolon-ai/eidolon.git", "https://{GITHUB_TOKEN}@github.com/eidolon-ai/eidolon.git"], description="URL of the repository. Will be templated with envars.")
+    url: str = Field(examples=["https://github.com/eidolon-ai/eidolon.git",
+                               "https://{GITHUB_TOKEN}@github.com/eidolon-ai/eidolon.git"],
+                     description="URL of the repository. Will be templated with envars.")
     branch: str = "main"
     pattern: str | List[str] = "**"
     exclude: str | List[str] = []
@@ -161,34 +161,74 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
         found_excluded = set(metadata.root_metadata.get('exclude', []))
 
         current_commit = current_commit_override or await self.get_current_head()
-        new_root_metadata = RootMetadata({'pattern': list(pattern), 'exclude': list(excluded)})
 
-        if 'commit' in metadata.root_metadata and metadata.root_metadata['commit'] == current_commit:
+        commit_matches = 'commit' in metadata.root_metadata and metadata.root_metadata['commit'] == current_commit
+        if commit_matches and found_pattern == pattern and found_excluded == excluded:
             logger.info("No changes detected")
-        elif not metadata.root_metadata.get('commit') or found_pattern != pattern or found_excluded != excluded:
-            logger.info("Initializing loader with current commit as root commit.")
-            async with self._temp_repo(current_commit, 1) as repo:
-                new_root_metadata.metadata['commit'] = repo.head().decode('ascii')
-                async for change in self.from_uninitialized(repo, metadata):
-                    yield change
-            yield new_root_metadata
         else:
-            async with self._temp_repo(current_commit, self.spec.diff_depth) as repo:
-                new_root_metadata.metadata['commit'] = repo.head().decode('ascii')
-                logger.info(f"Loading changes from commit {metadata.root_metadata['commit']} to {current_commit}")
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                repo: Repo = await make_async(porcelain.clone)(
+                    self.url,
+                    target=tmp_dir,
+                    depth=self.spec.diff_depth if 'commit' in metadata.root_metadata else 1,
+                    branch=self.spec.branch,
+                    bare=True,
+                )
+            try:
+                commit: Commit = repo[current_commit.encode('ascii')]
                 try:
                     old_commit: Optional[Commit] = repo[metadata.root_metadata['commit'].encode('ascii')]
-                    found_commit = True
                 except KeyError:
-                    found_commit = False
-                if found_commit:
-                    async for change in self.from_commit(repo, old_commit):
-                        yield change
+                    old_commit = None
+                # Separate this check so actual logic doesn't happen in try/catch block.
+                if old_commit:
+                    changes = self.from_commit(repo, commit, old_commit)
                 else:
-                    logger.warning(f"Commit {metadata.root_metadata['commit']} not found in history (depth={self.spec.diff_depth})")
-                    async for change in self.from_uninitialized(repo, metadata):
+                    tree: Tree = repo[commit.tree]
+                    changes = self.from_uninitialized(
+                        metadata,
+                        repo,
+                        tree,
+                        {doc.path: doc.metadata async for doc in metadata.doc_metadata()}
+                    )
+
+                # Since we are doing bare checkout, we don't actually have the data loaded.
+                # We fetch the blobs lazily that way we do not need to download irrelevant files
+                blobless_changes = []
+                async for change in changes:
+                    if isinstance(change, AddedFile) or isinstance(change, ModifiedFile):
+                        blobless_changes.append(change)
+                    else:
                         yield change
-            yield new_root_metadata
+
+                if blobless_changes:
+                    await make_async(LocalGitClient().fetch_pack)(
+                        tmp_dir,
+                        depth=1,
+                        determine_wants=lambda refs: [f.file_info.metadata['sha'].encode('ascii') for f in blobless_changes],
+                        graph_walker=_NullGraphWalker(),
+                        pack_data=repo.object_store.add_pack,
+                    )
+                    async for change in self._transform_changes(blobless_changes, repo):
+                        yield change
+
+                yield RootMetadata({'commit': current_commit, 'pattern': list(pattern), 'exclude': list(excluded)})
+            finally:
+                repo.close()
+
+    async def _transform_changes(self, blobless, repo):
+        tasks = []
+        for change in blobless:
+            tasks.append(asyncio.create_task(self._transform_change(change, repo)))
+        while tasks:
+            done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+            for task in done:
+                yield await task
+
+    @make_async
+    def _transform_change(self, change, repo):
+        change.file_info.data = DataBlob(repo[change.file_info.metadata['sha']].data)
+        return change
 
     @make_async
     def get_current_head(self) -> str:
@@ -201,86 +241,88 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
 
         raise ValueError(f"No HEAD found for branch {self.spec.branch}")
 
-    async def from_uninitialized(self, repo: Repo, metadata: LoaderMetadata) -> AsyncIterator[FileChange]:
-        # if we are here we don't expect files, but there are edge cases where this is possible
-        existing_files = {doc.path: doc.metadata async for doc in metadata.doc_metadata()}
-
-        commit: Commit = repo[repo.head()]
-        tree: Tree = repo[commit.tree]
-
-        # Walk the tree and yield all files
+    async def from_uninitialized(
+            self,
+            metadata: LoaderMetadata,
+            repo: Repo,
+            tree: Tree,
+            existing_files,
+            delete_remaining=True,
+            parents: List[int] = None,
+    ) -> AsyncIterator[FileChange]:
+        parents = parents or []
         for entry in tree.iteritems():
             file_path = entry.path.decode()
-            if not self._matches(file_path):
-                continue
-
-            blob = repo[entry.sha]
-
-            existing = existing_files.pop(file_path, None)
-            if existing:
-                if existing['sha'] != entry.sha.decode('ascii'):
-                    yield ModifiedFile(FileInfo(
+            if entry.mode == 0o040000:  # is directory check
+                async for change in self.from_uninitialized(
+                    metadata,
+                    repo=repo,
+                    tree=repo[entry.sha],
+                    existing_files=existing_files,
+                    delete_remaining=False,
+                    parents=parents + [file_path]
+                ):
+                    yield change
+            elif self._matches(parents, file_path):
+                blob = repo[entry.sha]
+                existing = existing_files.pop(file_path, None)
+                if existing:
+                    if existing['sha'] != entry.sha.decode('ascii'):
+                        yield ModifiedFile(FileInfo(
+                            path=file_path,
+                            metadata={'sha': entry.sha.decode('ascii')},
+                            data=DataBlob(blob.data)
+                        ))
+                else:
+                    yield AddedFile(FileInfo(
                         path=file_path,
                         metadata={'sha': entry.sha.decode('ascii')},
                         data=DataBlob(blob.data)
                     ))
             else:
-                yield AddedFile(FileInfo(
-                    path=file_path,
-                    metadata={'sha': entry.sha.decode('ascii')},
-                    data=DataBlob(blob.data)
-                ))
+                logger.debug(f"Skipping non-matching file", file_path)
 
-        for file_path in existing_files.keys():
-            yield RemovedFile(file_path)
+            if delete_remaining:
+                for file_path in existing_files.keys():
+                    yield RemovedFile(file_path)
 
-    async def from_commit(self, repo: Repo, old_commit: Commit) -> AsyncIterator[FileChange]:
-        current_commit: Commit = repo[repo.head()]
+    async def from_commit(self, repo: Repo, current_commit: Commit, old_commit: Commit) -> AsyncIterator[FileChange]:
         # Get the changes between commits
         changes = repo.object_store.tree_changes(
             old_commit.tree,
             current_commit.tree,
         )
 
-        for (oldpath, newpath), (oldmode, newmode), (oldsha, newsha) in changes:
-            if not self._matches(newpath.decode()):
+        for (oldpath, newpath), _, (oldsha, newsha) in changes:
+            if not self._matches(parents, newpath.decode()):
                 newpath = None
             if oldpath and newpath is None:
                 yield RemovedFile(oldpath.decode())
             else:
-                blob = repo[newsha]
                 file_info = FileInfo(
                     path=newpath.decode(),
-                    metadata={'mode': newmode},
-                    data=DataBlob(blob.data)
+                    metadata={'sha': newsha},
+                    data=None
                 )
                 yield AddedFile(file_info) if oldpath is None else ModifiedFile(file_info)
 
-    @asynccontextmanager
-    async def _temp_repo(self, current_commit: str, depth: int) -> AsyncContextManager[Repo]:
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            repo: Repo = await self._clone(tmp_dir, depth)
-            try:
-                yield repo
-            finally:
-                repo.close()
-
-    @make_async
-    def _clone(self, tmp_dir, depth) -> Repo:
-        return porcelain.clone(
-            self.url,
-            target=tmp_dir,
-            depth=depth,
-            branch=self.spec.branch,
-            checkout=True,
-        )
-
-    def _matches(self, path: str) -> bool:
+    def _matches(self, parents: List[str], path: str) -> bool:
         if self.spec.pattern == "**" and not self.spec.exclude:
             return True
 
         pattern = set(self.spec.pattern if isinstance(self.spec.pattern, list) else [self.spec.pattern])
         excluded = set(self.spec.exclude if isinstance(self.spec.exclude, list) else [self.spec.exclude])
 
-        matched = any(fnmatch.fnmatch(path, p) for p in pattern)
-        return matched and not any(fnmatch.fnmatch(path, e) for e in excluded)
+        full_path = "/".join(parents + [path])
+        matched = any(fnmatch.fnmatch(full_path, p) for p in pattern)
+        return matched and not any(fnmatch.fnmatch(full_path, e) for e in excluded)
+
+
+class _NullGraphWalker:
+    """A graph walker that always returns no commits."""
+
+    def __next__(self, *args, **kwargs):
+        raise StopIteration()
+
+    def ack(self, *args, **kwargs):
+        pass

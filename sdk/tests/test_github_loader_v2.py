@@ -25,4 +25,4 @@ def md(metadata: dict = None, files: list = None):
 # @pytest.mark.vcr()
 async def test_can_load_repo(github_loader: GitHubLoaderV2):
     changes = [c async for c in github_loader.get_changes(md())]
-    print(changes)
+    assert len(changes) == 2
