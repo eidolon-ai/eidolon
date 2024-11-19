@@ -22,8 +22,7 @@ class Operation(BaseModel):
 
 
 class Action(BaseModel):
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     title: str
     sub_title: str
