@@ -256,11 +256,11 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
             tree: Tree,
             existing_files,
             delete_remaining=True,
-            parents: List[int] = None,
+            parent: Optional[str] = None,
     ) -> AsyncIterator[FileChange]:
-        parents = parents or []
         for entry in tree.iteritems():
             file_path = entry.path.decode()
+            full_path = parent + '/' + file_path if parent else file_path
             if entry.mode == 0o040000:  # is directory check
                 async for change in self.from_uninitialized(
                     metadata,
@@ -268,10 +268,10 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
                     tree=repo[entry.sha],
                     existing_files=existing_files,
                     delete_remaining=False,
-                    parents=parents + [file_path]
+                    parent=full_path,
                 ):
                     yield change
-            elif self._matches(parents, file_path):
+            elif self._matches(full_path):
                 blob = repo[entry.sha]
                 existing = existing_files.pop(file_path, None)
                 if existing:
@@ -314,16 +314,15 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
                 )
                 yield AddedFile(file_info) if oldpath is None else ModifiedFile(file_info)
 
-    def _matches(self, parents: List[str], path: str) -> bool:
+    def _matches(self, path: str) -> bool:
         if self.spec.pattern == "**" and not self.spec.exclude:
             return True
 
         pattern = set(self.spec.pattern if isinstance(self.spec.pattern, list) else [self.spec.pattern])
         excluded = set(self.spec.exclude if isinstance(self.spec.exclude, list) else [self.spec.exclude])
 
-        full_path = "/".join(parents + [path])
-        matched = any(fnmatch.fnmatch(full_path, p) for p in pattern)
-        return matched and not any(fnmatch.fnmatch(full_path, e) for e in excluded)
+        matched = any(fnmatch.fnmatch(path, p) for p in pattern)
+        return matched and not any(fnmatch.fnmatch(path, e) for e in excluded)
 
 
 class NullGraphWalker:
