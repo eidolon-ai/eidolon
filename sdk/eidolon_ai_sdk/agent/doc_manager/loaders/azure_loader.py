@@ -31,6 +31,3 @@ class AzureLoader(DocumentLoader, Specable[AzureLoaderSpec]):
 
     def get_changes(self, *args, **kwargs):
         return self.loader.get_changes(*args, **kwargs)
-
-    def list_files(self, *args, **kwargs):
-        return self.loader.list_files(*args, **kwargs)

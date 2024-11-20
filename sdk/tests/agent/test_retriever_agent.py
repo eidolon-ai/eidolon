@@ -134,16 +134,16 @@ class TestRetrieverAgent:
         await process.action("search", body={"question": "what about a .exe"})
 
     async def test_azure(self, agent):
-        s3_agent = Agent.get("RetrieverAgentAzure")
-        process = await s3_agent.create_process()
+        azure_agent = Agent.get("RetrieverAgentAzure")
+        process = await azure_agent.create_process()
         found = await process.action("search", body={"question": "how do I make a pdf?"})
         assert "Get_Started_With_Smallpdf" in str(found.data)
 
     async def test_azure_cached_results(self, agent):
-        s3_agent = Agent.get("RetrieverAgentAzure")
-        process = await s3_agent.create_process()
+        azure_agent = Agent.get("RetrieverAgentAzure")
+        process = await azure_agent.create_process()
         await process.action("search", body={"question": "how do I make a pdf?"})
 
         #  will error if there is an issue with syncing docs
-        process = await s3_agent.create_process()
+        process = await azure_agent.create_process()
         await process.action("search", body={"question": "what about a .exe"})

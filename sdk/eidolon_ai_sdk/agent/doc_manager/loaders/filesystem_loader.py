@@ -1,7 +1,7 @@
 import hashlib
 import os
 from pathlib import Path
-from typing import Dict, Any, AsyncIterator
+from typing import AsyncIterator
 
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
     DocumentLoader,
@@ -10,7 +10,7 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
     FileChange,
     ModifiedFile,
     AddedFile,
-    RemovedFile,
+    RemovedFile, LoaderMetadata,
 )
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.system.specable import Specable
@@ -48,11 +48,8 @@ class FilesystemLoader(DocumentLoader, Specable[FilesystemLoaderSpec]):
         if not self.root_path.exists():
             raise ValueError(f"Root directory {self.root_dir} does not exist")
 
-    async def list_files(self) -> AsyncIterator[str]:
-        for file in self.root_path.glob(self.spec.pattern):
-            yield str(file.relative_to(self.root_dir))
-
-    async def get_changes(self, metadata: Dict[str, Dict[str, Any]]) -> AsyncIterator[FileChange]:
+    async def get_changes(self, metadata: LoaderMetadata) -> AsyncIterator[FileChange]:
+        metadata = {doc.path: doc.metadata async for doc in metadata.doc_metadata()}
         # iterate over all python files in the root_dir
         for file in self.root_path.glob(self.spec.pattern):
             if file.is_file():

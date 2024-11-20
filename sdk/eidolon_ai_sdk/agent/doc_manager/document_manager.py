@@ -1,5 +1,7 @@
 import asyncio
+import json
 import logging
+from functools import partial
 from typing import List
 
 import time
@@ -12,7 +14,7 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
     DocumentLoader,
     RemovedFile,
     ModifiedFile,
-    AddedFile,
+    AddedFile, LoaderMetadata, RootMetadata,
 )
 from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.system.reference_model import AnnotatedReference
@@ -65,41 +67,46 @@ class DocumentManager(Specable[DocumentManagerSpec]):
         self.loader = self.spec.loader.instantiate()
         self.loader.name = self.spec.name
         self.logger = logging.getLogger("eidolon")
-        self.processor = self.spec.doc_processor.instantiate()
+        self.processor: DocumentProcessor = self.spec.doc_processor.instantiate()
         self.collection_name = f"doc_sync_{self.spec.name}"
 
     async def list_files(self):
-        return self.loader.list_files()
+        async for doc in self.processor.list_files(self.collection_name):
+            yield doc.path
 
     async def sync_docs(self, force: bool = False):
         if force or self.last_reload + self.spec.recheck_frequency < time.time():
             self.logger.info(f"Syncing files from {self.spec.name}")
-
             self.last_reload = time.time()
-            data = {}
-            async for file in AgentOS.symbolic_memory.find(self.collection_name, {}):
-                data[file["file_path"]] = file["data"]
-
-            self.logger.info(f"Found {len(data)} files in symbolic memory")
-
             add_count = remove_count = replace_count = 0
             tasks = set()
+
+            root_metadata_loc = "eidolon/document_manager/" + self.collection_name + ".json"
+            if await AgentOS.file_memory.exists(root_metadata_loc):
+                root_metadata_bs = await AgentOS.file_memory.read_file(root_metadata_loc)
+                root_metadata = json.loads(root_metadata_bs)
+            else:
+                root_metadata = {}
+
+            metadata = LoaderMetadata(metadata=root_metadata, doc_fn=partial(self.processor.list_files, collection_name=self.collection_name))
             with tracer.start_as_current_span("syncing docs"):
-                async for change in self.loader.get_changes(data):
+                async for change in self.loader.get_changes(metadata):
                     while len(tasks) > self.spec.concurrency:
                         _, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
 
                     if isinstance(change, AddedFile):
-                        tasks.add(asyncio.create_task(self.processor.addFile(self.collection_name, change.file_info)))
+                        tasks.add(asyncio.create_task(self.processor.add_file(self.collection_name, change.file_info)))
                         add_count += 1
                     elif isinstance(change, ModifiedFile):
                         tasks.add(
-                            asyncio.create_task(self.processor.replaceFile(self.collection_name, change.file_info))
+                            asyncio.create_task(self.processor.replace_file(self.collection_name, change.file_info))
                         )
                         replace_count += 1
                     elif isinstance(change, RemovedFile):
-                        tasks.add(asyncio.create_task(self.processor.removeFile(self.collection_name, change.file_path)))
+                        tasks.add(asyncio.create_task(self.processor.remove_file(self.collection_name, change.file_path)))
                         remove_count += 1
+                    elif isinstance(change, RootMetadata):
+                        await AgentOS.file_memory.write_file(root_metadata_loc, json.dumps(change.metadata).encode())
                     else:
                         logger.warning(f"Unknown change type {change}")
                 if add_count:

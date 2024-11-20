@@ -88,7 +88,8 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
         :return: The response from the apu
         """
         if self.document_manager:
-            files = [item async for item in await self.document_manager.list_files()]
+            await self.document_manager.sync_docs()
+            files = [item async for item in self.document_manager.list_files()]
         else:
             files = []
         return AgentState(name="idle", data=files)

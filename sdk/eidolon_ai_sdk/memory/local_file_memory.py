@@ -108,8 +108,13 @@ class LocalFileMemory(FileMemoryBase, Specable[LocalFileMemoryConfig]):
         safe_file_path = self.resolve(file_path)
 
         # Write the contents to the file
-        async with aiofiles.open(safe_file_path, mode="wb") as file:
-            await file.write(file_contents)
+        try:
+            async with aiofiles.open(safe_file_path, mode="wb") as file:
+                await file.write(file_contents)
+        except FileNotFoundError:
+            safe_file_path.parent.mkdir(parents=True)
+            async with aiofiles.open(safe_file_path, mode="wb") as file:
+                await file.write(file_contents)
 
     async def delete_file(self, file_path: str) -> None:
         # Resolve the safe path

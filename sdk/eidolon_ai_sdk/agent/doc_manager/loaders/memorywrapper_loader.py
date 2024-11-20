@@ -1,7 +1,8 @@
 import asyncio
 import hashlib
-from typing import Dict, Any, AsyncIterator, Optional
+from typing import AsyncIterator, Optional, Dict
 
+from dateutil.tz import tzutc
 from opentelemetry import trace
 
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
@@ -11,7 +12,7 @@ from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import (
     FileChange,
     ModifiedFile,
     AddedFile,
-    RemovedFile,
+    RemovedFile, LoaderMetadata,
 )
 from eidolon_ai_sdk.agent.doc_manager.parsers.base_parser import DataBlob
 from eidolon_ai_sdk.agent_os_interfaces import FileMetadata
@@ -50,11 +51,14 @@ class WrappedMemoryLoader(DocumentLoader, Specable[WrappedMemoryLoaderSpec]):
     async def start(self):
         await self.memory.start()
 
-    async def list_files(self) -> AsyncIterator[str]:
-        async for file in self.memory.glob(self.spec.pattern):
-            yield file.file_path
+    async def get_changes(self, metadata: LoaderMetadata) -> AsyncIterator[FileChange]:
+        metadata_mapping: Dict[str, FileMetadata] = {}
+        async for doc in metadata.doc_metadata():
+            md = FileMetadata(**doc.metadata)
+            if md.updated:
+                md.updated = md.updated.replace(tzinfo=tzutc())
+            metadata_mapping[doc.path] = md
 
-    async def get_changes(self, metadata: Dict[str, Dict[str, Any]]) -> AsyncIterator[FileChange]:
         tasks = set()
         async for file in self.memory.glob(self.spec.pattern):
             while len(tasks) >= self.spec.concurrency:
@@ -64,15 +68,15 @@ class WrappedMemoryLoader(DocumentLoader, Specable[WrappedMemoryLoaderSpec]):
                     if change_record:
                         yield change_record
 
-            if file.file_path in metadata:
+            if file.file_path in metadata_mapping:
                 tasks.add(
-                    asyncio.create_task(self._process_existing_file(file, FileMetadata(**metadata[file.file_path])))
+                    asyncio.create_task(self._process_existing_file(file, metadata_mapping[file.file_path]))
                 )
-                del metadata[file.file_path]
+                del metadata_mapping[file.file_path]
             else:
                 tasks.add(asyncio.create_task(self._process_new_file(file)))
 
-        for not_found in metadata.keys():
+        for not_found in metadata_mapping.keys():
             yield RemovedFile(not_found)
         while tasks:
             done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
@@ -81,21 +85,23 @@ class WrappedMemoryLoader(DocumentLoader, Specable[WrappedMemoryLoaderSpec]):
                 if change_record:
                     yield change_record
 
-    async def _process_new_file(self, file):
+    async def _process_new_file(self, file: FileMetadata):
         with tracer.start_as_current_span("reading file"):
             file_path = file.file_path
             data = await self.memory.read_file(file_path)
             file.extra["loader_hash"] = hash_file(data)
+            if file.updated:  # convert to utc for storage
+                file.updated = file.updated.astimezone(tz=tzutc())
             return AddedFile(FileInfo(file_path, file.model_dump(), DataBlob.from_bytes(data, path=file_path)))
 
-    async def _process_existing_file(self, file, saved_metadata):
+    async def _process_existing_file(self, file: FileMetadata, saved_metadata: FileMetadata):
         with tracer.start_as_current_span("process existing file"):
             file_path = file.file_path
             data: Optional[bytes] = None
-            if saved_metadata.updated:
-                changed = saved_metadata.updated != file.updated
-            elif saved_metadata.hash:
+            if saved_metadata.hash:
                 changed = saved_metadata.hash != file.hash
+            elif saved_metadata.updated:
+                changed = saved_metadata.updated != file.updated
             elif "loader_hash" in saved_metadata.extra:
                 data = await self.memory.read_file(file_path)
                 loader_hash = hash_file(data)

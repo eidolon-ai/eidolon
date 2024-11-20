@@ -2,7 +2,7 @@ import json
 from typing import List, Optional, Tuple, Any, Callable
 
 from jsonref import replace_refs
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.util.filter_json import filter_and_reconstruct_json, filter_and_reconstruct_json_from_paths
@@ -22,8 +22,7 @@ class Operation(BaseModel):
 
 
 class Action(BaseModel):
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     title: str
     sub_title: str
