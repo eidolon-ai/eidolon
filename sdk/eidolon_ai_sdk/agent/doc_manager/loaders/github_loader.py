@@ -224,7 +224,8 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
 
     @make_async
     def _transform_change(self, change, repo):
-        change.file_info.data = DataBlob(repo[change.file_info.metadata['sha'].encode('ascii')].data)
+        data_bytes = repo[change.file_info.metadata['sha'].encode('ascii')].data
+        change.file_info.data = DataBlob.from_bytes(data_bytes, path=change.file_info.path)
         return change
 
     @make_async
@@ -264,7 +265,6 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
                 ):
                     yield change
             elif self._matches(full_path):
-                print(full_path, "known")
                 existing = existing_files.pop(full_path, None)
                 sha_str = entry.sha.decode('ascii')
                 if existing:
@@ -283,11 +283,9 @@ class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
                         data=None
                     ))
             else:
-                print(full_path, "unknown")
                 logger.debug("Skipping non-matching file", full_path)
 
         if delete_remaining:
-            print("deleting remaining", len(existing_files))
             for p in existing_files.keys():
                 yield RemovedFile(p)
 
