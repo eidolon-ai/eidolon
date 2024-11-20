@@ -4,14 +4,14 @@ import pytest
 
 from eidolon_ai_sdk.agent.doc_manager.loaders.base_loader import LoaderMetadata, AddedFile, RootMetadata, \
     FileInfoMetadata, FileInfo, ModifiedFile, RemovedFile
-from eidolon_ai_sdk.agent.doc_manager.loaders.github_loader import GitHubLoaderV2, \
-    GitHubLoaderV2Spec
+from eidolon_ai_sdk.agent.doc_manager.loaders.github_loader import GitLoader, \
+    GitLoaderSpec
 
 
 @pytest.fixture
 def github_loader():
-    return GitHubLoaderV2(
-        GitHubLoaderV2Spec(url="https://github.com/eidolon-ai/typedai.git")
+    return GitLoader(
+        GitLoaderSpec(url="https://github.com/eidolon-ai/typedai.git")
     )
 
 
@@ -26,7 +26,7 @@ def md(metadata: dict = None, files: List[FileInfoMetadata] = None):
 
 
 @pytest.mark.vcr()
-async def test_can_load_repo(github_loader: GitHubLoaderV2):
+async def test_can_load_repo(github_loader: GitLoader):
     changes = [c async for c in github_loader.get_changes(md())]
     assert len(changes) > 40
     grouped = {}
@@ -38,7 +38,7 @@ async def test_can_load_repo(github_loader: GitHubLoaderV2):
 
 
 @pytest.mark.vcr()
-async def test_reload_is_noop(github_loader: GitHubLoaderV2):
+async def test_reload_is_noop(github_loader: GitLoader):
     changes = [c async for c in github_loader.get_changes(md())]
     assert len(changes) > 40
 
@@ -51,7 +51,7 @@ async def test_reload_is_noop(github_loader: GitHubLoaderV2):
 
 
 @pytest.mark.vcr()
-async def test_reloads_only_changed_files(github_loader: GitHubLoaderV2):
+async def test_reloads_only_changed_files(github_loader: GitLoader):
     files = [c.file_info async for c in github_loader.get_changes(md()) if isinstance(c, AddedFile)]
 
     # remove 3 so 3 appears added

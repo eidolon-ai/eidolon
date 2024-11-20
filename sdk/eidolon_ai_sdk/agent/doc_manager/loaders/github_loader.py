@@ -36,7 +36,7 @@ class GitHubLoaderSpec(DocumentLoaderSpec):
     """
     Deprecated. Will be removed at a later version.
 
-    Use GitHubLoaderV2 instead
+    Use [GitLoader](/docs/components/documentloader/gitloader) instead
     """
 
     owner: str
@@ -56,11 +56,11 @@ class GitHubLoaderSpec(DocumentLoaderSpec):
 
 class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):
     def __init__(self, *args, **kwargs):
-        logger.warning("GitHubLoader is deprecated. Use GitHubLoaderV2 instead")
+        logger.warning("GitHubLoader is deprecated. Use GitLoader instead")
         super().__init__(*args, **kwargs)
 
     async def get_changes(self, metadata: LoaderMetadata) -> AsyncIterator[FileChange]:
-        logger.warning("GitHubLoader is deprecated. Use GitHubLoaderV2 instead")
+        logger.warning("GitHubLoader is deprecated. Use GitLoader instead")
         metadata = {doc.path: doc.metadata async for doc in metadata.doc_metadata()}
         async with AsyncClient(**self.spec.client_args) as client:
             tasks: List[Task] = []
@@ -123,25 +123,22 @@ class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):
         return op(FileInfo(file["path"], new_metadata, await self._data(client, file)))
 
 
-class GitHubLoaderV2Spec(DocumentLoaderSpec):
+class GitLoaderSpec(DocumentLoaderSpec):
     """
-    Loads files from a GitHub repository. Note that you will likely hit rate limits on all but the smallest repositories
-    unless a TOKEN is provided
+    Loads files from a git repository. Uses raw git protocols, so this is not a GitHub specific implementation.
     """
 
-    url: str = Field(examples=["https://github.com/eidolon-ai/eidolon.git",
-                               "https://{GITHUB_TOKEN}@github.com/eidolon-ai/eidolon.git"],
-                     description="URL of the repository. Will be templated with envars.")
-    branch: str = "HEAD"
-    pattern: str | List[str] = "**"
-    exclude: str | List[str] = []
-    diff_depth: int = 100
+    url: str = Field(examples=["https://github.com/eidolon-ai/eidolon.git", "https://{GITHUB_TOKEN}@github.com/eidolon-ai/eidolon.git"],
+                     description="URL for source repository. Will be templated with envars.")
+    branch: str = Field("HEAD", description="Branch, ref, or commit to load files from.")
+    pattern: str | List[str] = Field("**", description="Blob pattern(s) of files to include.")
+    exclude: str | List[str] = Field([], description="Blob pattern(s) of files to exclude. Calculated after pattern (ei, files from pattern are selected, then any matching exclude are removed).")
 
     def templated_url(self) -> str:
         return self.url.format_map(os.environ)
 
 
-class GitHubLoaderV2(DocumentLoader, Specable[GitHubLoaderV2Spec]):
+class GitLoader(DocumentLoader, Specable[GitLoaderSpec]):
     _inited: bool = False
     url: str
 
