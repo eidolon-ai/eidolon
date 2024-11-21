@@ -1,13 +1,13 @@
 {
   "additionalProperties": false,
-  "description": "Loads files from a GitHub repository. Note that you will likely hit rate limits on all but the smallest repositories\nunless a TOKEN is provided",
+  "description": "Loads files from a git repository. Uses raw git protocols, so this is not a GitHub specific implementation.",
   "properties": {
     "implementation": {
-      "const": "GitHubLoaderV2",
+      "const": "GitLoader",
       "title": "Implementation"
     },
     "url": {
-      "description": "URL of the repository. Will be templated with envars.",
+      "description": "URL for source repository. Will be templated with envars.",
       "examples": [
         "https://github.com/eidolon-ai/eidolon.git",
         "https://{GITHUB_TOKEN}@github.com/eidolon-ai/eidolon.git"
@@ -17,6 +17,7 @@
     },
     "branch": {
       "default": "HEAD",
+      "description": "Branch, ref, or commit to load files from.",
       "title": "Branch",
       "type": "string"
     },
@@ -33,6 +34,7 @@
         }
       ],
       "default": "**",
+      "description": "Blob pattern(s) of files to include.",
       "title": "Pattern"
     },
     "exclude": {
@@ -48,24 +50,20 @@
         }
       ],
       "default": [],
+      "description": "Blob pattern(s) of files to exclude. Calculated after pattern (ei, files from pattern are selected, then any matching exclude are removed).",
       "title": "Exclude"
-    },
-    "diff_depth": {
-      "default": 100,
-      "title": "Diff Depth",
-      "type": "integer"
     }
   },
   "reference_details": {
-    "clz": "eidolon_ai_sdk.agent.doc_manager.loaders.github_loader.GitHubLoaderV2",
+    "clz": "eidolon_ai_sdk.agent.doc_manager.loaders.github_loader.GitLoader",
     "group": "DocumentLoader",
-    "name": "GitHubLoaderV2",
+    "name": "GitLoader",
     "overrides": {}
   },
   "required": [
     "url",
     "implementation"
   ],
-  "title": "GitHubLoaderV2",
+  "title": "GitLoader",
   "type": "object"
 }
