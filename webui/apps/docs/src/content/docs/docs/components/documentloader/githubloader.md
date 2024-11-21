@@ -5,7 +5,7 @@ description: Description of the GitHubLoader component
 
 **Description:** Deprecated. Will be removed at a later version.
 
-Use GitHubLoaderV2 instead
+Use [GitLoader](/docs/components/documentloader/gitloader) instead
 
 | Property                             | Pattern | Type        | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ----------- | ---------- | ---------- | ----------------- |

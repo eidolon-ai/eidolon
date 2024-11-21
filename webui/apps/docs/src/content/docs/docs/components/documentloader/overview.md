@@ -7,5 +7,5 @@ Overview of the DocumentLoader component
 * [AzureLoader](/docs/components/documentloader/azureloader/)
 * [FilesystemLoader](/docs/components/documentloader/filesystemloader/)
 * [GitHubLoader](/docs/components/documentloader/githubloader/)
-* [GitHubLoaderV2](/docs/components/documentloader/githubloaderv2/)
+* [GitLoader](/docs/components/documentloader/gitloader/)
 * [S3Loader](/docs/components/documentloader/s3loader/)

@@ -1,10 +1,9 @@
 ---
-title: GitHubLoaderV2
-description: Description of the GitHubLoaderV2 component
+title: GitLoader
+description: Description of the GitLoader component
 ---
 
-**Description:** Loads files from a GitHub repository. Note that you will likely hit rate limits on all but the smallest repositories
-unless a TOKEN is provided
+**Description:** Loads files from a git repository. Uses raw git protocols, so this is not a GitHub specific implementation.
 
 | Property                             | Pattern | Type        | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ----------- | ---------- | ---------- | ----------------- |
@@ -13,7 +12,6 @@ unless a TOKEN is provided
 | - [branch](#branch )                 | No      | string      | No         | -          | Branch            |
 | - [pattern](#pattern )               | No      | Combination | No         | -          | Pattern           |
 | - [exclude](#exclude )               | No      | Combination | No         | -          | Exclude           |
-| - [diff_depth](#diff_depth )         | No      | integer     | No         | -          | Diff Depth        |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -24,7 +22,7 @@ unless a TOKEN is provided
 | **Type**     | `const` |
 | **Required** | Yes     |
 
-Specific value: `"GitHubLoaderV2"`
+Specific value: `"GitLoader"`
 
 ## <a name="url"></a>2. Property `url`
 
@@ -35,7 +33,7 @@ Specific value: `"GitHubLoaderV2"`
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-**Description:** URL of the repository. Will be templated with envars.
+**Description:** URL for source repository. Will be templated with envars.
 
 **Examples:** 
 
@@ -57,6 +55,8 @@ Specific value: `"GitHubLoaderV2"`
 | **Required** | No       |
 | **Default**  | `"HEAD"` |
 
+**Description:** Branch, ref, or commit to load files from.
+
 ## <a name="pattern"></a>4. Property `pattern`
 
 **Title:** Pattern
@@ -67,6 +67,8 @@ Specific value: `"GitHubLoaderV2"`
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `"**"`                                                                    |
+
+**Description:** Blob pattern(s) of files to include.
 
 | Any of(Option)              |
 | --------------------------- |
@@ -117,6 +119,8 @@ Specific value: `"GitHubLoaderV2"`
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Default**               | `[]`                                                                      |
 
+**Description:** Blob pattern(s) of files to exclude. Calculated after pattern (ei, files from pattern are selected, then any matching exclude are removed).
+
 | Any of(Option)              |
 | --------------------------- |
 | [item 0](#exclude_anyOf_i0) |
@@ -154,15 +158,5 @@ Specific value: `"GitHubLoaderV2"`
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
-
-## <a name="diff_depth"></a>6. Property `diff_depth`
-
-**Title:** Diff Depth
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `integer` |
-| **Required** | No        |
-| **Default**  | `100`     |
 
 ----------------------------------------------------------------------------------------------------------------------------

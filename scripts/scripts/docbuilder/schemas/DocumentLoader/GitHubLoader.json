@@ -1,6 +1,6 @@
 {
   "additionalProperties": false,
-  "description": "Deprecated. Will be removed at a later version.\n\nUse GitHubLoaderV2 instead",
+  "description": "Deprecated. Will be removed at a later version.\n\nUse [GitLoader](/docs/components/documentloader/gitloader) instead",
   "properties": {
     "implementation": {
       "const": "GitHubLoader",
