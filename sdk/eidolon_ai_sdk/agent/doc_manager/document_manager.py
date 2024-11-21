@@ -92,7 +92,9 @@ class DocumentManager(Specable[DocumentManagerSpec]):
             with tracer.start_as_current_span("syncing docs"):
                 async for change in self.loader.get_changes(metadata):
                     while len(tasks) > self.spec.concurrency:
-                        _, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+                        done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+                        for task in done:
+                            await task.result()
 
                     if isinstance(change, AddedFile):
                         tasks.add(asyncio.create_task(self.processor.add_file(self.collection_name, change.file_info)))
