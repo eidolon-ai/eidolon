@@ -74,7 +74,7 @@ class GitHubLoader(DocumentLoader, Specable[GitHubLoaderSpec]):
             while tasks:
                 done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
                 for task in done:
-                    yield await task.result()
+                    yield await task
             for file_path in metadata:
                 yield RemovedFile(file_path)
 

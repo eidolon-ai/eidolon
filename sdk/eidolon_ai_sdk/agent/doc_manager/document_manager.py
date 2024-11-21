@@ -95,7 +95,7 @@ class DocumentManager(Specable[DocumentManagerSpec]):
                         done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
                         for task in done:
                             try:
-                                await task.result()
+                                await task
                             except Exception as e:
                                 if logger.isEnabledFor(logging.DEBUG):
                                     logger.error("Error processing file", exc_info=True)
@@ -128,7 +128,7 @@ class DocumentManager(Specable[DocumentManagerSpec]):
                     done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
                     for task in done:
                         try:
-                            await task.result()
+                            await task
                         except Exception as e:
                             if logger.isEnabledFor(logging.DEBUG):
                                 logger.error("Error processing file", exc_info=True)
