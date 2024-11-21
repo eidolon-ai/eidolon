@@ -74,6 +74,12 @@
     "apu": {
       "$ref": "../APU/overview.json",
       "description": "The APU to use for question transformation."
+    },
+    "sync_wait_time": {
+      "default": -1,
+      "description": "The amount of time (seconds) to wait while documents sync before returning results.",
+      "title": "Sync Wait Time",
+      "type": "integer"
     }
   },
   "reference_details": {
