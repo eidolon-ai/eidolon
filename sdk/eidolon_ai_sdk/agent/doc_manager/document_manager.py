@@ -98,7 +98,7 @@ class DocumentManager(Specable[DocumentManagerSpec]):
                                 await task.result()
                             except Exception as e:
                                 if logger.isEnabledFor(logging.DEBUG):
-                                    logger.error(f"Error processing file", exc_info=True)
+                                    logger.error("Error processing file", exc_info=True)
                                 else:
                                     logger.error(f"Error processing file\n{type(e)}: {e}")
 
@@ -131,7 +131,7 @@ class DocumentManager(Specable[DocumentManagerSpec]):
                             await task.result()
                         except Exception as e:
                             if logger.isEnabledFor(logging.DEBUG):
-                                logger.error(f"Error processing file", exc_info=True)
+                                logger.error("Error processing file", exc_info=True)
                             else:
                                 logger.error(f"Error processing file\n{type(e)}: {e}")
 
