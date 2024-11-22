@@ -92,7 +92,15 @@ class DocumentManager(Specable[DocumentManagerSpec]):
             with tracer.start_as_current_span("syncing docs"):
                 async for change in self.loader.get_changes(metadata):
                     while len(tasks) > self.spec.concurrency:
-                        _, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+                        done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+                        for task in done:
+                            try:
+                                await task
+                            except Exception as e:
+                                if logger.isEnabledFor(logging.DEBUG):
+                                    logger.error("Error processing file", exc_info=True)
+                                else:
+                                    logger.error(f"Error processing file\n{type(e)}: {e}")
 
                     if isinstance(change, AddedFile):
                         tasks.add(asyncio.create_task(self.processor.add_file(self.collection_name, change.file_info)))
@@ -116,6 +124,21 @@ class DocumentManager(Specable[DocumentManagerSpec]):
                 if remove_count:
                     self.logger.info(f"Removing {remove_count} files...")
 
-                await asyncio.gather(*tasks)
+                while tasks:
+                    done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+                    for task in done:
+                        try:
+                            await task
+                        except Exception as e:
+                            if logger.isEnabledFor(logging.DEBUG):
+                                logger.error("Error processing file", exc_info=True)
+                            else:
+                                logger.error(f"Error processing file\n{type(e)}: {e}")
+
+                await asyncio.gather(*tasks, return_exceptions=True)
+                for task in tasks:
+                    if task.exception():
+                        self.logger.error(f"Error processing file: {task.exception()}")
+
                 self.logger.info("Document Manager sync complete")
             self.last_reload = time.time()
