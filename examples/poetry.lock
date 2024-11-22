@@ -1566,7 +1566,7 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-sdk"
-version = "0.1.173"
+version = "0.1.174"
 description = "An open source sgent service SDK"
 optional = false
 python-versions = ">=3.10,<3.13"
@@ -7140,4 +7140,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "0d2cf21149ea1ea50c5c53f9f2123f94f9bd2328b355dc2a0ff82f6a1eea2df1"
+content-hash = "89f78669172dbfa09b52e43a0621ee3c3244b8decb765e5e6e40b0060ca5ac6c"
