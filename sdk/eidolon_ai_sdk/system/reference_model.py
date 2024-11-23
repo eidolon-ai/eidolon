@@ -102,7 +102,9 @@ class Reference(BaseModel):
                         groups=[json_schema["reference_pointer"]["type"]],
                     ))
                 else:
-                    metadata["groups"].append(json_schema["reference_pointer"]["type"])
+                    grp = json_schema["reference_pointer"]["type"]
+                    if grp not in metadata["groups"]:
+                        metadata["groups"].append(grp)
                 ref = handler(model.__pydantic_core_schema__)
                 if r.metadata.name == json_schema["reference_pointer"]["type"]:
                     group_component_ref = ref
