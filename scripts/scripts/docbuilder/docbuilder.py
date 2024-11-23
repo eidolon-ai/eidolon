@@ -233,6 +233,7 @@ def write_md(read_loc,
                     show_breadcrumbs=False,
                     custom_template_path=str(Path(__file__).parent / "templates" / "custom" / "base.md"),
                     with_footer=False,
+                    examples_as_yaml=True,
                 ))
                 write_astro_md_file(content, write_loc / url_safe(group_name) / (
                             url_safe(schema['reference_details']['name']) + ".md"), group_names)

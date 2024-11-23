@@ -37,12 +37,12 @@ Specific value: `"GitLoader"`
 
 **Examples:** 
 
-```json
-"https://github.com/eidolon-ai/eidolon.git"
+```yaml
+https://github.com/eidolon-ai/eidolon.git
 ```
 
-```json
-"https://{GITHUB_TOKEN}@github.com/eidolon-ai/eidolon.git"
+```yaml
+https://{GITHUB_TOKEN}@github.com/eidolon-ai/eidolon.git
 ```
 
 ## <a name="branch"></a>3. Property `branch`
