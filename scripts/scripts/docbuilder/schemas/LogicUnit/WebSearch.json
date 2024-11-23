@@ -61,7 +61,10 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.builtins.logic_units.web_search.WebSearch",
-    "group": "LogicUnit",
+    "groups": [
+      "LogicUnit",
+      "LogicUnit"
+    ],
     "name": "WebSearch",
     "overrides": {}
   },

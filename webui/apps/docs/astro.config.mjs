@@ -301,6 +301,10 @@ export default defineConfig({
                     "link": "/docs/components/logicunit/apilogicunit"
                   },
                   {
+                    "label": "AudioUnit",
+                    "link": "/docs/components/logicunit/audiounit"
+                  },
+                  {
                     "label": "Browser",
                     "link": "/docs/components/logicunit/browser"
                   },
@@ -309,8 +313,16 @@ export default defineConfig({
                     "link": "/docs/components/logicunit/openaiimageunit"
                   },
                   {
+                    "label": "OpenAiSpeech",
+                    "link": "/docs/components/logicunit/openaispeech"
+                  },
+                  {
                     "label": "Search",
                     "link": "/docs/components/logicunit/search"
+                  },
+                  {
+                    "label": "Toolhouse",
+                    "link": "/docs/components/logicunit/toolhouse"
                   },
                   {
                     "label": "VectaraSearch",

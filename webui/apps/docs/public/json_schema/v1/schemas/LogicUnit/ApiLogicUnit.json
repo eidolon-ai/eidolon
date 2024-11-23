@@ -49,7 +49,10 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.builtins.logic_units.api_logic_unit.ApiLogicUnit",
-    "group": "LogicUnit",
+    "groups": [
+      "LogicUnit",
+      "LogicUnit"
+    ],
     "name": "ApiLogicUnit",
     "overrides": {}
   },

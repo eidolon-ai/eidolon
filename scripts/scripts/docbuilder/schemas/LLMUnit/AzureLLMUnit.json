@@ -80,7 +80,11 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.apu.llm.azure_llm_unit.AzureLLMUnit",
-    "group": "LLMUnit",
+    "groups": [
+      "LLMUnit",
+      "LLMUnit",
+      "LLMUnit"
+    ],
     "name": "AzureLLMUnit",
     "overrides": {}
   },

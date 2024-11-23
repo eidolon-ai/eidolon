@@ -44,7 +44,10 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.builtins.logic_units.vectara.VectaraSearch",
-    "group": "LogicUnit",
+    "groups": [
+      "LogicUnit",
+      "LogicUnit"
+    ],
     "name": "VectaraSearch",
     "overrides": {}
   },

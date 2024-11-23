@@ -95,7 +95,13 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.apu.conversational_apu.ConversationalAPU",
-    "group": "APU",
+    "groups": [
+      "APU",
+      "APU",
+      "APU",
+      "APU",
+      "APU"
+    ],
     "name": "ClaudeOpus",
     "overrides": {
       "audio_unit": "OpenAiSpeech",

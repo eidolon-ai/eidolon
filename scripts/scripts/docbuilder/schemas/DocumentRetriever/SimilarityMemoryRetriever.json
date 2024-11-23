@@ -8,7 +8,10 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.agent.retriever_agent.document_retriever.SimilarityMemoryRetriever",
-    "group": "DocumentRetriever",
+    "groups": [
+      "DocumentRetriever",
+      "DocumentRetriever"
+    ],
     "name": "SimilarityMemoryRetriever",
     "overrides": {}
   },

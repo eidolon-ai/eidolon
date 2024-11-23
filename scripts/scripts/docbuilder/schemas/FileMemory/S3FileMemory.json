@@ -71,7 +71,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.memory.s3_file_memory.S3FileMemory",
-    "group": "FileMemory",
+    "groups": [
+      "FileMemory"
+    ],
     "name": "S3FileMemory",
     "overrides": {}
   },

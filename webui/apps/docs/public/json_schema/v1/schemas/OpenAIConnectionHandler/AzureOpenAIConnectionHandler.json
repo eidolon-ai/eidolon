@@ -34,7 +34,11 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.apu.llm.open_ai_connection_handler.AzureOpenAIConnectionHandler",
-    "group": "OpenAIConnectionHandler",
+    "groups": [
+      "OpenAIConnectionHandler",
+      "OpenAIConnectionHandler",
+      "OpenAIConnectionHandler"
+    ],
     "name": "AzureOpenAIConnectionHandler",
     "overrides": {}
   },

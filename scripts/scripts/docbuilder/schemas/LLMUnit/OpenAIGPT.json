@@ -60,7 +60,11 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.apu.llm.open_ai_llm_unit.OpenAIGPT",
-    "group": "LLMUnit",
+    "groups": [
+      "LLMUnit",
+      "LLMUnit",
+      "LLMUnit"
+    ],
     "name": "OpenAIGPT",
     "overrides": {}
   },

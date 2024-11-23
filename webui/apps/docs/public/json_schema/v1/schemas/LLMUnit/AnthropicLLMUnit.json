@@ -33,7 +33,11 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.apu.llm.anthropic_llm_unit.AnthropicLLMUnit",
-    "group": "LLMUnit",
+    "groups": [
+      "LLMUnit",
+      "LLMUnit",
+      "LLMUnit"
+    ],
     "name": "AnthropicLLMUnit",
     "overrides": {}
   },

@@ -65,8 +65,7 @@ def write_json_schema(dist_component_schemas, schema):
     defs = schema.get("$defs", {})
     transform_file_defs(schema, defs)
     for k, v in defs.items():
-        write_loc = get_write_loc(v)
-        if write_loc:
+        for write_loc in get_write_locs(v):
             copied = copy.deepcopy(v)
             local_refs = find_local_refs(v)
             # relative_write_locs(copied, "../" + str(write_loc.parent) + "/")
@@ -79,13 +78,13 @@ def write_json_schema(dist_component_schemas, schema):
                 json.dump(copied, json_file, indent=2)
 
 
-def get_write_loc(schema):
+def get_write_locs(schema):
     if "reference_pointer" in schema:  # group, should only be referenced by component
-        return Path(f"{schema['reference_pointer']['type']}/overview.json")
+        return [Path(f"{schema['reference_pointer']['type']}/overview.json")]
     elif 'reference_details' in schema:  # component definition, should only be referenced by groups
-        return Path(f"{schema['reference_details']['group']}/{schema['reference_details']['name']}.json")
+        return [Path(f"{g}/{schema['reference_details']['name']}.json") for g in schema['reference_details']['groups']]
     else:
-        return None
+        return []
 
 
 def relative_write_locs(schema, loc):
@@ -103,8 +102,8 @@ def transform_file_defs(schema, defs):
     if isinstance(schema, dict):
         if "$ref" in schema:
             ref_key = schema["$ref"].removeprefix("#/$defs/")
-            write_loc = get_write_loc(defs[ref_key])
-            if write_loc:
+            write_locs = get_write_locs(defs[ref_key])
+            for write_loc in write_locs:
                 schema['$ref'] = "../" + str(write_loc)
         for v in schema.values():
             transform_file_defs(v, defs)

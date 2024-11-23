@@ -76,7 +76,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.agent.doc_manager.loaders.github_loader.GitHubLoader",
-    "group": "DocumentLoader",
+    "groups": [
+      "DocumentLoader"
+    ],
     "name": "GitHubLoader",
     "overrides": {}
   },

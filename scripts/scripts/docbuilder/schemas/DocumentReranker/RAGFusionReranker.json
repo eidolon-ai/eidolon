@@ -14,7 +14,10 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.agent.retriever_agent.document_reranker.RAGFusionReranker",
-    "group": "DocumentReranker",
+    "groups": [
+      "DocumentReranker",
+      "DocumentReranker"
+    ],
     "name": "RAGFusionReranker",
     "overrides": {}
   },

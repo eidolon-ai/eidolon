@@ -46,7 +46,11 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.apu.llm.open_ai_image_unit.OpenAIImageUnit",
-    "group": "LogicUnit",
+    "groups": [
+      "LogicUnit",
+      "ImageUnit",
+      "LogicUnit"
+    ],
     "name": "OpenAIImageUnit",
     "overrides": {}
   },

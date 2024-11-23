@@ -43,7 +43,14 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.apu.llm_unit.LLMModel",
-    "group": "LLMModel",
+    "groups": [
+      "LLMModel",
+      "LLMModel",
+      "LLMModel",
+      "LLMModel",
+      "LLMModel",
+      "LLMModel"
+    ],
     "name": "gpt-4-turbo",
     "overrides": {
       "human_name": "GPT-4 Turbo",

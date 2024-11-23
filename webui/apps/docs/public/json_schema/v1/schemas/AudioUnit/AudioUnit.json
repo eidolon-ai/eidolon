@@ -48,7 +48,12 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.apu.llm.open_ai_speech.OpenAiSpeech",
-    "group": "AudioUnit",
+    "groups": [
+      "LogicUnit",
+      "AudioUnit",
+      "LogicUnit",
+      "AudioUnit"
+    ],
     "name": "AudioUnit",
     "overrides": {}
   },

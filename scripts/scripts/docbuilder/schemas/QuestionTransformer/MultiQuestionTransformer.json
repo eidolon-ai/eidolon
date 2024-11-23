@@ -26,7 +26,10 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.agent.retriever_agent.multi_question_transformer.MultiQuestionTransformer",
-    "group": "QuestionTransformer",
+    "groups": [
+      "QuestionTransformer",
+      "QuestionTransformer"
+    ],
     "name": "MultiQuestionTransformer",
     "overrides": {}
   },

@@ -8,7 +8,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.security.process_authorizer.PrivateAuthorizer",
-    "group": "ProcessAuthorizer",
+    "groups": [
+      "ProcessAuthorizer"
+    ],
     "name": "PrivateAuthorizer",
     "overrides": {}
   },

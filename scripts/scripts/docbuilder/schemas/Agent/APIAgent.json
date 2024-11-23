@@ -50,7 +50,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.agent.api_agent.APIAgent",
-    "group": "Agent",
+    "groups": [
+      "Agent"
+    ],
     "name": "APIAgent",
     "overrides": {}
   },

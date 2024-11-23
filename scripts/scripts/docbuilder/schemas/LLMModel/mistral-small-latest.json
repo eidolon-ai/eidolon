@@ -43,7 +43,14 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.apu.llm_unit.LLMModel",
-    "group": "LLMModel",
+    "groups": [
+      "LLMModel",
+      "LLMModel",
+      "LLMModel",
+      "LLMModel",
+      "LLMModel",
+      "LLMModel"
+    ],
     "name": "mistral-small-latest",
     "overrides": {
       "human_name": "Mistral Small",
