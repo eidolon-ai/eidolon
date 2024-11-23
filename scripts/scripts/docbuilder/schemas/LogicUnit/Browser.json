@@ -17,7 +17,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.builtins.logic_units.web_search.Browser",
-    "group": "LogicUnit",
+    "groups": [
+      "LogicUnit"
+    ],
     "name": "Browser",
     "overrides": {}
   },

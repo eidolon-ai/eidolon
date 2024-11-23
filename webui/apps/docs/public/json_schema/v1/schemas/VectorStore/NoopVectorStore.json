@@ -8,7 +8,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.memory.noop_memory.NoopVectorStore",
-    "group": "VectorStore",
+    "groups": [
+      "VectorStore"
+    ],
     "name": "NoopVectorStore",
     "overrides": {}
   },

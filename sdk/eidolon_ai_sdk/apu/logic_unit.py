@@ -118,7 +118,7 @@ def llm_function(
 
 class LogicUnitMeta(ABCMeta):
     def __subclasscheck__(cls, subclass):
-        if issubclass(subclass, ToolBuilder):
+        if issubclass(subclass, ToolBuilder) and cls is LogicUnit:
             return True
         return super().__subclasscheck__(subclass)
 

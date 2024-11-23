@@ -72,7 +72,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.agent.doc_manager.loaders.s3_loader.S3Loader",
-    "group": "DocumentLoader",
+    "groups": [
+      "DocumentLoader"
+    ],
     "name": "S3Loader",
     "overrides": {}
   },

@@ -8,7 +8,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.agent.retriever_agent.question_transformer.NoopQuestionTransformer",
-    "group": "QuestionTransformer",
+    "groups": [
+      "QuestionTransformer"
+    ],
     "name": "NoopQuestionTransformer",
     "overrides": {}
   },

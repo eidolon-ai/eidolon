@@ -98,7 +98,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.apu.conversational_apu.ConversationalAPU",
-    "group": "APU",
+    "groups": [
+      "APU"
+    ],
     "name": "Llamma3-8b",
     "overrides": {
       "llm_unit": {

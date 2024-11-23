@@ -1,10 +1,7 @@
 {
   "anyOf": [
     {
-      "$ref": "../AudioUnit/Toolhouse.json"
-    },
-    {
-      "$ref": "../LogicUnit/OpenAIImageUnit.json"
+      "$ref": "../ImageUnit/OpenAIImageUnit.json"
     }
   ],
   "reference_pointer": {

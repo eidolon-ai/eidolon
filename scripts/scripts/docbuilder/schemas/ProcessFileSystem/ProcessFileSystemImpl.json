@@ -13,7 +13,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.system.process_file_system.ProcessFileSystemImpl",
-    "group": "ProcessFileSystem",
+    "groups": [
+      "ProcessFileSystem"
+    ],
     "name": "ProcessFileSystemImpl",
     "overrides": {}
   },

@@ -8,7 +8,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.security.functional_authorizer.GlobPatternFunctionalAuthorizer",
-    "group": "FunctionalAuthorizer",
+    "groups": [
+      "FunctionalAuthorizer"
+    ],
     "name": "GlobPatternFunctionalAuthorizer",
     "overrides": {}
   },

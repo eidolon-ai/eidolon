@@ -4,7 +4,7 @@ import copy
 import logging
 import textwrap
 from functools import cache
-from typing import TypeVar, Type, Annotated, Optional, ClassVar
+from typing import TypeVar, Type, Annotated, Optional, ClassVar, Tuple
 
 from pydantic import BaseModel, model_validator, Field, ConfigDict, GetJsonSchemaHandler
 from pydantic.json_schema import JsonSchemaValue
@@ -93,43 +93,48 @@ class Reference(BaseModel):
             if hasattr(clz, "specable"):
                 clz = clz.specable()
             if issubclass(clz, cls._membership):
-                reference_details = dict(
-                    overrides=overrides,
-                    clz=pointer,
-                    name=r.metadata.name,
-                    group=json_schema["reference_pointer"]["type"],
-                )
-                ref = handler(_pseudo_pointer(r.metadata.name).__pydantic_core_schema__)
+                model, metadata = _pseudo_pointer(r.metadata.name)
+                if not metadata:
+                    metadata.update(dict(
+                        overrides=overrides,
+                        clz=pointer,
+                        name=r.metadata.name,
+                        groups=[json_schema["reference_pointer"]["type"]],
+                    ))
+                else:
+                    grp = json_schema["reference_pointer"]["type"]
+                    if grp not in metadata["groups"]:
+                        metadata["groups"].append(grp)
+                ref = handler(model.__pydantic_core_schema__)
                 if r.metadata.name == json_schema["reference_pointer"]["type"]:
                     group_component_ref = ref
                 ref_schema = handler.resolve_ref_schema(ref)
-                if "reference_details" not in ref_schema:
-                    ref_schema["reference_details"] = reference_details
-                    if hasattr(clz, "__pydantic_core_schema__"):
-                        obj_ref = clz.__get_pydantic_json_schema__(clz.__pydantic_core_schema__, handler)
-                    else:
-                        obj_ref = dict(
-                            type="object",
-                            properties=dict(implementation=dict(type="string")),
-                            additionalProperties=True,
-                        )
-                    desired_ref_schema = handler.resolve_ref_schema(obj_ref)
-                    if issubclass(clz, BaseModel):
-                        transform_spec_schema(desired_ref_schema, clz)
+                ref_schema["reference_details"] = metadata
+                if hasattr(clz, "__pydantic_core_schema__"):
+                    obj_ref = clz.__get_pydantic_json_schema__(clz.__pydantic_core_schema__, handler)
+                else:
+                    obj_ref = dict(
+                        type="object",
+                        properties=dict(implementation=dict(type="string")),
+                        additionalProperties=True,
+                    )
+                desired_ref_schema = handler.resolve_ref_schema(obj_ref)
+                if issubclass(clz, BaseModel):
+                    transform_spec_schema(desired_ref_schema, clz)
 
-                    desired_ref_schema["properties"]["implementation"] = dict(
-                        const=r.metadata.name, title="Implementation"
-                    )
-                    desired_ref_schema["properties"] = dict(  # put implementation at the top
-                        implementation=desired_ref_schema["properties"].pop("implementation"),
-                        **desired_ref_schema["properties"],
-                    )
-                    desired_ref_schema.pop("$defs", None)
-                    desired_ref_schema.setdefault("required", []).append("implementation")
-                    ref_schema.update(desired_ref_schema)
-                    ref_schema["title"] = r.metadata.name
-                    for key, value in overrides.items():
-                        ref_schema["properties"].setdefault(key, {})["default"] = value
+                desired_ref_schema["properties"]["implementation"] = dict(
+                    const=r.metadata.name, title="Implementation"
+                )
+                desired_ref_schema["properties"] = dict(  # put implementation at the top
+                    implementation=desired_ref_schema["properties"].pop("implementation"),
+                    **desired_ref_schema["properties"],
+                )
+                desired_ref_schema.pop("$defs", None)
+                desired_ref_schema.setdefault("required", []).append("implementation")
+                ref_schema.update(desired_ref_schema)
+                ref_schema["title"] = r.metadata.name
+                for key, value in overrides.items():
+                    ref_schema["properties"].setdefault(key, {})["default"] = value
                 json_schema["anyOf"].append(ref)
 
         json_schema["anyOf"] = sorted(json_schema["anyOf"], key=lambda x: x["$ref"])
@@ -292,5 +297,5 @@ class _ReferenceGetter(object):
 
 
 @cache
-def _pseudo_pointer(name) -> Type[BaseModel]:
-    return schema_to_model(dict(type="object", properties={}), name)
+def _pseudo_pointer(name) -> Tuple[Type[BaseModel], dict]:
+    return schema_to_model(dict(type="object", properties={}), name), dict()

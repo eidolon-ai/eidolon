@@ -31,7 +31,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.security.security_manager.SecurityManagerImpl",
-    "group": "SecurityManager",
+    "groups": [
+      "SecurityManager"
+    ],
     "name": "SecurityManagerImpl",
     "overrides": {}
   },

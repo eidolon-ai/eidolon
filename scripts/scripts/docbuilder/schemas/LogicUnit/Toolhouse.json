@@ -32,7 +32,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.builtins.logic_units.toolhouse_logic_unit.Toolhouse",
-    "group": "AudioUnit",
+    "groups": [
+      "LogicUnit"
+    ],
     "name": "Toolhouse",
     "overrides": {}
   },

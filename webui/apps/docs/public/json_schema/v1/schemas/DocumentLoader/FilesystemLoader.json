@@ -17,7 +17,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.agent.doc_manager.loaders.filesystem_loader.FilesystemLoader",
-    "group": "DocumentLoader",
+    "groups": [
+      "DocumentLoader"
+    ],
     "name": "FilesystemLoader",
     "overrides": {}
   },

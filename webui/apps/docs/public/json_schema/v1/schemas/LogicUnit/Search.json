@@ -52,7 +52,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.builtins.logic_units.web_search.Search",
-    "group": "LogicUnit",
+    "groups": [
+      "LogicUnit"
+    ],
     "name": "Search",
     "overrides": {}
   },

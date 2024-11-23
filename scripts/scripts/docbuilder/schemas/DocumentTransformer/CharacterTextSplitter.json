@@ -44,7 +44,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.agent.doc_manager.transformer.text_splitters.CharacterTextSplitter",
-    "group": "DocumentTransformer",
+    "groups": [
+      "DocumentTransformer"
+    ],
     "name": "CharacterTextSplitter",
     "overrides": {}
   },

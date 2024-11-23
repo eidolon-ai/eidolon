@@ -27,7 +27,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.apu.tool_call_unit.ToolCallLLMWrapper",
-    "group": "LLMUnit",
+    "groups": [
+      "LLMUnit"
+    ],
     "name": "ToolCallLLMWrapper",
     "overrides": {}
   },

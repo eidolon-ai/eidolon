@@ -7,7 +7,7 @@
       "$ref": "../LogicUnit/Browser.json"
     },
     {
-      "$ref": "../LogicUnit/OpenAIImageUnit.json"
+      "$ref": "../ImageUnit/OpenAIImageUnit.json"
     },
     {
       "$ref": "../AudioUnit/OpenAiSpeech.json"
@@ -16,7 +16,7 @@
       "$ref": "../LogicUnit/Search.json"
     },
     {
-      "$ref": "../AudioUnit/Toolhouse.json"
+      "$ref": "../LogicUnit/Toolhouse.json"
     },
     {
       "$ref": "../LogicUnit/VectaraSearch.json"

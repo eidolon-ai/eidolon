@@ -82,7 +82,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.apu.llm.ollama_llm_unit.OllamaLLMUnit",
-    "group": "LLMUnit",
+    "groups": [
+      "LLMUnit"
+    ],
     "name": "OllamaLLMUnit",
     "overrides": {}
   },

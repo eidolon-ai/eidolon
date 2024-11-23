@@ -38,7 +38,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.apu.llm.mistral_llm_unit.MistralGPT",
-    "group": "LLMUnit",
+    "groups": [
+      "LLMUnit"
+    ],
     "name": "MistralGPT",
     "overrides": {}
   },

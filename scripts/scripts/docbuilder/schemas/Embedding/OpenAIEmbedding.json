@@ -17,7 +17,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.memory.embeddings.OpenAIEmbedding",
-    "group": "Embedding",
+    "groups": [
+      "Embedding"
+    ],
     "name": "OpenAIEmbedding",
     "overrides": {}
   },

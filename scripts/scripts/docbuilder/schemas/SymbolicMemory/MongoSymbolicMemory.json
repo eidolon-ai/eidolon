@@ -20,7 +20,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.memory.mongo_symbolic_memory.MongoSymbolicMemory",
-    "group": "SymbolicMemory",
+    "groups": [
+      "SymbolicMemory"
+    ],
     "name": "MongoSymbolicMemory",
     "overrides": {}
   },

@@ -20,7 +20,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.memory.chroma_vector_store.ChromaVectorStore",
-    "group": "VectorStore",
+    "groups": [
+      "VectorStore"
+    ],
     "name": "ChromaVectorStore",
     "overrides": {}
   },

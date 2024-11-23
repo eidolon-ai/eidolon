@@ -8,7 +8,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.security.functional_authorizer.NoopFunctionalAuth",
-    "group": "FunctionalAuthorizer",
+    "groups": [
+      "FunctionalAuthorizer"
+    ],
     "name": "NoopFunctionalAuth",
     "overrides": {}
   },

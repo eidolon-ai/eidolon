@@ -43,7 +43,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.apu.llm_unit.LLMModel",
-    "group": "LLMModel",
+    "groups": [
+      "LLMModel"
+    ],
     "name": "claude-3-sonnet-20240229",
     "overrides": {
       "human_name": "Claude Sonnet",

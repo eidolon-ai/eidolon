@@ -43,7 +43,9 @@
   },
   "reference_details": {
     "clz": "eidolon_ai_sdk.apu.llm_unit.LLMModel",
-    "group": "LLMModel",
+    "groups": [
+      "LLMModel"
+    ],
     "name": "gpt-4o",
     "overrides": {
       "human_name": "GPT-4o",
