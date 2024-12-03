@@ -74,7 +74,6 @@ def build_actions(operations_to_expose: List[Operation], schema: dict, title: st
                                 type="string",
                                 description="The path of a response field as it appears in the json schema",
                             ),
-                            required=False,
                         )
 
                         if "requestBody" in method:
