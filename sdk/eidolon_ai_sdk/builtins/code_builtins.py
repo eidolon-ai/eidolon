@@ -72,6 +72,7 @@ from eidolon_ai_sdk.apu.tool_call_unit import ToolCallLLMWrapper
 from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager, CustomSampler, NoopSpanExporter
 from eidolon_ai_sdk.builtins.components.usage import UsageMiddleware
 from eidolon_ai_sdk.builtins.logic_units.api_logic_unit import ApiLogicUnit
+from eidolon_ai_sdk.builtins.logic_units.browser import BrowserV2
 from eidolon_ai_sdk.builtins.logic_units.toolhouse_logic_unit import Toolhouse
 from eidolon_ai_sdk.builtins.logic_units.vectara import VectaraSearch
 from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch, Browser, Search
@@ -179,6 +180,7 @@ def named_builtins() -> List[ReferenceResource]:
         WebSearch,
         Search,
         Browser,
+        BrowserV2,
         Retriever,
         ApiLogicUnit,
         VectaraSearch,
