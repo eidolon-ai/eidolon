@@ -25,4 +25,4 @@ RUN addgroup --system --gid 1001 eidolon && adduser --system --uid 1001 --ingrou
 USER eidolon
 EXPOSE 7468
 ENV PYTHONUNBUFFERED=1
-#ENTRYPOINT ["fastapi", "main", 7468] todo this is wrong entrypoint for sure
+#ENTRYPOINT ["fastapi", "run", "eidolon_browser_service", "--port", 7468] todo this is wrong entrypoint for sure

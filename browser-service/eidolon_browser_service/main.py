@@ -33,7 +33,7 @@ async def list_pages(context_id: str):
     context = await browser_service.get_or_create_context(context_id)
     return {
         "pages": [
-            PageInfo(page_id=page.page_id, url=page.page.url)
+            PageInfo(page_id=page.page_id, url=page.page.url if page.page.url != "about:blank" else None)
             for page in context.pages.values()
         ]
     }

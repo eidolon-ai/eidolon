@@ -87,7 +87,7 @@ class Page(PageInfo):
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
-                    urljoin(self.location, f"/contexts/{self.context_id}/pages/{self.page_id}/go_to_url"),
+                    urljoin(self.location, f"/contexts/{self.context_id}/pages/{self.page_id}/navigate"),
                     json={"url": url}
                 )
                 response.raise_for_status()
@@ -128,7 +128,7 @@ class Context(BaseModel):
                     Page(
                         location=self.location,
                         context_id=self.context_id,
-                        page_id=page["page_id"]
+                        **PageInfo(**page).model_dump(),
                     )
                     for page in response.json()["pages"]
                 ]
