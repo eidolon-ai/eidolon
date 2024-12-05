@@ -57,7 +57,7 @@ async def evaluate_script(context_id: str, page_id: str, request: EvaluateReques
         else:
             logger.warning("Error executing script")
         raise HTTPException(status_code=422, detail=f"{type(e).__name__}: {e}")
-    return EvaluateInfo(result=result)
+    return EvaluateInfo(result=str(result) if result is not None else None)
 
 
 @app.post("/contexts/{context_id}/pages/{page_id}/navigate")

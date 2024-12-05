@@ -23,6 +23,10 @@ class PageNotFoundError(BrowserError):
     pass
 
 
+class EvaluationError(BrowserError):
+    pass
+
+
 async def _handle_response_error(e: httpx.HTTPStatusError, context: str) -> None:
     if e.response.status_code == 404:
         raise PageNotFoundError(
@@ -53,6 +57,13 @@ class Page(PageInfo):
                 response.raise_for_status()
                 return EvaluateInfo.model_validate(response.json())
         except httpx.HTTPStatusError as e:
+            if e.response.status_code == 422:
+                raise EvaluationError(
+                    e.response.json().get('detail', e.response.text),
+                    status_code=e.response.status_code,
+                    response_body=e.response.text,
+                    original_error=e
+                )
             await _handle_response_error(e, "Evaluation failed")
 
     async def navigate(self, url: str) -> Page:
@@ -82,22 +93,6 @@ class Page(PageInfo):
                 return response.text
         except httpx.HTTPStatusError as e:
             await _handle_response_error(e, "Failed to get content")
-
-    async def go_to_url(self, url: str) -> Page:
-        try:
-            async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    urljoin(self.location, f"/contexts/{self.context_id}/pages/{self.page_id}/navigate"),
-                    json={"url": url}
-                )
-                response.raise_for_status()
-                return Page(
-                    location=self.location,
-                    context_id=self.context_id,
-                    **response.json()
-                )
-        except httpx.HTTPStatusError as e:
-            await _handle_response_error(e, "Failed to go to URL")
 
 
 class Context(BaseModel):

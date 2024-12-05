@@ -13,7 +13,7 @@ class EvaluateRequest(BaseModel):
 
 
 class EvaluateInfo(BaseModel):
-    result: str
+    result: Optional[str]
 
 
 class NavigateRequest(BaseModel):

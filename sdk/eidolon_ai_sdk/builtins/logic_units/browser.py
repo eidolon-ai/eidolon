@@ -1,27 +1,61 @@
 from __future__ import annotations
 
 import os
-from typing import Optional
+from typing import Optional, Literal
 
-from pydantic import Field
+from bs4 import BeautifulSoup
+from pydantic import Field, BaseModel
 
 from eidolon_ai_client.util.logger import logger
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.system.tool_builder import ToolBuilder
-from eidolon_browser_service.async_client import Browser, Page
+from eidolon_browser_service.async_client import Browser, EvaluationError
 
+
+class Summarizer(BaseModel):
+    tool_description: str = "Summarize the current page (Current url: {url})"
+    mode: Literal["BeautifulSoup", "noop"]
+
+    def clean_html(self, soup, tag):
+        """Strip away everything except essential attributes and structure"""
+        # Keep these attributes for all elements
+        keep_attrs = ['id', 'class', 'href', 'type', 'name']
+
+        # Create new tag with only desired attributes
+        attrs = {k: v for k, v in tag.attrs.items() if k in keep_attrs}
+        new_tag = soup.new_tag(tag.name, attrs=attrs)
+
+        # Recursively process child elements
+        for child in tag.children:
+            if isinstance(child, str):
+                if child.strip():
+                    new_tag.append(child.strip())
+            elif child.name:
+                new_tag.append(BeautifulSoup(self.clean_html(soup, child), 'lxml').find(child.name))
+
+        return str(new_tag)
+
+    def summarize(self, text: str):
+        if self.mode == "BeautifulSoup":
+            soup = BeautifulSoup(text, "lxml")
+
+            # Process all interactive elements
+            for tag in soup.find_all(['form', 'input', 'button', 'a', 'select', 'textarea']):
+                # Only process top-level elements (not nested in forms)
+                if tag.name == 'form' or not tag.find_parent('form'):
+                    tag_text = f"\n--- {tag.name.upper()} ---\n{self.clean_html(soup, tag)}\n--- END {tag.name.upper()} ---\n\n"
+                    tag.replace_with(tag_text)
+
+            return soup.get_text(separator="\n", strip=True)
+
+        return text
 
 class BrowserV2(ToolBuilder):
     starting_url: Optional[str] = None
     browser_service_loc: str = Field(default=os.environ.get("BROWSER_SERVICE_URL", "http://localhost:7468"), description="The location of the playwright installation.", examples=["http://localhost:7468"])
-    description: str = """
-    This tool allows you to interact with a browser using playwright. You can go to a url or evaluate javascript on a page.
-    The browser session (context) persists across the entire conversation.
-    
-    The current page content is:
-    {page_content}
-    """
-    uninitialized_page_content: str = "[Page not initialized. No content available. Use go_to_url to initialize.]"
+    go_to_url_description: str = "Go to a specified url"
+    go_to_url_summarizer: Optional[Summarizer] = Summarizer(mode="BeautifulSoup")
+    evaluate_description: str = "Evaluate javascript on the current page. This is how you interact with the DOM including retrieving structure, filling out forms, clicking buttons, etc.\nCurrent url: {url}"
 
 
 @BrowserV2.dynamic_contract
@@ -37,43 +71,24 @@ async def browser_build(spec: BrowserV2, call_context: CallContext):
         page = pages[0]
     elif spec.starting_url:
         page = await browser.create_page()
-        page = await page.go_to_url(spec.starting_url)
+        page = await page.navigate(spec.starting_url)
     else:
         page = None
 
-    current_page_content = await page.get_content() if page else spec.uninitialized_page_content
-
-    tool_desc = spec.description.format(page_content=current_page_content)
-    url_desc = "Go to a specified url. Will be performed prior to evaluating javascript if both are provided"
-    js_desc = "Evaluate JavaScript and return the response. Will be performed after going to a url if both are provided."
+    @BrowserV2.tool(description=spec.go_to_url_description)
+    async def go_to_url(url: str):
+        page_ = page or await browser.create_page()
+        await page_.navigate(url)
+        if spec.go_to_url_summarizer:
+            return spec.go_to_url_summarizer.summarize(await page_.get_content())
+        else:
+            return f"Successfully went to {url}"
 
     if page and page.url:
-        @BrowserV2.tool(description=tool_desc)
-        async def browser_page(
-                go_to_url: Optional[str] = Field(None, description=url_desc),
-                evaluate_js: Optional[str] = Field(None, description=js_desc),
-        ):
-            return await _browser_page(go_to_url, evaluate_js, page)
-    else:
-        @BrowserV2.tool(description=tool_desc)
-        async def browser_page(
-                go_to_url: str = Field(description=url_desc),
-                evaluate_js: Optional[str] = Field(None, description=js_desc),
-        ):
-            return await _browser_page(go_to_url, evaluate_js, page if page else await browser.create_page())
-
-
-async def _browser_page(go_to_url: Optional[str], evaluate_js: Optional[str], page: Page):
-    if not go_to_url and not evaluate_js:
-        raise ValueError("Must include go_to_url or evaluate_js.")
-    if not page.url and not go_to_url:
-        raise ValueError("Must include go_to_url if no page is running.")
-    response = dict()
-    if go_to_url:
-        page = await page.go_to_url(go_to_url)
-        response['went to url'] = go_to_url
-    if evaluate_js:
-        code_response = await page.evaluate(evaluate_js)
-        response['evaluated JavaScript result'] = code_response.result
-
-    return response
+        @BrowserV2.tool(description=spec.evaluate_description.format(url=page.url))
+        async def evaluate(javascript: str):
+            try:
+                return await page.evaluate(javascript)
+            except EvaluationError as e:
+                logger.warning(f"Error evaluating agent javascript: {e}")
+                return str(e)
