@@ -18,7 +18,6 @@ class Summarizer(BaseModel):
 
     def clean_html(self, soup, tag):
         """Strip away everything except essential attributes and structure"""
-        # Keep these attributes for all elements
         keep_attrs = ['id', 'class', 'href', 'type', 'name']
 
         # Create new tag with only desired attributes
@@ -39,16 +38,28 @@ class Summarizer(BaseModel):
         if self.mode == "BeautifulSoup":
             soup = BeautifulSoup(text, "lxml")
 
-            # Process all interactive elements
-            for tag in soup.find_all(['form', 'input', 'button', 'a', 'select', 'textarea']):
-                # Only process top-level elements (not nested in forms)
-                if tag.name == 'form' or not tag.find_parent('form'):
-                    tag_text = f"\n--- {tag.name.upper()} ---\n{self.clean_html(soup, tag)}\n--- END {tag.name.upper()} ---\n\n"
-                    tag.replace_with(tag_text)
+            # Remove unwanted elements
+            for tag in soup.find_all(['head', 'style', 'script', 'svg', 'noscript']):
+                tag.decompose()
 
-            return soup.get_text(separator="\n", strip=True)
+            # Clean and collect main sections
+            cleaned_html = []
 
-        return text
+            # Process body
+            body = soup.find('body')
+            if body:
+                cleaned_html.append(self.clean_html(soup, body))
+                body.decompose()
+
+            # Process footer (now no risk of duplication)
+            footer = soup.find('footer')
+            if footer:
+                cleaned_html.append(self.clean_html(soup, footer))
+
+            return "\n".join(cleaned_html)
+        else:
+            return text
+
 
 class BrowserV2(ToolBuilder):
     starting_url: Optional[str] = None
@@ -60,7 +71,7 @@ class BrowserV2(ToolBuilder):
 
 @BrowserV2.dynamic_contract
 async def browser_build(spec: BrowserV2, call_context: CallContext):
-    context_str = f"pid-{call_context.process_id}-tid-{call_context.thread_id}"
+    context_str = f"pid-{call_context.process_id}"
     browser = Browser(location=spec.browser_service_loc).context(context_str)
     pages = await browser.list_pages()
 
