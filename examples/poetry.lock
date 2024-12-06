@@ -1566,7 +1566,7 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-sdk"
-version = "0.1.177"
+version = "0.1.178"
 description = "An open source sgent service SDK"
 optional = false
 python-versions = ">=3.10,<3.13"
@@ -1591,7 +1591,7 @@ dulwich = "^0.22.6"
 eidolon-ai-client = "^0.1.40"
 eidolon-ai-mistralai = "^0.1.6a"
 eidolon-ai-usage-client = "^0.1.10"
-eidolon-browser-service = "^0.1.1"
+eidolon-browser-service = "^0.1.2"
 esprima = "^4.0.1"
 eval-type-backport = "^0.2.0"
 fastapi = ">=0.109.0"
@@ -1657,7 +1657,7 @@ url = "../usage-service/usage-client"
 
 [[package]]
 name = "eidolon-browser-service"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 optional = false
 python-versions = ">=3.10,<3.13"
@@ -7172,4 +7172,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "10ae54fdce2d9c2711c576021c87261557020d5d484b76b9bfbd720ec1d4cd50"
+content-hash = "d2f1bfa220952cf58bb60d3a149c78edd88a7ad5d1aa05a3c6f71ac5f8654eae"
