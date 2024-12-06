@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+from contextlib import contextmanager
 from functools import partial
 from typing import List
 
@@ -94,13 +95,8 @@ class DocumentManager(Specable[DocumentManagerSpec]):
                     while len(tasks) > self.spec.concurrency:
                         done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
                         for task in done:
-                            try:
+                            with _log_process_file_error():
                                 await task
-                            except Exception as e:
-                                if logger.isEnabledFor(logging.DEBUG):
-                                    logger.error("Error processing file", exc_info=True)
-                                else:
-                                    logger.error(f"Error processing file\n{type(e)}: {e}")
 
                     if isinstance(change, AddedFile):
                         tasks.add(asyncio.create_task(self.processor.add_file(self.collection_name, change.file_info)))
@@ -127,18 +123,21 @@ class DocumentManager(Specable[DocumentManagerSpec]):
                 while tasks:
                     done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
                     for task in done:
-                        try:
+                        with _log_process_file_error():
                             await task
-                        except Exception as e:
-                            if logger.isEnabledFor(logging.DEBUG):
-                                logger.error("Error processing file", exc_info=True)
-                            else:
-                                logger.error(f"Error processing file\n{type(e)}: {e}")
 
                 await asyncio.gather(*tasks, return_exceptions=True)
                 for task in tasks:
-                    if task.exception():
-                        self.logger.error(f"Error processing file: {task.exception()}")
+                    with _log_process_file_error():
+                        await task
 
                 self.logger.info("Document Manager sync complete")
             self.last_reload = time.time()
+
+
+@contextmanager
+def _log_process_file_error():
+    try:
+        yield
+    except Exception:
+        logger.exception("Error processing file")
