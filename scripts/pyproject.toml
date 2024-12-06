@@ -44,6 +44,11 @@ path = "../client/python"
 develop = true
 optional = true
 
+[tool.poetry.group.dev.dependencies.eidolon-browser-service]
+path = "../browser-service"
+develop = true
+optional = true
+
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.7"
 
