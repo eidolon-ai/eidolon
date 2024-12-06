@@ -1,3 +1,5 @@
+import asyncio
+import logging
 from typing import Annotated, List, Optional
 from urllib.parse import urlparse
 
@@ -38,6 +40,7 @@ class RetrieverAgentSpec(RetrieverSpec):
     document_manager: Optional[Reference[DocumentManager]] = None
 
     apu: AnnotatedReference[APU] = Field(description="The APU to use for question transformation.")
+    sync_wait_time: int = Field(default=-1, description="The amount of time (seconds) to wait while documents sync before returning results.")
 
     # noinspection PyMethodParameters
     @model_validator(mode="before")
@@ -88,7 +91,7 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
         :return: The response from the apu
         """
         if self.document_manager:
-            await self.document_manager.sync_docs()
+            await self._sync_docs()
             files = [item async for item in self.document_manager.list_files()]
         else:
             files = []
@@ -103,8 +106,16 @@ class RetrieverAgent(Specable[RetrieverAgentSpec]):
         :param question: The question to process
         :return: The response from the apu
         """
-        if hasattr(self, "document_manager") and self.document_manager:
-            await self.document_manager.sync_docs()
-
+        await self._sync_docs()
         results = await self.retriever.do_search(f"doc_contents_{self.spec.name}", self.apu, process_id, question)
         return [doc async for doc in results]
+
+    async def _sync_docs(self):
+        if hasattr(self, "document_manager") and self.document_manager:
+            if self.spec.sync_wait_time >= 0:
+                try:
+                    await asyncio.wait_for(asyncio.shield(self.document_manager.sync_docs()), timeout=self.spec.sync_wait_time)
+                except asyncio.TimeoutError:
+                    logging.info("DocumentManager sync timed out before it finished, continuing with request while it finishes.")
+            else:
+                await self.document_manager.sync_docs()
