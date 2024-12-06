@@ -131,7 +131,10 @@ async def browser_build(spec: BrowserV2, call_context: CallContext):
         @BrowserV2.tool(description=spec.evaluate_description.format(**format_args))
         async def evaluate(javascript: str):
             try:
-                return await page.evaluate(javascript)
+                result = await page.evaluate(javascript)
+                rtn = result.model_dump()
+                rtn["completion_time"] = str(datetime.utcnow())
+                return rtn
             except EvaluationError as e:
                 logger.warning(f"Error evaluating agent javascript: {e}")
                 return str(e)
