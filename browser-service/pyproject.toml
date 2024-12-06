@@ -1,9 +1,16 @@
+[build-system]
+requires = [ "poetry-core",]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
 name = "eidolon-browser-service"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
-authors = ["Luke Lalor <lukehlalor@gmail.com>"]
+authors = [ "Luke Lalor <lukehlalor@gmail.com>",]
 readme = "README.md"
+
+[tool.eidolon]
+last-update-hash = "83cc5a65dea415bc632fa1e4fa662b14d0d60324"
 
 [tool.poetry.urls]
 Github = "https://github.com/eidolon-ai/eidolon"
@@ -14,19 +21,15 @@ python = ">=3.10,<3.13"
 pydantic = "^2.10.3"
 playwright = "^1.49.0"
 
+[tool.poetry.extras]
+server = [ "fastapi",]
+
 [tool.poetry.dependencies.fastapi]
-version="^0.115.6"
-extras=["standard"]
-optional=true
+version = "^0.115.6"
+extras = [ "standard",]
+optional = true
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"
 pylint = "^3.0.3"
 ruff = "^0.1.7"
-
-[tool.poetry.extras]
-server = [ "fastapi" ]
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
