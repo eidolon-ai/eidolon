@@ -1425,7 +1425,7 @@ url = "../usage-service/usage-client"
 [[package]]
 name = "eidolon-browser-service"
 version = "0.1.2"
-description = ""
+description = "Lightweight playwright wrapper for AI Agents"
 optional = true
 python-versions = ">=3.10,<3.13"
 files = []
