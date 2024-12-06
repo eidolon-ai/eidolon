@@ -52,6 +52,7 @@ from eidolon_ai_sdk.agent.tot_agent.thought_generators import ThoughtGenerationS
 from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
 from eidolon_ai_sdk.agent.vectara_agent import VectaraAgent
 from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, SimilarityMemory, SecurityManager
+from eidolon_ai_sdk.apu.RollingMemoryUnit import RollingMemoryUnit
 from eidolon_ai_sdk.apu.llm.azure_llm_unit import AzureLLMUnit
 from eidolon_ai_sdk.apu.longterm_memory_unit import LongTermMemoryUnit
 from eidolon_ai_sdk.apu.agent_io import IOUnit
@@ -177,6 +178,7 @@ def named_builtins() -> List[ReferenceResource]:
         LLMModel,
         (MemoryUnit, RawMemoryUnit),
         RawMemoryUnit,
+        RollingMemoryUnit,
         WebSearch,
         Search,
         Browser,

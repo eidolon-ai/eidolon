@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from textwrap import dedent
 from typing import Optional, Literal
 
 from bs4 import BeautifulSoup
@@ -66,7 +67,13 @@ class BrowserV2(ToolBuilder):
     browser_service_loc: str = Field(default=os.environ.get("BROWSER_SERVICE_URL", "http://localhost:7468"), description="The location of the playwright installation.", examples=["http://localhost:7468"])
     go_to_url_description: str = "Go to a specified url"
     go_to_url_summarizer: Optional[Summarizer] = Summarizer(mode="BeautifulSoup")
-    evaluate_description: str = "Evaluate javascript on the current page. This is how you interact with the DOM including retrieving structure, filling out forms, clicking buttons, etc.\nCurrent url: {url}"
+    evaluate_description: str = dedent("""
+    Evaluate javascript on the current page and return the last expression. This is how you interact with the DOM including retrieving structure, filling out forms, clicking buttons, etc.
+    
+    Will return immediately after the last expression is evaluated, so the page may not have fully loaded yet. If you need to wait for the page to load, do so explicitly or poll the page state.
+    
+    Current url: {url}
+    """).strip()
 
 
 @BrowserV2.dynamic_contract
