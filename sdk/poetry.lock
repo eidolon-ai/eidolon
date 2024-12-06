@@ -1608,7 +1608,7 @@ url = "../usage-service/usage-client"
 
 [[package]]
 name = "eidolon-browser-service"
-version = "0.1.2"
+version = "0.1.3"
 description = "Lightweight playwright wrapper for AI Agents"
 optional = false
 python-versions = ">=3.10,<3.13"
@@ -6896,4 +6896,4 @@ all = ["chromadb", "playwright", "unstructured"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "958aa713048f59c48130af9ddbbf9542255e484dbc527a03a8b1a1178e8dc8ac"
+content-hash = "436ea8d9938c80a7bb270b584954a1ea6375e8e23bb4d0befa096ad4ba085880"
