@@ -5,6 +5,10 @@ description = ""
 authors = ["Luke Lalor <lukehlalor@gmail.com>"]
 readme = "README.md"
 
+[tool.poetry.urls]
+Github = "https://github.com/eidolon-ai/eidolon"
+Website = "https://www.eidolonai.com/"
+
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
 pydantic = "^2.10.3"
