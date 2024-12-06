@@ -28,7 +28,7 @@ COPY --from=eidolon_client_builder dist/*.whl /tmp/eidolon_ai_client/
 RUN pip install /tmp/eidolon_ai_client/*.whl --no-cache --no-deps
 COPY --from=usage_client_builder dist/*.whl /tmp/usage_client/
 RUN pip install /tmp/usage_client/*.whl --no-cache --no-deps
-COPY --from=browser_service_builder dist/*.whl /tmp/usage_client/
+COPY --from=browser_service_builder dist/*.whl /tmp/browser_service_builder/
 RUN pip install /tmp/browser_service_builder/*.whl --no-cache --no-deps
 COPY --from=builder dist/*.whl /tmp/eidolon_ai_sdk/
 RUN pip install /tmp/eidolon_ai_sdk/*.whl --no-cache --no-deps
