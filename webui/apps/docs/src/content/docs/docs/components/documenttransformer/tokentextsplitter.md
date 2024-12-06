@@ -123,8 +123,6 @@ Specific value: `"TokenTextSplitter"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-Must be one of:
-* "all"
 Specific value: `"all"`
 
 ### <a name="allowed_special_anyOf_i1"></a>8.2. Property `item 1`
@@ -178,8 +176,6 @@ Specific value: `"all"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-Must be one of:
-* "all"
 Specific value: `"all"`
 
 ### <a name="disallowed_special_anyOf_i1"></a>9.2. Property `item 1`

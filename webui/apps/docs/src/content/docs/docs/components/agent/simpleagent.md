@@ -260,8 +260,6 @@ Specific value: `"SimpleAgent"`
 | **Type**     | `const` |
 | **Required** | No      |
 
-Must be one of:
-* "str"
 Specific value: `"str"`
 
 ##### <a name="actions_items_output_schema_anyOf_i1"></a>7.1.7.2. Property `item 1`

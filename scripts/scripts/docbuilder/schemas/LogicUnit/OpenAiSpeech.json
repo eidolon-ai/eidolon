@@ -33,9 +33,6 @@
       "const": "whisper-1",
       "default": "whisper-1",
       "description": "The model to use for speech to text.",
-      "enum": [
-        "whisper-1"
-      ],
       "title": "Speech To Text Model",
       "type": "string"
     },

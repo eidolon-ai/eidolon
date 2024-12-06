@@ -171,9 +171,6 @@
           "anyOf": [
             {
               "const": "str",
-              "enum": [
-                "str"
-              ],
               "type": "string"
             },
             {
