@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from datetime import datetime
 from textwrap import dedent
 from typing import Optional, Literal
 
@@ -74,15 +75,30 @@ class BrowserV2(ToolBuilder):
 
     starting_url: Optional[str] = None
     browser_service_loc: str = Field(default=os.environ.get("BROWSER_SERVICE_URL", "http://localhost:7468"), description="The location of the playwright installation.", examples=["http://localhost:7468"])
-    go_to_url_description: str = "Go to a specified url"
-    go_to_url_summarizer: Optional[Summarizer] = Summarizer(mode="BeautifulSoup")
-    evaluate_description: str = dedent("""
-    Evaluate javascript on the current page and return the last expression. This is how you interact with the DOM including retrieving structure, filling out forms, clicking buttons, etc.
+    navigate_description: str = dedent("""
+    Navigate to a url from the current page. Waits for the url to load before returning.
     
-    Will return immediately after the last expression is evaluated, so the page may not have fully loaded yet. If you need to wait for the page to load, do so explicitly or poll the page state.
-    
-    Current url: {url}
+    The current page url as of {datetime} is "{url}"
     """).strip()
+    evaluate_description: str = dedent("""
+    Evaluate javascript on the current page and return the last expression.
+    This is how you interact with the DOM including...
+    * retrieving structure
+    * filling out forms
+    * clicking buttons
+    * waiting for events, elements, urls, or other conditions
+    
+    JavaScript is evaluated using playwright's page.evaluate method.
+    The tool call returns immediately after the last expression is evaluated, so the page may not have fully loaded depending on the provided javascript.
+    
+    The current page url as of {datetime} is "{url}"
+    """).strip()
+    content_description: str = dedent("""
+    Get the HTML content of the current page. Content will be summarized to remove unnecessary elements.
+    
+    The current page url as of {datetime} is "{url}"
+    """).strip()
+    content_summarizer: Optional[Summarizer] = Summarizer(mode="BeautifulSoup")
 
 
 @BrowserV2.dynamic_contract
@@ -90,6 +106,7 @@ async def browser_build(spec: BrowserV2, call_context: CallContext):
     context_str = f"pid-{call_context.process_id}"
     browser = Browser(location=spec.browser_service_loc).context(context_str)
     pages = await browser.list_pages()
+    datetime.utcnow()
 
     if len(pages) > 1:
         logger.warning("LLM found more than one page running in the browser. Using the last one.")
@@ -102,7 +119,9 @@ async def browser_build(spec: BrowserV2, call_context: CallContext):
     else:
         page = None
 
-    @BrowserV2.tool(description=spec.go_to_url_description)
+    format_args = dict(datetime=str(datetime.utcnow()), url=str(page.url if page else None))
+
+    @BrowserV2.tool(description=spec.navigate_description.format(**format_args))
     async def go_to_url(url: str):
         page_ = page or await browser.create_page()
         await page_.navigate(url)
@@ -112,10 +131,18 @@ async def browser_build(spec: BrowserV2, call_context: CallContext):
             return f"Successfully went to {url}"
 
     if page and page.url:
-        @BrowserV2.tool(description=spec.evaluate_description.format(url=page.url))
+        @BrowserV2.tool(description=spec.evaluate_description.format(**format_args))
         async def evaluate(javascript: str):
             try:
                 return await page.evaluate(javascript)
+            except EvaluationError as e:
+                logger.warning(f"Error evaluating agent javascript: {e}")
+                return str(e)
+
+        @BrowserV2.tool(description=spec.content_description.format(**format_args))
+        async def page_content():
+            try:
+                return await page.get_content()
             except EvaluationError as e:
                 logger.warning(f"Error evaluating agent javascript: {e}")
                 return str(e)

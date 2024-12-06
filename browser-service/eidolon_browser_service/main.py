@@ -2,7 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
-from starlette.responses import HTMLResponse
+from starlette.responses import HTMLResponse, RedirectResponse
 
 from eidolon_browser_service.api import PageInfo, EvaluateRequest, EvaluateInfo, NavigateRequest
 from eidolon_browser_service.service import BrowserService
@@ -19,6 +19,11 @@ async def lifespan(app):
 
 
 app = FastAPI(lifespan=lifespan)
+
+
+@app.get("/", include_in_schema=False)
+async def docs_redirect():
+    return RedirectResponse(url='/docs')
 
 
 @app.post("/contexts/{context_id}/pages")

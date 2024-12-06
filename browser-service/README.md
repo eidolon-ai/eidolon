@@ -4,3 +4,8 @@ pages, execute javascript code on a page, and get the page content. It supports 
 
 To use this service as a client pip install. There is an optional extra 'server' that includes the dependencies needed 
 to run the server, keeping this library as a lightweight client.
+
+## Running the server
+```shell
+docker run -p 7468:7468 eidolonai/browser_service:latest
+```

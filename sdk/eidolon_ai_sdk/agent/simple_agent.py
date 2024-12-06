@@ -220,7 +220,7 @@ def fn(spec: SimpleAgent, metadata: Metadata):
                     attached_files.append(fh)
 
             template_args = {k: v.instantiate().value for k, v in spec.prompt_templates.items()}
-            template_args.update(dict(datetime_iso=datetime.now().isoformat(), body=str(request_body)))
+            template_args.update(dict(datetime_iso=datetime.utcnow().isoformat(), body=str(request_body)))
             if isinstance(request_body, dict):
                 template_args.update(request_body)
 

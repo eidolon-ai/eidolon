@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "eidolon-browser-service"
 version = "0.1.1"
-description = ""
+description = "Lightweight playwright wrapper for AI Agents"
 authors = [ "Luke Lalor <lukehlalor@gmail.com>",]
 readme = "README.md"
 
