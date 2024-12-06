@@ -63,6 +63,15 @@ class Summarizer(BaseModel):
 
 
 class BrowserV2(ToolBuilder):
+    """
+    A tool for interacting with a browser instance.
+
+    Requires a running browser service.
+
+    Exposes two tools to an Agent, one for navigating to a url and another for evaluating javascript on the current page.
+    Browser sessions are durable throughout a process, but each process has its own browser, isolating browsers between agents.
+    """
+
     starting_url: Optional[str] = None
     browser_service_loc: str = Field(default=os.environ.get("BROWSER_SERVICE_URL", "http://localhost:7468"), description="The location of the playwright installation.", examples=["http://localhost:7468"])
     go_to_url_description: str = "Go to a specified url"

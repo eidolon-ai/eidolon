@@ -17,7 +17,7 @@ dockerx:
 	sed -e '1 s/\(^FROM\)/FROM --platform=\$$\{BUILDPLATFORM\}/; t' -e ' 1,// s//FROM --platform=\$$\{BUILDPLATFORM\}/' Dockerfile > Dockerfile.cross
 	$(CONTAINER_TOOL) buildx create --name project-v3-builder
 	$(CONTAINER_TOOL) buildx use project-v3-builder
-	$(CONTAINER_TOOL) buildx build --platform=$(PLATFORMS) --push -f Dockerfile.cross -t browser_service -t ${PROJECT}/browser_service -t ${PROJECT}/browser_service:${VERSION} .
+	$(CONTAINER_TOOL) buildx build --platform=$(PLATFORMS) --push -f Dockerfile.cross -t ${PROJECT}/browser_service -t ${PROJECT}/browser_service:${VERSION} .
 	$(CONTAINER_TOOL) buildx rm project-v3-builder
 	rm Dockerfile.cross
 
