@@ -3,6 +3,13 @@ title: BrowserV2
 description: Description of the BrowserV2 component
 ---
 
+**Description:** A tool for interacting with a browser instance.
+
+Requires a running browser service.
+
+Exposes two tools to an Agent, one for navigating to a url and another for evaluating javascript on the current page.
+Browser sessions are durable throughout a process, but each process has its own browser, isolating browsers between agents.
+
 | Property                                           | Pattern | Type        | Deprecated | Definition | Title/Description     |
 | -------------------------------------------------- | ------- | ----------- | ---------- | ---------- | --------------------- |
 | + [implementation](#implementation )               | No      | const       | No         | -          | Implementation        |

@@ -1,5 +1,6 @@
 {
   "additionalProperties": false,
+  "description": "A tool for interacting with a browser instance.\n\nRequires a running browser service.\n\nExposes two tools to an Agent, one for navigating to a url and another for evaluating javascript on the current page.\nBrowser sessions are durable throughout a process, but each process has its own browser, isolating browsers between agents.",
   "properties": {
     "implementation": {
       "const": "BrowserV2",

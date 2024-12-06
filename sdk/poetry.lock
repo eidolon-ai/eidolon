@@ -1608,7 +1608,7 @@ url = "../usage-service/usage-client"
 
 [[package]]
 name = "eidolon-browser-service"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 optional = false
 python-versions = ">=3.10,<3.13"
@@ -6896,4 +6896,4 @@ all = ["chromadb", "playwright", "unstructured"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "1f50d9de7683f2b2a7fc82a7221ebda4e3b19a4fb0aab36b7e935054f9e6d475"
+content-hash = "958aa713048f59c48130af9ddbbf9542255e484dbc527a03a8b1a1178e8dc8ac"
