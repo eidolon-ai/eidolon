@@ -1,0 +1,91 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "implementation": {
+      "const": "BrowserV2",
+      "title": "Implementation"
+    },
+    "starting_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Starting Url"
+    },
+    "browser_service_loc": {
+      "default": "http://localhost:7468",
+      "description": "The location of the playwright installation.",
+      "examples": [
+        "http://localhost:7468"
+      ],
+      "title": "Browser Service Loc",
+      "type": "string"
+    },
+    "go_to_url_description": {
+      "default": "Go to a specified url",
+      "title": "Go To Url Description",
+      "type": "string"
+    },
+    "go_to_url_summarizer": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Summarizer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": {
+        "tool_description": "Summarize the current page (Current url: {url})",
+        "mode": "BeautifulSoup"
+      }
+    },
+    "evaluate_description": {
+      "default": "Evaluate javascript on the current page and return the last expression. This is how you interact with the DOM including retrieving structure, filling out forms, clicking buttons, etc.\n\nWill return immediately after the last expression is evaluated, so the page may not have fully loaded yet. If you need to wait for the page to load, do so explicitly or poll the page state.\n\nCurrent url: {url}",
+      "title": "Evaluate Description",
+      "type": "string"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.builtins.logic_units.browser.BrowserV2",
+    "groups": [
+      "LogicUnit"
+    ],
+    "name": "BrowserV2",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "BrowserV2",
+  "type": "object",
+  "$defs": {
+    "Summarizer": {
+      "properties": {
+        "tool_description": {
+          "default": "Summarize the current page (Current url: {url})",
+          "title": "Tool Description",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "BeautifulSoup",
+            "noop"
+          ],
+          "title": "Mode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode"
+      ],
+      "title": "Summarizer",
+      "type": "object"
+    }
+  }
+}

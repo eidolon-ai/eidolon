@@ -70,8 +70,6 @@ Must be one of:
 
 **Description:** The model to use for speech to text.
 
-Must be one of:
-* "whisper-1"
 Specific value: `"whisper-1"`
 
 ## <a name="speech_to_text_temperature"></a>5. Property `speech_to_text_temperature`

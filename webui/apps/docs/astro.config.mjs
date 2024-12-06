@@ -309,6 +309,10 @@ export default defineConfig({
                     "link": "/docs/components/logicunit/browser"
                   },
                   {
+                    "label": "BrowserV2",
+                    "link": "/docs/components/logicunit/browserv2"
+                  },
+                  {
                     "label": "OpenAIImageUnit",
                     "link": "/docs/components/logicunit/openaiimageunit"
                   },

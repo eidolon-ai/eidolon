@@ -1,0 +1,35 @@
+{
+  "additionalProperties": false,
+  "description": "Memory unit that only retrieves the most recent messages that are under a token limit. Does not summarize removed messages.",
+  "properties": {
+    "implementation": {
+      "const": "RollingMemoryUnit",
+      "title": "Implementation"
+    },
+    "encoding": {
+      "default": "o200k_base",
+      "description": "tiktoken encoding to use when counting tokens",
+      "title": "Encoding",
+      "type": "string"
+    },
+    "token_limit": {
+      "default": 32000,
+      "description": "The maximum number of message tokens to sent to llm",
+      "title": "Token Limit",
+      "type": "integer"
+    }
+  },
+  "reference_details": {
+    "clz": "eidolon_ai_sdk.apu.RollingMemoryUnit.RollingMemoryUnit",
+    "groups": [
+      "MemoryUnit"
+    ],
+    "name": "RollingMemoryUnit",
+    "overrides": {}
+  },
+  "required": [
+    "implementation"
+  ],
+  "title": "RollingMemoryUnit",
+  "type": "object"
+}

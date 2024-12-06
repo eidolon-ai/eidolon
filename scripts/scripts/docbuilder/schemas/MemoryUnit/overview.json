@@ -1,6 +1,9 @@
 {
   "anyOf": [
     {
+      "$ref": "../MemoryUnit/RollingMemoryUnit.json"
+    },
+    {
       "$ref": "../MemoryUnit/RawMemoryUnit.json"
     }
   ],

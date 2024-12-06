@@ -52,6 +52,7 @@ from eidolon_ai_sdk.agent.tot_agent.thought_generators import ThoughtGenerationS
 from eidolon_ai_sdk.agent.tot_agent.tot_agent import TreeOfThoughtsAgent
 from eidolon_ai_sdk.agent.vectara_agent import VectaraAgent
 from eidolon_ai_sdk.agent_os_interfaces import FileMemory, SymbolicMemory, SimilarityMemory, SecurityManager
+from eidolon_ai_sdk.apu.RollingMemoryUnit import RollingMemoryUnit
 from eidolon_ai_sdk.apu.llm.azure_llm_unit import AzureLLMUnit
 from eidolon_ai_sdk.apu.longterm_memory_unit import LongTermMemoryUnit
 from eidolon_ai_sdk.apu.agent_io import IOUnit
@@ -72,6 +73,7 @@ from eidolon_ai_sdk.apu.tool_call_unit import ToolCallLLMWrapper
 from eidolon_ai_sdk.builtins.components.opentelemetry import OpenTelemetryManager, CustomSampler, NoopSpanExporter
 from eidolon_ai_sdk.builtins.components.usage import UsageMiddleware
 from eidolon_ai_sdk.builtins.logic_units.api_logic_unit import ApiLogicUnit
+from eidolon_ai_sdk.builtins.logic_units.browser import BrowserV2
 from eidolon_ai_sdk.builtins.logic_units.toolhouse_logic_unit import Toolhouse
 from eidolon_ai_sdk.builtins.logic_units.vectara import VectaraSearch
 from eidolon_ai_sdk.builtins.logic_units.web_search import WebSearch, Browser, Search
@@ -176,9 +178,11 @@ def named_builtins() -> List[ReferenceResource]:
         LLMModel,
         (MemoryUnit, RawMemoryUnit),
         RawMemoryUnit,
+        RollingMemoryUnit,
         WebSearch,
         Search,
         Browser,
+        BrowserV2,
         Retriever,
         ApiLogicUnit,
         VectaraSearch,

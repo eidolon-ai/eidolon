@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "eidolon-browser-service"
+version = "0.1.0"
+description = ""
+authors = ["Luke Lalor <lukehlalor@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.urls]
+Github = "https://github.com/eidolon-ai/eidolon"
+Website = "https://www.eidolonai.com/"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+pydantic = "^2.10.3"
+playwright = "^1.49.0"
+
+[tool.poetry.dependencies.fastapi]
+version="^0.115.6"
+extras=["standard"]
+optional=true
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.4"
+pylint = "^3.0.3"
+ruff = "^0.1.7"
+
+[tool.poetry.extras]
+server = [ "fastapi" ]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
