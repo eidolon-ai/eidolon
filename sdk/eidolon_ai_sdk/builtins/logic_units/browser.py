@@ -141,8 +141,8 @@ async def browser_build(spec: BrowserV2, call_context: CallContext):
 
         @BrowserV2.tool(description=spec.content_description.format(**format_args))
         async def page_content():
+            utcnow = datetime.utcnow()
             text = await page.get_content()
             if spec.content_summarizer:
-                return spec.content_summarizer.summarize(text)
-            else:
-                return text
+                text = spec.content_summarizer.summarize(text)
+            return f"Page content as of {utcnow}:\n{text}"
