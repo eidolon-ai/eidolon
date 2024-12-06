@@ -71,7 +71,7 @@ class Page(PageInfo):
             async with httpx.AsyncClient() as client:
                 response = await client.post(
                     urljoin(self.location, f"/contexts/{self.context_id}/pages/{self.page_id}/navigate"),
-                    json=NavigateRequest(url=url).model_dump(),
+                    json=dict(url=url),
                 )
                 response.raise_for_status()
                 return Page(

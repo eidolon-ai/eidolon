@@ -69,7 +69,7 @@ async def evaluate_script(context_id: str, page_id: str, request: EvaluateReques
 async def navigate(context_id: str, page_id: str, request: NavigateRequest):
     context = await browser_service.get_or_create_context(context_id)
     page = context.get_page(page_id)
-    await page.page.goto(request.url)
+    await page.page.goto(str(request.url))
 
 
 @app.get("/contexts/{context_id}/pages/{page_id}/content", response_class=HTMLResponse)
