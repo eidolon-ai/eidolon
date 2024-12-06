@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
 
 
 class PageInfo(BaseModel):
@@ -17,4 +17,4 @@ class EvaluateInfo(BaseModel):
 
 
 class NavigateRequest(BaseModel):
-    url: str
+    url: HttpUrl

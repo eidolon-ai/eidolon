@@ -27,12 +27,22 @@
       "title": "Browser Service Loc",
       "type": "string"
     },
-    "go_to_url_description": {
-      "default": "Go to a specified url",
-      "title": "Go To Url Description",
+    "navigate_description": {
+      "default": "Navigate to a url from the current page. Waits for the url to load before returning.\n\nThe current page url as of {datetime} is \"{url}\"",
+      "title": "Navigate Description",
       "type": "string"
     },
-    "go_to_url_summarizer": {
+    "evaluate_description": {
+      "default": "Evaluate javascript on the current page and return the last expression.\nThis is how you interact with the DOM including...\n* retrieving structure\n* filling out forms\n* clicking buttons\n* waiting for events, elements, urls, or other conditions\n\nJavaScript is evaluated using playwright's page.evaluate method.\nThe tool call returns immediately after the last expression is evaluated, so the page may not have fully loaded depending on the provided javascript.\n\nThe current page url as of {datetime} is \"{url}\"",
+      "title": "Evaluate Description",
+      "type": "string"
+    },
+    "content_description": {
+      "default": "Get the HTML content of the current page. Content will be summarized to remove unnecessary elements.\n\nThe current page url as of {datetime} is \"{url}\"",
+      "title": "Content Description",
+      "type": "string"
+    },
+    "content_summarizer": {
       "anyOf": [
         {
           "$ref": "#/$defs/Summarizer"
@@ -45,11 +55,6 @@
         "tool_description": "Summarize the current page (Current url: {url})",
         "mode": "BeautifulSoup"
       }
-    },
-    "evaluate_description": {
-      "default": "Evaluate javascript on the current page and return the last expression. This is how you interact with the DOM including retrieving structure, filling out forms, clicking buttons, etc.\n\nWill return immediately after the last expression is evaluated, so the page may not have fully loaded yet. If you need to wait for the page to load, do so explicitly or poll the page state.\n\nCurrent url: {url}",
-      "title": "Evaluate Description",
-      "type": "string"
     }
   },
   "reference_details": {
