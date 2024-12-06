@@ -125,10 +125,7 @@ async def browser_build(spec: BrowserV2, call_context: CallContext):
     async def go_to_url(url: str):
         page_ = page or await browser.create_page()
         await page_.navigate(url)
-        if spec.go_to_url_summarizer:
-            return spec.go_to_url_summarizer.summarize(await page_.get_content())
-        else:
-            return f"Successfully went to {url}"
+        return f"Successfully navigated to {url}"
 
     if page and page.url:
         @BrowserV2.tool(description=spec.evaluate_description.format(**format_args))
@@ -141,8 +138,8 @@ async def browser_build(spec: BrowserV2, call_context: CallContext):
 
         @BrowserV2.tool(description=spec.content_description.format(**format_args))
         async def page_content():
-            try:
-                return await page.get_content()
-            except EvaluationError as e:
-                logger.warning(f"Error evaluating agent javascript: {e}")
-                return str(e)
+            text = await page.get_content()
+            if spec.content_summarizer:
+                return spec.content_summarizer.summarize(text)
+            else:
+                return text
