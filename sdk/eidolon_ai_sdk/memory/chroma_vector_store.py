@@ -1,3 +1,4 @@
+import logging
 import threading
 
 import chromadb
@@ -79,6 +80,7 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
         super().__init__(spec)
         self.spec = spec
         self.client = None
+        self.collections: Dict[str, Collection] = {}
 
     async def start(self):
         pass
@@ -108,10 +110,13 @@ class ChromaVectorStore(FileSystemVectorStore, Specable[ChromaVectorStoreConfig]
     def _get_collection(self, name: str):
         with ChromaVectorStore.lock:
             if not self.client:
+                logging.info("Connecting to ChromaDB")
                 self.connect()
-
             try:
-                return self.client.get_or_create_collection(name=name)
+                if name not in self.collections:
+                    logging.info(f"Getting collection {name}")
+                    self.collections[name] = self.client.get_or_create_collection(name=name)
+                return self.collections[name]
             except BaseException as e:
                 raise RuntimeError(f"Failed to get collection {name}") from e
 
