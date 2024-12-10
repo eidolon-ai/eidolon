@@ -27,19 +27,9 @@
       "title": "Browser Service Loc",
       "type": "string"
     },
-    "navigate_description": {
-      "default": "Navigate to a url from the current page. Waits for the url to load before returning.\n\nThe current page url as of {datetime} is \"{url}\"",
-      "title": "Navigate Description",
-      "type": "string"
-    },
-    "evaluate_description": {
-      "default": "Evaluate javascript on the current page and return the last expression.\nThis is how you interact with the DOM including...\n* retrieving structure\n* filling out forms\n* clicking buttons\n* waiting for events, elements, urls, or other conditions\n\nJavaScript is evaluated using playwright's page.evaluate method.\nThe tool call returns immediately after the last expression is evaluated, so the page may not have fully loaded depending on the provided javascript.\n\nThe current page url as of {datetime} is \"{url}\"",
-      "title": "Evaluate Description",
-      "type": "string"
-    },
-    "content_description": {
-      "default": "Get the HTML content of the current page. Content will be summarized to remove unnecessary elements.\n\nThe current page url as of {datetime} is \"{url}\"",
-      "title": "Content Description",
+    "operation_description": {
+      "default": "Perform the specified operation on the current page. The operation is executed using a playwright \"Page\" object.\n\nPrefer using fill / click to interact with the page over executing raw javascript when possible.\n\nREMEMBER: A selector can match multiple elements, and that the first element found will be interacted with. Be sure \nto specify an index if you are using a selector that could have multiple matches. For example, to find the second \ndiv with class \"foo\", you could use \"(//div[contains(@class, 'foo')])[2]\".\n\nThe current page url as of {datetime} is \"{url}\"",
+      "title": "Operation Description",
       "type": "string"
     },
     "content_summarizer": {
@@ -53,7 +43,9 @@
       ],
       "default": {
         "tool_description": "Summarize the current page (Current url: {url})",
-        "mode": "BeautifulSoup"
+        "mode": "BeautifulSoup",
+        "encoding": "o200k_base",
+        "token_limit": 8000
       }
     }
   },
@@ -85,6 +77,25 @@
           ],
           "title": "Mode",
           "type": "string"
+        },
+        "encoding": {
+          "default": "o200k_base",
+          "description": "tiktoken encoding to use when counting tokens",
+          "title": "Encoding",
+          "type": "string"
+        },
+        "token_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 8000,
+          "description": "The maximum number of message tokens to sent respond with",
+          "title": "Token Limit"
         }
       },
       "required": [

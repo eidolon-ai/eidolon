@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 
 from pydantic import BaseModel, HttpUrl
 
@@ -8,13 +8,10 @@ class PageInfo(BaseModel):
     url: Optional[str]
 
 
-class EvaluateRequest(BaseModel):
-    script: str
+class PlaywrightActionRequest(BaseModel):
+    args: list = []
+    kwargs: dict = {}
 
 
-class EvaluateInfo(BaseModel):
-    result: Optional[str]
-
-
-class NavigateRequest(BaseModel):
-    url: HttpUrl
+class PlaywrightActionResponse(BaseModel):
+    result: Optional[Any]
