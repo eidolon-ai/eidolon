@@ -4,13 +4,13 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "eidolon-browser-service"
-version = "0.1.4"
+version = "0.1.5"
 description = "Lightweight playwright wrapper for AI Agents"
 authors = [ "Luke Lalor <lukehlalor@gmail.com>",]
 readme = "README.md"
 
 [tool.eidolon]
-last-update-hash = "0d0cfb49137a42664dfe48b2e505474abf326a2d"
+last-update-hash = "3eeb02f930c5a06e8d08fd751f0c08df8e326a6d"
 
 [tool.poetry.urls]
 Github = "https://github.com/eidolon-ai/eidolon"
