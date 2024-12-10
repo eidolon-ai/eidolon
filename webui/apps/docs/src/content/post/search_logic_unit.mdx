@@ -24,12 +24,12 @@ class SearchSpec(BaseModel):
     cse_id: str = Field(
         default_factory=lambda: os.environ["CSE_ID"],
         validate_default=True,
-        desctiption="Google Custom Search Engine Id.",
+        description="Google Custom Search Engine Id.",
     )
     cse_token: str = Field(
         default_factory=lambda: os.environ["CSE_TOKEN"],
         validate_default=True,
-        desctiption="Google Project dev token, must have search permissions.",
+        description="Google Project dev token, must have search permissions.",
     )
     name: str = "search"
     description: str = None
