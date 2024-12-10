@@ -116,7 +116,9 @@ async def convert_to_llm(message: LLMMessage):
 
         return {"role": "user", "content": content}
     elif isinstance(message, AssistantMessage):
-        content = [TextBlockParam(type="text", text=message.content)]
+        content = []
+        if message.content:
+            content.append(TextBlockParam(type="text", text=message.content))
         if message.tool_calls and len(message.tool_calls) > 0:
             for tool_call in message.tool_calls:
                 content.append(
