@@ -5,9 +5,10 @@ from typing import List
 from urllib.parse import urljoin
 
 import httpx
+from httpx import Timeout
 from pydantic import BaseModel
 
-from eidolon_browser_service.api import PageInfo, EvaluateInfo, NavigateRequest
+from eidolon_browser_service.api import PageInfo, PlaywrightActionResponse
 
 
 class BrowserError(Exception):
@@ -23,10 +24,6 @@ class PageNotFoundError(BrowserError):
     pass
 
 
-class EvaluationError(BrowserError):
-    pass
-
-
 async def _handle_response_error(e: httpx.HTTPStatusError, context: str) -> None:
     if e.response.status_code == 404:
         raise PageNotFoundError(
@@ -35,8 +32,13 @@ async def _handle_response_error(e: httpx.HTTPStatusError, context: str) -> None
             response_body=e.response.text,
             original_error=e
         )
+    error_message = f"{context}: {str(e)}"
+    try:
+        error_message = e.response.json().get("detail")
+    except Exception:
+        pass
     raise BrowserError(
-        f"{context}: {str(e)}",
+        error_message,
         status_code=e.response.status_code,
         response_body=e.response.text,
         original_error=e
@@ -46,46 +48,29 @@ async def _handle_response_error(e: httpx.HTTPStatusError, context: str) -> None
 class Page(PageInfo):
     location: str
     context_id: str
+    request_timout: int = 30
+    connect_timout: int = 5
 
-    async def evaluate(self, script: str) -> EvaluateInfo:
+    async def actions(self, action: str, args: list = None, kwargs: dict = None) -> PlaywrightActionResponse:
+        json = dict()
+        if args:
+            json["args"] = args
+        if kwargs:
+            json["kwargs"] = kwargs
         try:
-            async with httpx.AsyncClient() as client:
+            async with httpx.AsyncClient(timeout=Timeout(self.request_timout, connect=self.connect_timout)) as client:
                 response = await client.post(
-                    urljoin(self.location, f"/contexts/{self.context_id}/pages/{self.page_id}/evaluate"),
-                    json={"script": script}
+                    urljoin(self.location, f"/contexts/{self.context_id}/pages/{self.page_id}/actions/{action}"),
+                    json=json
                 )
                 response.raise_for_status()
-                return EvaluateInfo.model_validate(response.json())
+                return PlaywrightActionResponse.model_validate(response.json())
         except httpx.HTTPStatusError as e:
-            if e.response.status_code == 422:
-                raise EvaluationError(
-                    e.response.json().get('detail', e.response.text),
-                    status_code=e.response.status_code,
-                    response_body=e.response.text,
-                    original_error=e
-                )
-            await _handle_response_error(e, "Evaluation failed")
-
-    async def navigate(self, url: str) -> Page:
-        try:
-            async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    urljoin(self.location, f"/contexts/{self.context_id}/pages/{self.page_id}/navigate"),
-                    json=dict(url=url),
-                )
-                response.raise_for_status()
-                return Page(
-                    location=self.location,
-                    context_id=self.context_id,
-                    page_id=self.page_id,
-                    url=url,
-                )
-        except httpx.HTTPStatusError as e:
-            await _handle_response_error(e, "Failed to navigate")
+            await _handle_response_error(e, f"action \"{action}\" failed")
 
     async def get_content(self) -> str:
         try:
-            async with httpx.AsyncClient() as client:
+            async with httpx.AsyncClient(timeout=Timeout(self.request_timout, connect=self.connect_timout)) as client:
                 response = await client.get(
                     urljoin(self.location, f"/contexts/{self.context_id}/pages/{self.page_id}/content")
                 )
