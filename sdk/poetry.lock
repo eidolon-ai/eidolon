@@ -1616,11 +1616,10 @@ files = []
 develop = true
 
 [package.dependencies]
-playwright = "^1.49.0"
 pydantic = "^2.10.3"
 
 [package.extras]
-server = ["fastapi[standard] (>=0.115.6,<0.116.0)"]
+server = ["fastapi[standard] (>=0.115.6,<0.116.0)", "playwright (>=1.49.0,<2.0.0)"]
 
 [package.source]
 type = "directory"
@@ -4326,7 +4325,7 @@ type = ["mypy (>=1.8)"]
 name = "playwright"
 version = "1.49.0"
 description = "A high-level API to automate web browsers"
-optional = false
+optional = true
 python-versions = ">=3.9"
 files = [
     {file = "playwright-1.49.0-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:704532a2d8ba580ec9e1895bfeafddce2e3d52320d4eb8aa38e80376acc5cbb0"},
@@ -4631,7 +4630,7 @@ typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 name = "pyee"
 version = "12.0.0"
 description = "A rough port of Node.js's EventEmitter to Python with a few tricks of its own"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "pyee-12.0.0-py3-none-any.whl", hash = "sha256:7b14b74320600049ccc7d0e0b1becd3b4bd0a03c745758225e31a59f4095c990"},

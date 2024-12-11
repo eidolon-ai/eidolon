@@ -1665,11 +1665,10 @@ files = []
 develop = true
 
 [package.dependencies]
-playwright = "^1.49.0"
 pydantic = "^2.10.3"
 
 [package.extras]
-server = ["fastapi[standard] (>=0.115.6,<0.116.0)"]
+server = ["fastapi[standard] (>=0.115.6,<0.116.0)", "playwright (>=1.49.0,<2.0.0)"]
 
 [package.source]
 type = "directory"
