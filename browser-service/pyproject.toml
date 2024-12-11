@@ -4,13 +4,13 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "eidolon-browser-service"
-version = "0.1.5"
+version = "0.1.6"
 description = "Lightweight playwright wrapper for AI Agents"
 authors = [ "Luke Lalor <lukehlalor@gmail.com>",]
 readme = "README.md"
 
 [tool.eidolon]
-last-update-hash = "3eeb02f930c5a06e8d08fd751f0c08df8e326a6d"
+last-update-hash = "241f6ba7a83c73a4eae806301dfbb21bb0768876"
 
 [tool.poetry.urls]
 Github = "https://github.com/eidolon-ai/eidolon"
@@ -20,6 +20,9 @@ Website = "https://www.eidolonai.com/"
 python = ">=3.10,<3.13"
 pydantic = "^2.10.3"
 
+[tool.poetry.extras]
+server = [ "fastapi", "playwright",]
+
 [tool.poetry.dependencies.fastapi]
 version = "^0.115.6"
 extras = [ "standard",]
@@ -28,9 +31,6 @@ optional = true
 [tool.poetry.dependencies.playwright]
 version = "^1.49.0"
 optional = true
-
-[tool.poetry.extras]
-server = [ "fastapi", "playwright", ]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"

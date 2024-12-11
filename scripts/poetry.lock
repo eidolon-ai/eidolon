@@ -1336,7 +1336,7 @@ pydantic = ">=2.5.2,<3.0.0"
 
 [[package]]
 name = "eidolon-ai-sdk"
-version = "0.1.182"
+version = "0.1.183"
 description = "An open source sgent service SDK"
 optional = true
 python-versions = ">=3.10,<3.13"
@@ -1360,7 +1360,7 @@ dulwich = "^0.22.6"
 eidolon-ai-client = "^0.1.40"
 eidolon-ai-mistralai = "^0.1.6a"
 eidolon-ai-usage-client = "^0.1.10"
-eidolon-browser-service = "^0.1.5"
+eidolon-browser-service = "^0.1.6"
 esprima = "^4.0.1"
 eval-type-backport = "^0.2.0"
 fastapi = ">=0.109.0"
@@ -1424,7 +1424,7 @@ url = "../usage-service/usage-client"
 
 [[package]]
 name = "eidolon-browser-service"
-version = "0.1.5"
+version = "0.1.6"
 description = "Lightweight playwright wrapper for AI Agents"
 optional = true
 python-versions = ">=3.10,<3.13"
