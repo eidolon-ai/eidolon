@@ -12,13 +12,28 @@ docker run -p 7468:7468 eidolonai/browser_service:latest
 
 > Note: The dockerfile has the CMD ["uvicorn", "eidolon_browser_service.main:app", "--host", "0.0.0.0", "--port", "7468"]
 
-## Customization
-```.dotenv
+### Endpoints
+See the [OpenAPI](http://localhost:7468/docs) for the full list of endpoints.
+
+### Customization
+The service can be customized by setting the following environment variables:
+```dotenv
 BROWSER_SERVICE_CONTEXT_LIMIT=20  # the maximum number of browser contexts that can be created. Can be disabled by setting to -1
 BROWSER_SERVICE_CONTEXT_TTL=3600  # the ttl time in seconds of a browser context. Can be disabled by setting to -1
 ```
 
-## Usage
+## Python Client
+The client is available at `eidolon_browser_service.async_client` after pip installing this package.
+
+### Download
+```shell
+pip install eidolon-browser-service
+```
+
+> Note that this only includes the client code. The server dependencies are an available extra .
+
+### Usage
+
 ```python
 from eidolon_browser_service.async_client import Browser
 

@@ -19,15 +19,18 @@ Website = "https://www.eidolonai.com/"
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
 pydantic = "^2.10.3"
-playwright = "^1.49.0"
-
-[tool.poetry.extras]
-server = [ "fastapi",]
 
 [tool.poetry.dependencies.fastapi]
 version = "^0.115.6"
 extras = [ "standard",]
 optional = true
+
+[tool.poetry.dependencies.playwright]
+version = "^1.49.0"
+optional = true
+
+[tool.poetry.extras]
+server = [ "fastapi", "playwright", ]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"
