@@ -178,7 +178,6 @@ async def browser_build(spec: BrowserV2, call_context: CallContext):
     context_str = f"pid-{call_context.process_id}"
     browser = Browser(location=spec.browser_service_loc).context(context_str)
     pages = await browser.list_pages()
-    datetime.utcnow()
 
     if len(pages) > 1:
         logger.warning("LLM found more than one page running in the browser. Using the last one.")
@@ -207,7 +206,7 @@ async def browser_build(spec: BrowserV2, call_context: CallContext):
     async def operation(kwargs: dict):
         op: Click | Fill | Evaluate | GoTo | GetContent = adapter.validate_python(kwargs)
         asyncio.create_task(store_browser_record(browser))
-        page_: Page = await browser.create_page()
+        page_: Page = page or await browser.create_page()
 
         if isinstance(op, GetContent):
             utcnow = datetime.utcnow()

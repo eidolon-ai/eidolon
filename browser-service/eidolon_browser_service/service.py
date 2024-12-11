@@ -83,19 +83,16 @@ async def background_ttl_check(service: BrowserService):
             current_time = time.perf_counter()
             sorted_contexts = sorted(service.contexts.values(), reverse=True)
             acc = []
-            while (
-                sorted_contexts
-                and sorted_contexts[0].last_used + service.max_ttl < current_time
-            ):
+            while sorted_contexts and sorted_contexts[-1].last_used + service.max_ttl < current_time:
                 to_clean = sorted_contexts.pop()
                 del service.contexts[to_clean.context_id]
                 acc.append(to_clean)
             for record in acc:
                 try:
                     await record.context.cleanup()
-                    logger.info("Removed context %s due to TTL", record.context_id)
+                    logger.info(f"Removed context due to TTL: {record.context_id}")
                 except Exception:
-                    logger.exception(f"Error cleaning context {record.context_id}")
+                    logger.exception(f"Error cleaning context: {record.context_id}")
         except asyncio.CancelledError:
             break
         except Exception:
