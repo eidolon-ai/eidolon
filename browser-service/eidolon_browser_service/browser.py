@@ -1,8 +1,8 @@
-from typing import Dict, Optional
+from typing import Dict
 import uuid
 
 from fastapi import HTTPException
-from playwright.async_api import Page
+from playwright.async_api import Page, BrowserContext as PlaywrightBrowserContext
 
 
 class ManagedPage:
@@ -15,9 +15,8 @@ class ManagedPage:
 
 
 class BrowserContext:
-    def __init__(self, context, browser):
+    def __init__(self, context: PlaywrightBrowserContext):
         self.context = context
-        self.browser = browser
         self.pages: Dict[str, ManagedPage] = {}
 
     async def create_page(self) -> ManagedPage:
@@ -29,7 +28,6 @@ class BrowserContext:
 
     async def cleanup(self):
         await self.context.close()
-        await self.browser.close()
 
     def get_page(self, page_id: str) -> ManagedPage:
         page = self.pages.get(page_id)

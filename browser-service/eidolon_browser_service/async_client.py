@@ -12,8 +12,13 @@ from eidolon_browser_service.api import PageInfo, PlaywrightActionResponse
 
 
 class BrowserError(Exception):
-    def __init__(self, message: str, status_code: int = None, response_body: str = None,
-                 original_error: Exception = None):
+    def __init__(
+        self,
+        message: str,
+        status_code: int = None,
+        response_body: str = None,
+        original_error: Exception = None,
+    ):
         super().__init__(message)
         self.status_code = status_code
         self.response_body = response_body
@@ -30,7 +35,7 @@ async def _handle_response_error(e: httpx.HTTPStatusError, context: str) -> None
             f"{context}: resource not found",
             status_code=e.response.status_code,
             response_body=e.response.text,
-            original_error=e
+            original_error=e,
         )
     error_message = f"{context}: {str(e)}"
     try:
@@ -41,7 +46,7 @@ async def _handle_response_error(e: httpx.HTTPStatusError, context: str) -> None
         error_message,
         status_code=e.response.status_code,
         response_body=e.response.text,
-        original_error=e
+        original_error=e,
     )
 
 
@@ -51,28 +56,40 @@ class Page(PageInfo):
     request_timout: int = 30
     connect_timout: int = 5
 
-    async def actions(self, action: str, args: list = None, kwargs: dict = None) -> PlaywrightActionResponse:
+    async def actions(
+        self, action: str, args: list = None, kwargs: dict = None
+    ) -> PlaywrightActionResponse:
         json = dict()
         if args:
             json["args"] = args
         if kwargs:
             json["kwargs"] = kwargs
         try:
-            async with httpx.AsyncClient(timeout=Timeout(self.request_timout, connect=self.connect_timout)) as client:
+            async with httpx.AsyncClient(
+                timeout=Timeout(self.request_timout, connect=self.connect_timout)
+            ) as client:
                 response = await client.post(
-                    urljoin(self.location, f"/contexts/{self.context_id}/pages/{self.page_id}/actions/{action}"),
-                    json=json
+                    urljoin(
+                        self.location,
+                        f"/contexts/{self.context_id}/pages/{self.page_id}/actions/{action}",
+                    ),
+                    json=json,
                 )
                 response.raise_for_status()
                 return PlaywrightActionResponse.model_validate(response.json())
         except httpx.HTTPStatusError as e:
-            await _handle_response_error(e, f"action \"{action}\" failed")
+            await _handle_response_error(e, f'action "{action}" failed')
 
     async def get_content(self) -> str:
         try:
-            async with httpx.AsyncClient(timeout=Timeout(self.request_timout, connect=self.connect_timout)) as client:
+            async with httpx.AsyncClient(
+                timeout=Timeout(self.request_timout, connect=self.connect_timout)
+            ) as client:
                 response = await client.get(
-                    urljoin(self.location, f"/contexts/{self.context_id}/pages/{self.page_id}/content")
+                    urljoin(
+                        self.location,
+                        f"/contexts/{self.context_id}/pages/{self.page_id}/content",
+                    )
                 )
                 response.raise_for_status()
                 return response.text
@@ -87,12 +104,14 @@ class Context(BaseModel):
     async def create_page(self) -> Page:
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.post(urljoin(self.location, f"/contexts/{self.context_id}/pages"))
+                response = await client.post(
+                    urljoin(self.location, f"/contexts/{self.context_id}/pages")
+                )
                 response.raise_for_status()
                 return Page(
                     location=self.location,
                     context_id=self.context_id,
-                    **response.json()
+                    **response.json(),
                 )
         except httpx.HTTPStatusError as e:
             await _handle_response_error(e, "Failed to create page")

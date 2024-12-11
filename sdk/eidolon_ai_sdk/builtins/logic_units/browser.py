@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import os
 from datetime import datetime
 from textwrap import dedent
@@ -10,9 +11,13 @@ from bs4 import BeautifulSoup
 from pydantic import Field, BaseModel, TypeAdapter, ConfigDict
 
 from eidolon_ai_client.util.logger import logger
+from eidolon_ai_sdk.agent_os import AgentOS
 from eidolon_ai_sdk.apu.call_context import CallContext
 from eidolon_ai_sdk.system.tool_builder import ToolBuilder
-from eidolon_browser_service.async_client import Browser, Page, BrowserError
+from eidolon_browser_service.async_client import Browser, Page, BrowserError, Context
+
+
+BROWSER_RECORD_DB = "eidolon_browser_records"
 
 
 class Summarizer(BaseModel):
@@ -103,6 +108,21 @@ class BrowserV2(ToolBuilder):
     """).strip()
     content_summarizer: Optional[Summarizer] = Summarizer(mode="BeautifulSoup")
 
+    @classmethod
+    async def delete_process(cls, process_id: str):
+        found_browsers = False
+        async for browser in AgentOS.symbolic_memory.find(symbol_collection=BROWSER_RECORD_DB, query=dict(pid=process_id)):
+            found_browsers = True
+            try:
+                await Browser(location=browser["browser_loc"]).context(browser["context_id"]).delete()
+                logger.debug(f"Deleted browser context {browser['context_id']} for pid {process_id}")
+            except Exception:
+                logger.warning(f"Failed to delete browser context {browser['context_id']} for pid {process_id}", exc_info=True)
+        if found_browsers:
+            await AgentOS.symbolic_memory.delete(symbol_collection=BROWSER_RECORD_DB, query=dict(pid=process_id))
+            logger.info(f"Deleted all browser records for pid {process_id}")
+
+
 
 class Click(BaseModel):
     model_config = ConfigDict(json_schema_extra=dict(description=dedent("""
@@ -166,6 +186,7 @@ async def browser_build(spec: BrowserV2, call_context: CallContext):
     elif len(pages) == 1:
         page = pages[0]
     elif spec.starting_url:
+        asyncio.create_task(store_browser_record(browser))
         page = await browser.create_page()
         page = await page.navigate(spec.starting_url)
     else:
@@ -185,7 +206,9 @@ async def browser_build(spec: BrowserV2, call_context: CallContext):
     @BrowserV2.tool(description=spec.operation_description.format(**format_args), parameters=parameters)
     async def operation(kwargs: dict):
         op: Click | Fill | Evaluate | GoTo | GetContent = adapter.validate_python(kwargs)
-        page_: Page = page or await browser.create_page()
+        asyncio.create_task(store_browser_record(browser))
+        page_: Page = await browser.create_page()
+
         if isinstance(op, GetContent):
             utcnow = datetime.utcnow()
             text = await page_.get_content()
@@ -201,3 +224,13 @@ async def browser_build(spec: BrowserV2, call_context: CallContext):
             except BrowserError as e:
                 logger.warning(f"Browser error: {e}")
                 return str(e)
+
+
+async def store_browser_record(browser: Context):
+    try:
+        await AgentOS.symbolic_memory.insert_one(
+            symbol_collection=BROWSER_RECORD_DB,
+            document=dict(pid=AgentOS.current_process_id(), browser_loc=browser.location, context_id=browser.context_id)
+        )
+    except Exception:
+        logger.exception(f"Failed to store browser record for pid {AgentOS.current_process_id()}")
