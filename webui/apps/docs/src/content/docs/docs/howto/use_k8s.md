@@ -58,11 +58,11 @@ With these operators, you can easily manage the lifecycle of the Eidolon AI comp
 
 To use the secret in your deployment, you need to add the following to your deployment yaml file's `spec`:
 
-    ```yaml
+   ```yaml
     envFrom:
       - secretRef:
           name: eidolon
-    ```
+   ```
 
 ## Getting Started
 
@@ -74,9 +74,9 @@ To use the secret in your deployment, you need to add the following to your depl
 
 To install the operator using the makefile available in the [eidolon quickstart][eqs] run `make k8s-operator` from the root directory of the project. Once completed you should see 
 
-    ```
+   ```
     K8s environment is ready. You can now deploy your application.
-    ```
+   ```
 
 #### New Installation
 
