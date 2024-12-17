@@ -77,10 +77,10 @@ export const footerData = {
           text: 'Discord',
           href: 'https://discord.gg/6kVQrHpeqG',
         },
-        {
-          text: 'Twitter / X',
-          href: 'https://twitter.com/AgentSDK',
-        },
+        // {
+        //   text: 'Twitter / X',
+          // href: 'https://twitter.com/AgentServer',
+        // },
         {
           text: 'Youtube',
           href: 'https://www.youtube.com/channel/UCARP0MIGLlq9BArL6HG6eUg',
@@ -93,7 +93,7 @@ export const footerData = {
     },
    ],
   socialLinks: [
-    {ariaLabel: 'X', icon: 'tabler:brand-x', href: 'https://twitter.com/AgentSDK'},
+    // {ariaLabel: 'X', icon: 'tabler:brand-x', href: 'https://twitter.com/AgentSDK'},
     {ariaLabel: 'LinkedIn', icon: 'tabler:brand-linkedin', href: 'https://www.linkedin.com/company/august-data/'},
     {ariaLabel: 'Discord', icon: 'tabler:brand-discord', href: 'https://discord.gg/6kVQrHpeqG'},
     {ariaLabel: 'YouTube', icon: 'tabler:brand-youtube', href: 'https://www.youtube.com/channel/UCARP0MIGLlq9BArL6HG6eUg'},

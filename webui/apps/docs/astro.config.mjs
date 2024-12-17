@@ -67,7 +67,7 @@ export default defineConfig({
         youtube: 'https://www.youtube.com/channel/UCARP0MIGLlq9BArL6HG6eUg',
         discord: 'https://discord.gg/6kVQrHpeqG',
         linkedin: 'https://www.linkedin.com/company/august-data',
-        'x.com': 'https://twitter.com/AgentSDK',
+        // 'x.com': 'https://twitter.com/AgentServer',
       },
       sidebar: [
         {label: 'Quickstart', link: '/docs/quickstart'},
