@@ -20,6 +20,7 @@ The agent will dynamically load and embed files, so it is not performant for loa
 | - [loader_pattern](#loader_pattern )             | No      | Combination                    | No         | -          | Loader Pattern                              |
 | - [document_manager](#document_manager )         | No      | [Reference[DocumentManager]](/docs/components/documentmanager/overview)     | No         | -          | -                                           |
 | - [apu](#apu )                                   | No      | [Reference[APU]](/docs/components/apu/overview)                 | No         | -          | The APU to use for question transformation. |
+| - [sync_wait_time](#sync_wait_time )             | No      | integer                        | No         | -          | Sync Wait Time                              |
 
 ## <a name="implementation"></a>1. Property `implementation`
 
@@ -159,5 +160,17 @@ Specific value: `"RetrieverAgent"`
 | **Default**  | `{"implementation": "APU"}` |
 
 **Description:** The APU to use for question transformation.
+
+## <a name="sync_wait_time"></a>13. Property `sync_wait_time`
+
+**Title:** Sync Wait Time
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+| **Default**  | `-1`      |
+
+**Description:** The amount of time (seconds) to wait while documents sync before returning results.
 
 ----------------------------------------------------------------------------------------------------------------------------
