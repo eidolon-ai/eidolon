@@ -46,35 +46,38 @@ class DocumentProcessor(Specable[DocumentProcessorSpec]):
             try:
                 with tracer.start_as_current_span("parsing"):
                     parsedDocs = await make_async(lambda d: list(self.parser.parse(d)))(file_info.data)
+            except Exception as e:
+                raise RuntimeError(f"Error parsing file {file_info.path})") from e
+            try:
                 with tracer.start_as_current_span("transforming"):
                     docs = await make_async(lambda pd: list(self.splitter.transform_documents(pd)))(parsedDocs)
-                with tracer.start_as_current_span("record symbolic"):
-                    await AgentOS.symbolic_memory.insert_one(
-                        collection_name,
-                        {
-                            "file_path": file_info.path,
-                            "data": file_info.metadata,
-                            "doc_ids": [doc.id for doc in docs],
-                        },
-                    )
-                if len(docs) == 0:
-                    logger.debug(f"File contained no text {file_info.path}")
-                    return
+            except Exception as e:
+                raise RuntimeError(f"Error transforming file {file_info.path}") from e
+            with tracer.start_as_current_span("record symbolic"):
+                await AgentOS.symbolic_memory.insert_one(
+                    collection_name,
+                    {
+                        "file_path": file_info.path,
+                        "data": file_info.metadata,
+                        "doc_ids": [doc.id for doc in docs],
+                    },
+                )
+            if docs:
                 with tracer.start_as_current_span("record similarity"):
                     await AgentOS.similarity_memory.add(collection_name, docs)
-                logger.debug(f"Added file {file_info.path}")
-            except Exception as e:
-                if logger.isEnabledFor(logging.DEBUG):
-                    logger.warning(f"Failed to parse file {file_info.path}", exc_info=True)
-                else:
-                    logger.warning(f"Failed to parse file {file_info.path} ({e})")
+                    logger.debug(f"Added file {file_info.path}")
+            else:
+                logger.debug(f"File contained no text {file_info.path}")
 
     async def remove_file(self, collection_name: str, path: str):
         with tracer.start_as_current_span("remove file"):
             file_info = await AgentOS.symbolic_memory.find_one(collection_name, {"file_path": path})
             if file_info is not None:
                 doc_ids = file_info["doc_ids"]
-                await AgentOS.similarity_memory.delete(collection_name, doc_ids)
+                if doc_ids:
+                    await AgentOS.similarity_memory.delete(collection_name, doc_ids)
+                else:
+                    logger.warning(f"No doc_ids found for {path}")
                 await AgentOS.symbolic_memory.delete(collection_name, {"file_path": path})
 
     async def replace_file(self, collection_name: str, file_info: FileInfo):
