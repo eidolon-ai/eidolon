@@ -17,11 +17,10 @@ Please do not try to push directly to this repo unless you are a maintainer.
 
 Our [backlog page](https://github.com/orgs/eidolon-ai/projects/1/views/1) contains bugs, improvements, and feature requests that we are currently working on.
 
-We are very adhoc in our processes right now. If you are interested in working on an issue, please let us know in our [Discord channel](https://discord.gg/6kVQrHpeqG), and we 
+If you are interested in working on an issue, please let us know in our [Discord channel](https://discord.gg/6kVQrHpeqG), and we 
 will help you. As the size and scope of the project grows, we will likely move to a more formal process.
 
-If you are adding an issue, please try to keep it focused on a single modular bug/improvement/feature. If the two issues are related, or blocking, please link them 
-rather than keep them as one single one.
+To get your feet wet, we keep a catalog of [good first issues](https://github.com/orgs/eidolon-ai/projects/6/views/6) for new contributors to tackle.
 
 We will try to keep these issues as up to date as possible, though with the rapid rate of development some may get out of date. 
 If you notice this happening, please just let us know.
