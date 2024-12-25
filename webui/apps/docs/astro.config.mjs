@@ -81,6 +81,7 @@ export default defineConfig({
             {label: 'Build Custom Tools', link: '/docs/howto/build_custom_tools'},
             {label: 'Build Custom Agent Templates', link: '/docs/howto/build_custom_agents'},
             {label: 'Use References', link: '/docs/howto/using_references'},
+            {label: 'Deploy Using Kubernetes', link: '/docs/howto/use_k8s'},
           ],
         },
         {
