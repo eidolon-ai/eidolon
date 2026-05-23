@@ -6,10 +6,12 @@ These strategies ensure that the language model generates diverse and
 non-repeating thoughts, which are crucial for problem-solving tasks that require
 exploration.
 """
+
 from abc import abstractmethod
 from typing import Any, Dict, List, Callable, Awaitable
 
-from jinja2 import StrictUndefined, Environment
+from jinja2 import StrictUndefined
+from jinja2.sandbox import ImmutableSandboxedEnvironment
 from pydantic import Field, BaseModel
 
 from eidolon_ai_sdk.apu.agent_io import SystemAPUMessage, UserTextAPUMessage, APUMessageTypes
@@ -36,7 +38,7 @@ class ThoughtGenerationStrategy(Specable[TGSConfig]):
     """
 
     spec: TGSConfig
-    env = Environment(undefined=StrictUndefined)
+    env = ImmutableSandboxedEnvironment(undefined=StrictUndefined)
 
     def __init__(self, spec):
         super().__init__(spec)

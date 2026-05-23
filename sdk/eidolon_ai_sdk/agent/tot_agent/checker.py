@@ -1,6 +1,7 @@
 from typing import List
 
-from jinja2 import StrictUndefined, Environment
+from jinja2 import StrictUndefined
+from jinja2.sandbox import ImmutableSandboxedEnvironment
 from pydantic import Field, BaseModel
 
 from eidolon_ai_sdk.apu.apu import APU
@@ -43,7 +44,7 @@ class ToTChecker(Specable[TotCheckerConfig]):
         """
 
         checker_prompt = (
-            Environment(undefined=StrictUndefined)
+            ImmutableSandboxedEnvironment(undefined=StrictUndefined)
             .from_string(self.spec.prompt)
             .render(
                 problem=problem_description,

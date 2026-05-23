@@ -4,7 +4,8 @@ from textwrap import indent
 from typing import List, Dict, Any, Literal, Optional, Type, Union
 
 from fastapi import HTTPException
-from jinja2 import StrictUndefined, Environment
+from jinja2 import StrictUndefined
+from jinja2.sandbox import ImmutableSandboxedEnvironment
 from pydantic import Field, BaseModel
 
 from eidolon_ai_sdk.agent.agent import register_program
@@ -121,7 +122,11 @@ class TreeOfThoughtsAgent(Agent, Specable[ToTAgentConfig]):
         # override to run the tree of thoughts algorithm in a separate thread
         thoughts_path: List[str] = []
         level = 0
-        question = Environment(undefined=StrictUndefined).from_string(self.spec.user_prompt).render(**body.model_dump())
+        question = (
+            ImmutableSandboxedEnvironment(undefined=StrictUndefined)
+            .from_string(self.spec.user_prompt)
+            .render(**body.model_dump())
+        )
 
         async def exec_request(
             _boot_messages: List[LLMMessage],

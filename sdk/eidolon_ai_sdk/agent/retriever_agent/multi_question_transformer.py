@@ -1,6 +1,7 @@
 from typing import List
 
-from jinja2 import Environment, StrictUndefined
+from jinja2 import StrictUndefined
+from jinja2.sandbox import ImmutableSandboxedEnvironment
 from pydantic import Field, BaseModel
 
 from eidolon_ai_sdk.agent.retriever_agent.question_transformer import QuestionTransformerSpec, QuestionTransformer
@@ -31,7 +32,7 @@ class MultiQuestionTransformer(QuestionTransformer, Specable[MultiQuestionTransf
 
     async def transform(self, apu: APU, process_id: str, question: str) -> List[str]:
         thread = apu.new_thread(process_id)
-        env = Environment(undefined=StrictUndefined)
+        env = ImmutableSandboxedEnvironment(undefined=StrictUndefined)
         userPrompt = env.from_string(self.spec.prompt).render(
             question=question, number_to_generate=self.spec.number_to_generate
         )
