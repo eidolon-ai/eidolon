@@ -6,6 +6,7 @@ from typing import List, Literal, Optional, Union, Dict, Any
 
 from fastapi import Body
 from jinja2 import Environment, meta, StrictUndefined
+from jinja2.sandbox import ImmutableSandboxedEnvironment
 from pydantic import field_validator, model_validator, BaseModel, Field
 from pydantic_core import to_jsonable_python, SchemaError
 
@@ -138,7 +139,7 @@ class SimpleAgent(AgentBuilder):
         t = default_apu.main_thread(process_id)
 
         template_args = {k: v.instantiate().value for k, v in self.prompt_templates.items()}
-        env = Environment(undefined=StrictUndefined)
+        env = ImmutableSandboxedEnvironment(undefined=StrictUndefined)
         system_prompt = env.from_string(self.system_prompt).render(**template_args)
         await t.set_boot_messages(prompts=[SystemAPUMessage(prompt=system_prompt)])
 
@@ -224,7 +225,7 @@ def fn(spec: SimpleAgent, metadata: Metadata):
             if isinstance(request_body, dict):
                 template_args.update(request_body)
 
-            env = Environment(undefined=StrictUndefined)
+            env = ImmutableSandboxedEnvironment(undefined=StrictUndefined)
             text_message = UserTextAPUMessage(prompt=env.from_string(action.user_prompt).render(**template_args))
 
             if execute_on_apu and execute_on_apu in apus:

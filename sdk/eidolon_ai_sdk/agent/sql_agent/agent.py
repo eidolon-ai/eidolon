@@ -1,6 +1,7 @@
 from typing import Literal, Optional, cast
 
 from jinja2 import Environment, StrictUndefined, Template
+from jinja2.sandbox import ImmutableSandboxedEnvironment
 from pydantic import BaseModel, Field
 
 from eidolon_ai_client.events import (
@@ -72,7 +73,7 @@ class SqlAgent(Specable[SqlAgentSpec]):
         else:
             raise ValueError("APU does not have logic units")
 
-        environment = Environment(undefined=StrictUndefined)
+        environment = ImmutableSandboxedEnvironment(undefined=StrictUndefined)
         self._error_prompt = environment.from_string(self.spec.error_prompt)
         self._system_prompt = environment.from_string(self.spec.system_prompt)
         self._user_prompt = environment.from_string(self.spec.user_prompt)
