@@ -6,10 +6,11 @@ These strategies ensure that the language model generates diverse and
 non-repeating thoughts, which are crucial for problem-solving tasks that require
 exploration.
 """
+
 from abc import abstractmethod
 from typing import Any, Dict, List, Callable, Awaitable
 
-from jinja2 import StrictUndefined, Environment
+from jinja2 import StrictUndefined
 from jinja2.sandbox import ImmutableSandboxedEnvironment
 from pydantic import Field, BaseModel
 

@@ -1,6 +1,6 @@
 from typing import Literal, Optional, cast
 
-from jinja2 import Environment, StrictUndefined, Template
+from jinja2 import StrictUndefined, Template
 from jinja2.sandbox import ImmutableSandboxedEnvironment
 from pydantic import BaseModel, Field
 

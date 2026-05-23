@@ -1,6 +1,6 @@
 from typing import List
 
-from jinja2 import StrictUndefined, Environment
+from jinja2 import StrictUndefined
 from jinja2.sandbox import ImmutableSandboxedEnvironment
 from pydantic import Field, BaseModel
 
