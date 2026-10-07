@@ -16,6 +16,7 @@ FQN = "eidolon_ai_sdk.builtins.logic_units.parallel_search.ParallelSearch"
 
 def install_server(monkeypatch, *, sse=False, error=None, delay=False):
     requests = []
+    request_ids = set()
     original = httpx.AsyncClient
 
     async def handle(request):
@@ -27,6 +28,9 @@ def install_server(monkeypatch, *, sse=False, error=None, delay=False):
             return httpx.Response(204)
         message = json.loads(request.content)
         method = message["method"]
+        if "id" in message:
+            assert message["id"] not in request_ids
+            request_ids.add(message["id"])
         if method == "initialize":
             return httpx.Response(
                 200,

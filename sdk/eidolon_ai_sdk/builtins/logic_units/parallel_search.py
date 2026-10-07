@@ -4,7 +4,7 @@ import asyncio
 import copy
 import json
 from contextlib import asynccontextmanager
-from uuid import NAMESPACE_URL, uuid5
+from uuid import NAMESPACE_URL, uuid4, uuid5
 
 import httpx
 from httpx import AsyncClient
@@ -112,7 +112,7 @@ class ParallelSearch(ToolBuilder):
 
 
 async def _rpc(client, method, params):
-    request_id = str(uuid5(NAMESPACE_URL, method))
+    request_id = str(uuid4())
     async with client.stream(
         "POST", _ENDPOINT, json=dict(jsonrpc="2.0", id=request_id, method=method, params=params)
     ) as response:
