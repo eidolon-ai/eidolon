@@ -1,0 +1,14 @@
+apiVersion: server.eidolonai.com/v1alpha1
+kind: Agent
+metadata:
+  name: ParallelResearcher
+spec:
+  implementation: SimpleAgent
+  description: Search the web and read source pages with Parallel Search MCP.
+  system_prompt: |
+    Use web search for current information. Read source pages when the search
+    excerpts are insufficient. Cite the URLs supporting your answer.
+  apu:
+    logic_units:
+      - implementation: eidolon_ai_sdk.builtins.logic_units.parallel_search.ParallelSearch
+        timeout: 60
